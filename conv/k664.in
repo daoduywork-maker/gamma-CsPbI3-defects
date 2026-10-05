@@ -1,0 +1,85 @@
+! gamma-CsPbI3 (orthorhombic, Pbnm setting of space group 62), 20 atoms
+! Soft variable-cell relaxation with Quantum ESPRESSO pw.x
+!
+! Starting structure: experimental, 293 K, Sutton et al., ACS Energy Lett. 2018
+!   (a = 8.5766, b = 8.8561, c = 12.4722 Angstrom after swapping a and b
+!    from the paper's Pnam setting). Verify against the paper's CIF.
+!
+! Before running:
+!   1. Set pseudo_dir and the three pseudopotential file names to the
+!      PBEsol files you actually have (names below are from memory).
+!   2. Set ecutwfc / ecutrho from your convergence test.
+!   3. Set K_POINTS from kconv.sh.
+
+&CONTROL
+  calculation   = 'scf'
+  prefix        = 'conv_k664'
+  outdir        = './tmp'
+  pseudo_dir    = '/home/duydao/pseudo_pbesol'
+  etot_conv_thr = 1.0d-4
+  forc_conv_thr = 1.0d-3
+  nstep         = 150
+  tprnfor       = .true.
+  tstress       = .true.
+/
+
+&SYSTEM
+  ibrav       = 0
+  nat         = 20
+  ntyp        = 3
+  ecutwfc     = 50
+  ecutrho     = 400.0
+  occupations = 'fixed'
+/
+
+&ELECTRONS
+  conv_thr    = 1.0d-7
+  mixing_beta = 0.5
+  electron_maxstep = 200
+/
+
+&IONS
+  ion_dynamics = 'bfgs'
+/
+
+&CELL
+  cell_dynamics  = 'bfgs'
+  press          = 0.0
+  press_conv_thr = 0.5
+  cell_dofree    = 'all'
+/
+
+ATOMIC_SPECIES
+Cs  132.905  cs_pbesol_v1.uspp.F.UPF
+Pb  207.200  Pb.pbesol-dn-kjpaw_psl.0.2.2.UPF
+I   126.904  I.pbesol-n-kjpaw_psl.0.2.UPF
+
+CELL_PARAMETERS angstrom
+  8.576600  0.000000   0.000000
+  0.000000  8.856100   0.000000
+  0.000000  0.000000  12.472200
+
+ATOMIC_POSITIONS crystal
+Cs  0.50509  0.45995  0.25000
+Cs  0.49491  0.54005  0.75000
+Cs  0.00509  0.04005  0.75000
+Cs  0.99491  0.95995  0.25000
+Pb  0.50000  0.00000  0.00000
+Pb  0.50000  0.00000  0.50000
+Pb  0.00000  0.50000  0.00000
+Pb  0.00000  0.50000  0.50000
+I   0.56202  0.00113  0.25000
+I   0.43798  0.99887  0.75000
+I   0.06202  0.49887  0.75000
+I   0.93798  0.50113  0.25000
+I   0.69731  0.30538  0.96423
+I   0.30269  0.69462  0.46423
+I   0.19731  0.19462  0.03577
+I   0.80269  0.80538  0.53577
+I   0.30269  0.69462  0.03577
+I   0.69731  0.30538  0.53577
+I   0.80269  0.80538  0.96423
+I   0.19731  0.19462  0.46423
+
+K_POINTS automatic
+6 6 4  0 0 0

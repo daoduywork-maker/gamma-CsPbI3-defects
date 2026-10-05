@@ -1,0 +1,10 @@
+# Quantum ESPRESSO scratch
+tmp/
+*.save/
+*.wfc*
+*.xml
+# loose backups and Windows leftovers
+backup/
+*:Zone.Identifier
+# Python
+__pycache__/

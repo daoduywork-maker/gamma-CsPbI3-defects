@@ -1,0 +1,16 @@
+== k-point convergence at ecutwfc = 50 Ry ==
+k = 2 2 1        -8165.77735737 Ry   -5555055.033 meV/atom
+k = 3 3 2        -8165.84047944 Ry   -5555097.974 meV/atom
+k = 4 4 3        -8165.84384715 Ry   -5555100.265 meV/atom
+k = 5 5 4        -8165.84417501 Ry   -5555100.488 meV/atom
+k = 6 6 4        -8165.84418094 Ry   -5555100.492 meV/atom
+
+== cutoff convergence at k = 4 4 3 ==
+ecutwfc = 40     -8165.84010932 Ry   -5555097.722 meV/atom
+ecutwfc = 50     -8165.84384715 Ry   -5555100.265 meV/atom
+ecutwfc = 60     -8165.84741893 Ry   -5555102.695 meV/atom
+ecutwfc = 70     -8165.84808710 Ry   -5555103.149 meV/atom
+ecutwfc = 80     -8165.84867694 Ry   -5555103.551 meV/atom
+
+Converged when the meV/atom column changes by less than about 1
+between one setting and the next.

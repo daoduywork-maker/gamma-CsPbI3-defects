@@ -1,0 +1,85 @@
+! gamma-CsPbI3 (orthorhombic, Pbnm setting of space group 62), 20 atoms
+! Soft variable-cell relaxation with Quantum ESPRESSO pw.x
+!
+! Starting structure: experimental, 293 K, Sutton et al., ACS Energy Lett. 2018
+!   (a = 8.5766, b = 8.8561, c = 12.4722 Angstrom after swapping a and b
+!    from the paper's Pnam setting). Verify against the paper's CIF.
+!
+! Before running:
+!   1. Set pseudo_dir and the three pseudopotential file names to the
+!      PBEsol files you actually have (names below are from memory).
+!   2. Set ecutwfc / ecutrho from your convergence test.
+!   3. Set K_POINTS from kconv.sh.
+
+&CONTROL
+  calculation   = 'vc-relax'
+  prefix        = 'cspbi3_gamma_s2'
+  outdir        = './tmp'
+  pseudo_dir    = '/home/duydao/pseudo_pbesol'
+  etot_conv_thr = 1.0d-4
+  forc_conv_thr = 1.0d-3
+  nstep         = 150
+  tprnfor       = .true.
+  tstress       = .true.
+/
+
+&SYSTEM
+  ibrav       = 0
+  nat         = 20
+  ntyp        = 3
+  ecutwfc     = 60.0
+  ecutrho     = 480.0
+  occupations = 'fixed'
+/
+
+&ELECTRONS
+  conv_thr    = 1.0d-7
+  mixing_beta = 0.5
+  electron_maxstep = 200
+/
+
+&IONS
+  ion_dynamics = 'bfgs'
+/
+
+&CELL
+  cell_dynamics  = 'bfgs'
+  press          = 0.0
+  press_conv_thr = 0.5
+  cell_dofree    = 'all'
+/
+
+ATOMIC_SPECIES
+Cs  132.905  cs_pbesol_v1.uspp.F.UPF
+Pb  207.200  Pb.pbesol-dn-kjpaw_psl.0.2.2.UPF
+I   126.904  I.pbesol-n-kjpaw_psl.0.2.UPF
+
+CELL_PARAMETERS angstrom
+   8.377755840   0.000000000   0.000000000
+   0.000000000   8.932511639   0.000000000
+   0.000000000   0.000000000  12.352906369
+
+ATOMIC_POSITIONS crystal
+Cs               0.4666242442        0.4169633822        0.2500000000
+Cs               0.5333757558        0.5830366178        0.7500000000
+Cs              -0.0333757558        0.0830366178        0.7500000000
+Cs               1.0333757558        0.9169633822        0.2500000000
+Pb               0.5000000000        0.0000000000       -0.0000000000
+Pb               0.5000000000       -0.0000000000        0.5000000000
+Pb               0.0000000000        0.5000000000       -0.0000000000
+Pb              -0.0000000000        0.5000000000        0.5000000000
+I                0.5863324472        0.0074257446        0.2500000000
+I                0.4136675528        0.9925742554        0.7500000000
+I                0.0863324472        0.4925742554        0.7500000000
+I                0.9136675528        0.5074257446        0.2500000000
+I                0.6875896891        0.3053841102        0.9596646978
+I                0.3124103109        0.6946158898        0.4596646978
+I                0.1875896891        0.1946158898        0.0403353022
+I                0.8124103109        0.8053841102        0.5403353022
+I                0.3124103109        0.6946158898        0.0403353022
+I                0.6875896891        0.3053841102        0.5403353022
+I                0.8124103109        0.8053841102        0.9596646978
+I                0.1875896891        0.1946158898        0.4596646978
+
+K_POINTS automatic
+4 4 3  0 0 0
