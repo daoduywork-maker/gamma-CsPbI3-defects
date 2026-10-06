@@ -1,0 +1,53 @@
+gamma-CsPbI3 two-stage variable-cell relaxation
+written: 2026-10-05 19:22:10
+folder : /home/duydao/Project-1
+
+Settings
+  ecutwfc / ecutrho : 60.0 / 480.0 Ry
+  stage 1 k-mesh    : 3 3 2
+  stage 2 k-mesh    : 4 4 3
+  pseudo_dir        : /home/duydao/pseudo_pbesol
+
+Stage 1 (k = 3 3 2)
+  output file            : stage1_k332/vcrelax.out
+  converged (bfgs)       : yes
+  energy evaluations     : 37
+  first energy (Ry)      : -8165.84405259
+  final energy (Ry)      : -8165.85787848
+  energy gained (meV/atom): 9.406
+  final pressure (kbar)  : 0.16
+  final total force (Ry/Bohr): 0.000814
+  wall time              : 13h54m
+
+Stage 2 (k = 4 4 3)
+  output file            : stage2_k443/vcrelax.out
+  converged (bfgs)       : yes
+  energy evaluations     : 3
+  first energy (Ry)      : -8165.86051237
+  final energy (Ry)      : -8165.86051809
+  energy gained (meV/atom): 0.004
+  final pressure (kbar)  : -0.04
+  final total force (Ry/Bohr): 0.001768
+  wall time              : 2h30m
+
+Lattice parameters (Angstrom) and cell volume (Angstrom^3)
+                                 a         b         c     volume
+  start (base input)        8.5766    8.8561   12.4722    947.329
+  after stage 1             8.3778    8.9325   12.3529    924.422
+  after stage 2 (final)     8.3776    8.9330   12.3518    924.376
+  final vs experiment       -2.32%    +0.87%    -0.97%     -2.42%
+  (experiment: a=8.5766 b=8.8561 c=12.4722 at 293 K; the last column
+   assumes an orthorhombic cell)
+
+Change from stage 1 to stage 2: a -0.002%, b +0.006%, c -0.009%
+
+Octahedral geometry
+                            Pb-I-Pb min    Pb-I-Pb max   Pb-I range (A)
+  start (base input)            150.84°        160.63°    3.148-3.221
+  final                         148.09°        153.54°    3.172-3.188
+  (180° means no tilt; smaller angles mean stronger tilting)
+
+Files
+  relaxed structure, scf-ready input : final/gamma_CsPbI3_relaxed_scf.in
+  structure blocks only              : final/structure_blocks.txt
+  CIF                                : final/gamma_CsPbI3_relaxed.cif
