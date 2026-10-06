@@ -1,0 +1,75 @@
+! Tight variable-cell relaxation of the 20-atom gamma-CsPbI3 cell.
+! Run this first, then rebuild the supercell from its result.
+
+&CONTROL
+  calculation   = 'vc-relax'
+  prefix        = 'unit_tight'
+  outdir        = './tmp'
+  pseudo_dir    = '/home/duydao/pseudo_pbesol'
+  etot_conv_thr = 1.0e-05
+  forc_conv_thr = 4.0e-04
+  nstep         = 300
+  tprnfor       = .true.
+  tstress       = .true.
+/
+
+&SYSTEM
+  ibrav       = 0
+  nat         = 20
+  ntyp        = 3
+  ecutwfc     = 60.0
+  ecutrho     = 480.0
+  occupations = 'fixed'
+/
+
+&ELECTRONS
+  conv_thr    = 1.0e-09
+  mixing_beta = 0.3
+  electron_maxstep = 300
+/
+
+&IONS
+  ion_dynamics = 'bfgs'
+/
+
+&CELL
+  cell_dynamics  = 'bfgs'
+  press          = 0.0
+  press_conv_thr = 0.20
+  cell_dofree    = 'all'
+/
+
+ATOMIC_SPECIES
+Cs    132.905  cs_pbesol_v1.uspp.F.UPF
+Pb    207.200  Pb.pbesol-dn-kjpaw_psl.0.2.2.UPF
+I     126.904  I.pbesol-n-kjpaw_psl.0.2.UPF
+
+CELL_PARAMETERS angstrom
+      8.3775903400     0.0000000000     0.0000000000
+      0.0000000000     8.9330465930     0.0000000000
+      0.0000000000     0.0000000000    12.3517898640
+
+ATOMIC_POSITIONS angstrom
+Cs      3.9093108905     3.7246414040     3.0879474660
+Cs      4.4682794495     5.2084051890     9.2638423980
+Cs     -0.2794842795     0.7418818925     9.2638423980
+Cs      8.6570746195     8.1911647005     3.0879474660
+Pb      4.1887951700     0.0000000000     0.0000000000
+Pb      4.1887951700     0.0000000000     6.1758949320
+Pb      0.0000000000     4.4665232965     0.0000000000
+Pb      0.0000000000     4.4665232965     6.1758949320
+I       4.9116226604     0.0662319774     3.0879474660
+I       3.4659676796     8.8668146156     9.2638423980
+I       0.7228274904     4.4002913191     9.2638423980
+I       7.6547628496     4.5327552739     3.0879474660
+I       5.7603990877     2.7280219972    11.8535584336
+I       2.6171912523     6.2050245958     5.6776635016
+I       1.5716039177     1.7385012993     0.4982314304
+I       6.8059864223     7.1945452937     6.6741263624
+I       2.6171912523     6.2050245958     0.4982314304
+I       5.7603990877     2.7280219972     6.6741263624
+I       6.8059864223     7.1945452937    11.8535584336
+I       1.5716039177     1.7385012993     5.6776635016
+
+K_POINTS automatic
+4 4 3  0 0 0
