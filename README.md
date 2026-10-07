@@ -10,10 +10,10 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 |---|---|
 | Convergence test (k-points, cutoff) | Done |
 | Soft relaxation of the 20-atom unit cell | Done |
-| Perfect supercell and vacancy inputs | Built from the soft-relaxed cell; to be rebuilt after the tight relaxation |
 | Cluster setup (job script, pseudopotentials, modules) | Done |
-| Tight relaxation of the unit cell | Running on the cluster |
-| Perfect supercell and vacancy relaxations | To do |
+| Tight relaxation of the unit cell | Done |
+| Perfect supercell and vacancy inputs | Built from the tight-relaxed cell |
+| Perfect supercell and vacancy relaxations (5 jobs) | On the cluster |
 | Vacancy hop inputs | To be built once the set of distinct hops is settled |
 | Migration barriers (NEB) | To do; `neb.x` is not yet installed on the cluster |
 | Interstitial, surface slab, machine-learned potential | Later stages |
@@ -43,15 +43,15 @@ At zero temperature the cubic structure is not a minimum of the energy: the octa
 
 ![Top and side views of the relaxed γ-CsPbI₃ lattice](assets/gamma_CsPbI3_lattice_tilted_octahedra.png)
 
-The figure is drawn from the relaxed structure in `final/`. The top view shows one layer of octahedra (Pb with its four in-plane iodine atoms) and the Cs atoms above it; the octahedra are rotated about c, in opposite senses for neighbours. The side view shows one sheet of octahedra seen along the in-plane diagonal; the Pb–I–Pb links along c are bent instead of straight.
+The figure is drawn from the soft-relaxed structure in `final/`; the tight relaxation changes it by less than 0.03 Å, which is not visible at this scale. The top view shows one layer of octahedra (Pb with its four in-plane iodine atoms) and the Cs atoms above it; the octahedra are rotated about c, in opposite senses for neighbours. The side view shows one sheet of octahedra seen along the in-plane diagonal; the Pb–I–Pb links along c are bent instead of straight.
 
 | Property | Value (this work, PBEsol) |
 |---|---|
 | Space group | Pnma (No. 62), written here in the Pbnm setting with c as the long axis |
 | Atoms per unit cell | 20 (4 Cs, 4 Pb, 12 I) |
-| Lattice parameters | a = 8.378 Å, b = 8.933 Å, c = 12.352 Å |
+| Lattice parameters | a = 8.362 Å, b = 8.961 Å, c = 12.350 Å |
 | Pb–I bond lengths | 3.17 to 3.19 Å |
-| Pb–I–Pb angles | 148° to 154° (180° in the cubic phase) |
+| Pb–I–Pb angles | 148° (equatorial) and 155° (apical); 180° in the cubic phase |
 | Iodine sites | 4 apical (linking octahedra along c) and 8 equatorial (linking them within the ab plane) |
 
 The tilting is what makes the two iodine sites different, and it is the reason the defect study below treats apical and equatorial positions separately.
@@ -150,7 +150,9 @@ The aim here is the piece these leave open: migration barriers as a function of 
 defects/
 ├── sites_report.txt             which atoms were removed
 ├── unitcell_tight/
-│   ├── vcrelax.in               tight relaxation of the 20-atom cell
+│   ├── unit_tight_relaxed.in    the tight-relaxed 20-atom cell; everything below is built from it
+│   ├── vcrelax.out              output of the tight relaxation
+│   ├── vcrelax.in               tight-relaxation input, restarting from the relaxed cell
 │   └── run_qe.pbs               PBS job script for the cluster queue
 ├── pristine_222/relax.in        perfect 2×2×2 supercell (160 atoms), the energy reference
 ├── q+1/                         defects with charge +1
@@ -210,15 +212,29 @@ Pseudopotential files:
 | | a (Å) | b (Å) | c (Å) | Volume (Å³) |
 |---|---|---|---|---|
 | Experiment, 293 K | 8.5766 | 8.8561 | 12.4722 | 947.33 |
-| This work, 0 K | 8.3776 | 8.9330 | 12.3518 | 924.38 |
-| Difference | −2.32% | +0.87% | −0.97% | −2.42% |
+| Soft relaxation | 8.3776 | 8.9330 | 12.3518 | 924.38 |
+| **Tight relaxation** | **8.3620** | **8.9607** | **12.3503** | **925.41** |
+| Tight vs soft | −0.19% | +0.31% | −0.01% | +0.11% |
+| Tight vs experiment | −2.50% | +1.18% | −0.98% | −2.31% |
 
 | | Pb–I–Pb angles | Pb–I bond lengths (Å) |
 |---|---|---|
 | Experiment, 293 K | 150.84° to 160.63° | 3.148 to 3.221 |
-| This work, 0 K | 148.09° to 153.54° | 3.172 to 3.188 |
+| Soft relaxation | 148.09° to 153.54° | 3.172 to 3.188 |
+| **Tight relaxation** | **148.19° and 154.54°** | **3.165 to 3.190** |
 
-This is a soft relaxation: forces to 10⁻³ Ry/Bohr (0.026 eV/Å), pressure to 0.5 kbar. Stage 1 took 37 energy evaluations and 13 h 54 min; stage 2 took 3 evaluations and 2 h 30 min, on a 6-core laptop.
+| | Soft relaxation | Tight relaxation |
+|---|---|---|
+| Force limit (largest component) | 0.026 eV/Å (10⁻³ Ry/Bohr) | 0.010 eV/Å (4×10⁻⁴ Ry/Bohr) |
+| Pressure limit | 0.5 kbar | 0.2 kbar |
+| Final largest force component | | 0.0047 eV/Å (1.8×10⁻⁴ Ry/Bohr) |
+| Final pressure | −0.04 kbar | −0.13 kbar |
+| Steps and time | 37 + 3 evaluations, 16 h 24 min on a 6-core laptop | 14 steps, 1 h 32 min on one 40-core node |
+| Code | Quantum ESPRESSO 7.6 | Quantum ESPRESSO 6.5 |
+
+The tight relaxation lowered the energy by 1.9 meV per 20-atom cell. The volume and c hardly changed, but a shortened and b lengthened by 0.2 to 0.3%: the cell is very soft against exchanging a for b, which goes with a small change in octahedral tilt. Run on the soft-relaxed structure, the two code versions gave the same total force to six decimal places.
+
+The defect calculations use the tight-relaxed cell.
 
 ## How to reproduce
 
@@ -230,7 +246,7 @@ bash kconv.sh | tee conv_summary.txt
 bash relax2stage.sh
 
 # 3. defect inputs
-python3 build_defects.py final/gamma_CsPbI3_relaxed_scf.in --pseudo-dir /path/to/pseudo
+python3 build_defects.py defects/unitcell_tight/unit_tight_relaxed.in --pseudo-dir /path/to/pseudo
 ```
 
 Set `PW` (path to `pw.x`) and `NP` (number of MPI processes) at the top of each shell script. Set `pseudo_dir` in `gamma_CsPbI3_vcrelax.in`. `build_defects.py` needs Python 3 with NumPy and ASE.
@@ -245,8 +261,8 @@ Listed in `.gitignore`:
 
 ## Next steps
 
-1. Tight relaxation of the unit cell (`defects/unitcell_tight`) on the cluster, then rebuild `defects/` from its result.
-2. Relax the perfect supercell and the two +1 vacancies.
+1. Relax the perfect supercell and the four vacancies (two sites, charge +1 and neutral) on the cluster.
+2. From the first step of the perfect supercell, check that the 4×4×3 unit-cell mesh and the 2×2×2 supercell mesh agree (small forces and pressure).
 3. Settle the set of distinct vacancy hops (from symmetry and the literature) and add them to `build_defects.py`.
 4. Get `neb.x` on the cluster, relax the end points of one hop and run a trial NEB.
 5. Remaining hops, neutral charge state, interstitial, then the surface slab.
