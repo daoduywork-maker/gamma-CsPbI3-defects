@@ -17,6 +17,7 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 | Vacancy hop inputs | To be built once the set of distinct hops is settled |
 | Migration barriers (NEB) | To do; `neb.x` is not yet installed on the cluster |
 | Interstitial, surface slab, machine-learned potential | Later stages |
+| Equilibrium vacancy profile against depth (analysis) | Planned, after the slab stage |
 
 ## The material: γ-CsPbI₃
 
@@ -74,6 +75,7 @@ Removing one iodine leaves a vacancy. Because the two sites are different, an ap
 1. Which site does the vacancy prefer, and by how much?
 2. How high is the energy barrier for each kind of hop? The lowest barriers set how fast iodine moves through the crystal.
 3. Do the answers change close to a surface, layer by layer?
+4. Under given growth conditions, how many vacancies sit at each depth, and how fast do they get there?
 
 ### Steps
 
@@ -86,14 +88,62 @@ Removing one iodine leaves a vacancy. Because the two sites are different, an ap
 | 5 | Repeat steps 3 and 4 for an extra iodine atom (interstitial) | The same quantities for the second mobile defect |
 | 6 | Build a slab with the CsI-terminated (001) surface and repeat for defects at increasing depth | Site energies and barriers as a function of distance from the surface |
 | 7 | Train a machine-learned interatomic potential on these calculations | Hop rates at finite temperature, larger cells, longer times |
+| 8 | Analysis only, no new slab runs: turn the layer-resolved formation energies of step 6 into an equilibrium concentration profile (see below) | Vacancy concentration against depth, for any iodine chemical potential and Fermi level |
 
 One defect is placed in each supercell. The cell is kept fixed in all defect calculations, so every energy is compared with the same perfect supercell.
+
+### Planned analysis: equilibrium vacancy profile near the surface (step 8)
+
+The idea is a "phase diagram" for the vacancy: how likely it is to form, as a function of the conditions and of the depth below the surface.
+
+**Three variables**
+
+| Variable | Kind | Set by |
+|---|---|---|
+| μ_I, chemical potential of iodine | Condition | How the film was made and what surrounds it (iodine-rich or iodine-poor) |
+| E_F, Fermi level | Condition | Doping, contacts and the overall charge balance |
+| Depth z | Position | Where in the film one looks |
+
+**Formation energy** of a vacancy with charge q in the layer at depth z:
+
+    Q(z, μ_I, E_F) = E_defect(z) − E_perfect + μ_I + q·E_F + corrections
+                   = Q₀(z) + μ_I + q·E_F
+
+Only Q₀(z) comes from the slab calculations. The two conditions enter as simple added terms, so one set of slab runs covers every value of μ_I and E_F.
+
+**Concentration** in the dilute limit, per iodine site, with the site-saturation form:
+
+    x(z) = 1 / (1 + exp(Q(z) / kT))        which is ≈ exp(−Q(z) / kT) when x is small
+
+**Separation of the two questions.** For a fixed charge state and flat bands, the enrichment at depth z relative to the bulk is
+
+    x(z) / x(bulk) = exp(−[Q₀(z) − Q₀(bulk)] / kT)
+
+in which μ_I and E_F cancel. The conditions decide how many vacancies there are overall; the depth dependence decides where they sit. This gives two simple figures: enrichment against depth (one curve per charge state), and bulk concentration against μ_I and E_F.
+
+**Extra calculations this needs**
+
+- Bulk CsI, PbI₂ and I₂ (and Pb, Cs) to fix the allowed range of μ_I, from iodine-poor to iodine-rich.
+- A finite-size correction for the charged vacancy, which needs the dielectric constant of γ-CsPbI₃. The 160-atom supercell holds one vacancy per 96 iodine sites, far above real concentrations; site-energy differences and barriers are little affected because the error cancels, but absolute formation energies are not.
+
+**Known limits, to be stated with any result**
+
+- The preferred charge state may change with depth, which couples the three variables.
+- Band bending near the surface makes E_F, measured from the band edges, depend on depth. The first version assumes flat bands.
+- If the surface preference is strong, the top layer may reach percent-level occupation while the bulk stays dilute. One check is planned: two vacancies in the surface layer, close together and far apart, to see whether they interact.
+- PBEsol without spin-orbit coupling does not place the band edges accurately, so an absolute E_F axis carries that uncertainty.
+- μ_I and E_F are treated as independent axes; in a real sample charge neutrality links them.
+
+Combined with the depth-resolved barriers of step 6, this gives both how many vacancies collect near the surface and how fast.
 
 ### Where this sits in the literature
 
 - Vacancy migration at surfaces has been computed for CsPbBr₃, where the barrier at the surface is about half the bulk value (Biega and Leppert, J. Phys.: Energy 3, 2021).
 - Ion migration in bulk γ-CsPbI₃ has been studied with ab initio and machine-learning methods (Chem. Mater. 37, 4416, 2025).
 - Formation energies of iodine vacancies and interstitials as a function of depth below the (001) surface of orthorhombic CsPbI₃ have been reported, without migration barriers (Ahmad, Limon and Ahmad, Phys. Rev. Materials 8, 125402, 2024).
+
+- Surface phase diagrams of CsPbI₃ from ab initio thermodynamics exist (Seidu et al., J. Chem. Phys. 154, 074712, 2021); what they cover needs checking before step 8.
+- The general framework of defect phase diagrams is reviewed in Korte-Kerzel et al., Int. Mater. Rev. 67, 89 (2022).
 
 The aim here is the piece these leave open: migration barriers as a function of depth below the surface in γ-CsPbI₃. Steps 1 to 4 reproduce bulk values and serve as the reference and as a check against published numbers.
 
