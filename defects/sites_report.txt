@@ -1,0 +1,9 @@
+Source unit cell : defects/unitcell_tight/unit_tight_relaxed.in
+Supercell        : 2x2x2, 160 atoms, k-mesh 2 2 2
+Cell lengths (A) : 16.7240 17.9215 24.7007
+
+Apical vacancy: removed atom 69 at (4.876, 9.018, 15.438) A
+
+Equatorial vacancy: removed atom 19 at (6.793, 7.213, 11.853) A
+
+q+1/ holds the +1 charged vacancies, q0/ the neutral ones (spin-polarised).
