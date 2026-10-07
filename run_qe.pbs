@@ -1,0 +1,47 @@
+#!/bin/bash
+# PBS job script for Quantum ESPRESSO pw.x on the group cluster.
+#
+# Submit from the folder that holds the input file:
+#     qsub run_qe.pbs                                  (uses the defaults below)
+#     qsub -N pristine -v INPUT=relax.in,NK=2 run_qe.pbs
+#
+# The output is written next to the input, with .in replaced by .out.
+
+#PBS -N unit_tight
+#PBS -q std40
+#PBS -l nodes=1:ppn=40
+#PBS -l walltime=72:00:00
+#PBS -j oe
+
+# ---- settings (can be overridden with qsub -v) ----
+INPUT="${INPUT:-vcrelax.in}"   # input file name
+NK="${NK:-4}"                  # k-point pools: 4 for the unit cell, 2 for supercells
+# ---------------------------------------------------
+
+cd "$PBS_O_WORKDIR" || exit 1
+
+# make the module command available in a batch job, then load what pw.x needs
+source /etc/profile 2>/dev/null
+module purge
+module load intel/intel2020
+module load qe/qe-6.5
+
+NP=$(wc -l < "$PBS_NODEFILE")
+OUTPUT="${INPUT%.in}.out"
+
+echo "job id    : $PBS_JOBID"
+echo "node(s)   : $(sort -u "$PBS_NODEFILE" | tr '\n' ' ')"
+echo "processes : $NP, k-point pools: $NK"
+echo "input     : $INPUT  ->  $OUTPUT"
+echo "pw.x      : $(which pw.x)"
+echo "started   : $(date)"
+
+if [ ! -f "$INPUT" ]; then
+  echo "Input file $INPUT not found in $PWD"
+  exit 1
+fi
+
+mpirun -np "$NP" -machinefile "$PBS_NODEFILE" pw.x -nk "$NK" -in "$INPUT" > "$OUTPUT"
+
+echo "finished  : $(date)"
+grep -E "bfgs converged|JOB DONE|convergence NOT achieved" "$OUTPUT" | tail -3

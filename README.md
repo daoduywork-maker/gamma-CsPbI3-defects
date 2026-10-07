@@ -10,8 +10,91 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 |---|---|
 | Convergence test (k-points, cutoff) | Done |
 | Soft relaxation of the 20-atom unit cell | Done |
-| Defect supercell, vacancy and hop inputs | Built, not yet run |
-| Tight relaxation, defect energies, NEB barriers | To do, on the cluster |
+| Defect supercell, vacancy and hop inputs | Built from the soft-relaxed cell; to be rebuilt after the tight relaxation |
+| Cluster setup (job script, pseudopotentials, modules) | Done |
+| Tight relaxation of the unit cell | Submitted on the cluster, waiting in the queue |
+| Perfect supercell and vacancy relaxations | To do |
+| Migration barriers (NEB) | To do; `neb.x` is not yet installed on the cluster |
+| Interstitial, surface slab, machine-learned potential | Later stages |
+
+## The material: γ-CsPbI₃
+
+### What it is
+
+CsPbI₃ is a halide perovskite with the formula ABX₃. Each Pb atom sits at the centre of an octahedron of six iodine atoms. The octahedra share corners and form a three-dimensional network, and the Cs atoms fill the cavities between them.
+
+The compound exists in several phases:
+
+| Phase | Structure | Notes |
+|---|---|---|
+| α | Cubic perovskite, octahedra not tilted | Stable only at high temperature |
+| β | Tetragonal perovskite, tilted about one axis | Intermediate, on cooling from α |
+| γ | Orthorhombic perovskite, tilted about all three axes | The black perovskite phase found at room temperature; metastable |
+| δ | Orthorhombic, not a perovskite (yellow) | The stable phase at room temperature; poor light absorber |
+
+The γ phase is the one used in solar cells and light emitters, with a band gap of about 1.7 eV.
+
+### Why γ and not the cubic α phase
+
+At zero temperature the cubic structure is not a minimum of the energy: the octahedra lower their energy by tilting. A relaxation without thermal motion, such as the calculations here, therefore belongs to the γ structure. It is also the perovskite phase present in devices at room temperature.
+
+### The structure
+
+![Top and side views of the relaxed γ-CsPbI₃ lattice](assets/gamma_CsPbI3_lattice_tilted_octahedra.png)
+
+The figure is drawn from the relaxed structure in `final/`. The top view shows one layer of octahedra (Pb with its four in-plane iodine atoms) and the Cs atoms above it; the octahedra are rotated about c, in opposite senses for neighbours. The side view shows one sheet of octahedra seen along the in-plane diagonal; the Pb–I–Pb links along c are bent instead of straight.
+
+| Property | Value (this work, PBEsol) |
+|---|---|
+| Space group | Pnma (No. 62), written here in the Pbnm setting with c as the long axis |
+| Atoms per unit cell | 20 (4 Cs, 4 Pb, 12 I) |
+| Lattice parameters | a = 8.378 Å, b = 8.933 Å, c = 12.352 Å |
+| Pb–I bond lengths | 3.17 to 3.19 Å |
+| Pb–I–Pb angles | 148° to 154° (180° in the cubic phase) |
+| Iodine sites | 4 apical (linking octahedra along c) and 8 equatorial (linking them within the ab plane) |
+
+The tilting is what makes the two iodine sites different, and it is the reason the defect study below treats apical and equatorial positions separately.
+
+## Defect study: what we are going to do
+
+### The two iodine sites
+
+![Apical and equatorial iodine vacancies around one Pb atom](assets/iodine_vacancy_sites_apical_vs_equatorial.png)
+
+Each Pb atom sits at the centre of an octahedron of six iodine atoms. In γ-CsPbI₃ the octahedra are tilted, so the six are not all equivalent:
+
+- **Apical** iodine: the two above and below Pb, along the c axis.
+- **Equatorial** iodine: the four around Pb, in the plane perpendicular to c.
+
+Removing one iodine leaves a vacancy. Because the two sites are different, an apical vacancy and an equatorial vacancy can have different energies, and a vacancy can move by two kinds of nearest-neighbour hop along an octahedron edge: apical ↔ equatorial and equatorial ↔ equatorial (4.4 to 4.6 Å, listed under Results).
+
+### Questions
+
+1. Which site does the vacancy prefer, and by how much?
+2. How high is the energy barrier for each kind of hop? The lowest barriers set how fast iodine moves through the crystal.
+3. Do the answers change close to a surface, layer by layer?
+
+### Steps
+
+| Step | Calculation | Result |
+|---|---|---|
+| 1 | Tight relaxation of the 20-atom cell: forces below 0.010 eV/Å (4×10⁻⁴ Ry/Bohr), pressure below 0.2 kbar | Reference lattice for everything that follows |
+| 2 | Build the 2×2×2 supercell (160 atoms) and relax its atoms at fixed cell | Energy of the perfect crystal |
+| 3 | Remove one apical iodine, or one equatorial iodine, and relax. Charge +1 first, neutral afterwards | Energy difference between the two vacancy sites |
+| 4 | For each distinct hop, relax the start and end structures, then find the path between them with the nudged elastic band (NEB) method | Migration barrier of each hop in the bulk |
+| 5 | Repeat steps 3 and 4 for an extra iodine atom (interstitial) | The same quantities for the second mobile defect |
+| 6 | Build a slab with the CsI-terminated (001) surface and repeat for defects at increasing depth | Site energies and barriers as a function of distance from the surface |
+| 7 | Train a machine-learned interatomic potential on these calculations | Hop rates at finite temperature, larger cells, longer times |
+
+One defect is placed in each supercell. The cell is kept fixed in all defect calculations, so every energy is compared with the same perfect supercell.
+
+### Where this sits in the literature
+
+- Vacancy migration at surfaces has been computed for CsPbBr₃, where the barrier at the surface is about half the bulk value (Biega and Leppert, J. Phys.: Energy 3, 2021).
+- Ion migration in bulk γ-CsPbI₃ has been studied with ab initio and machine-learning methods (Chem. Mater. 37, 4416, 2025).
+- Formation energies of iodine vacancies and interstitials as a function of depth below the (001) surface of orthorhombic CsPbI₃ have been reported, without migration barriers (Ahmad, Limon and Ahmad, Phys. Rev. Materials 8, 125402, 2024).
+
+The aim here is the piece these leave open: migration barriers as a function of depth below the surface in γ-CsPbI₃. Steps 1 to 4 reproduce bulk values and serve as the reference and as a check against published numbers.
 
 ## File structure
 
@@ -33,7 +116,10 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 ├── relax_summary.txt            report of the relaxation
 │
 ├── build_defects.py             builds the supercell, vacancy and hop inputs
-└── defects/                     everything that script wrote
+├── defects/                     everything that script wrote
+│
+├── run_qe.pbs                   job script for the cluster queue
+└── assets/                      figures used in this README
 ```
 
 ### Top-level files
@@ -46,6 +132,7 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 | `relax2stage.sh` | Relaxes the cell and atoms in two stages (coarse mesh, then converged mesh), exports the result to `final/`, and writes `relax_summary.txt`. |
 | `relax_summary.txt` | Energies, pressure, forces and timing for each stage; lattice parameters compared with experiment; Pb–I–Pb angles before and after. |
 | `build_defects.py` | Reads a relaxed unit cell and writes the inputs for the defect calculations. Does no physics calculation itself. |
+| `run_qe.pbs` | PBS job script for the cluster: loads the modules and runs `pw.x` on one 40-core node. Submit it from the folder that holds the input, for example `qsub -N pristine -v INPUT=relax.in,NK=2 run_qe.pbs`. |
 
 ### Folders
 
@@ -56,6 +143,7 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 | `stage2_k443/` | The same for stage 2, which started from the stage 1 result. |
 | `final/` | `gamma_CsPbI3_relaxed_scf.in`: complete input with the relaxed structure. `structure_blocks.txt`: cell and positions only. `gamma_CsPbI3_relaxed.cif`: for viewing. |
 | `defects/` | See below. |
+| `assets/` | `gamma_CsPbI3_lattice_tilted_octahedra.png`: top and side views of the relaxed lattice. `iodine_vacancy_sites_apical_vs_equatorial.png`: sketch of the two vacancy sites. |
 
 ### Inside `defects/`
 
@@ -81,7 +169,7 @@ Apical iodine links two Pb atoms along the long c axis. Equatorial iodine lies i
 
 | Item | Value |
 |---|---|
-| Code | Quantum ESPRESSO 7.6, `pw.x` |
+| Code | Quantum ESPRESSO `pw.x`: version 7.6 on the laptop (convergence test, soft relaxation), version 6.5 on the cluster (tight relaxation and all defect calculations) |
 | Functional | PBEsol |
 | Pseudopotentials | SSSP 1.3.0 PBEsol efficiency |
 | Plane-wave cutoff | 60 Ry (density 480 Ry) |
@@ -164,7 +252,7 @@ Listed in `.gitignore`:
 
 ## Next steps
 
-1. Tight relaxation of the unit cell (`defects/unitcell_tight`), then rebuild `defects/` from its result.
+1. Tight relaxation of the unit cell (`defects/unitcell_tight`) on the cluster, then rebuild `defects/` from its result.
 2. Relax the perfect supercell and the two +1 vacancies.
-3. Relax the end points of one hop and run a trial NEB.
-4. Remaining hops, neutral charge state, then the surface slab.
+3. Get `neb.x` on the cluster, relax the end points of one hop and run a trial NEB.
+4. Remaining hops, neutral charge state, interstitial, then the surface slab.
