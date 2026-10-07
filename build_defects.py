@@ -1,28 +1,25 @@
 #!/usr/bin/env python3
 """
-Build the bulk defect structures for gamma-CsPbI3 from a relaxed unit cell.
+Build the bulk iodine-vacancy structures for gamma-CsPbI3 from a relaxed unit cell.
 
 Reads a Quantum ESPRESSO input holding the relaxed 20-atom cell and writes,
 under an output folder (default: defects/):
 
   unitcell_tight/vcrelax.in       tight variable-cell relaxation of the unit cell
   pristine_222/relax.in           perfect 2x2x2 supercell (160 atoms), energy reference
-  q+1/ and q0/                    the same defect structures in two charge states:
+  q+1/ and q0/                    the same vacancies in two charge states:
                                   +1 (closed shell) and neutral (spin-polarised)
-    vac_I_apical/relax.in         iodine vacancy on an apical site (between Pb-I planes)
-    vac_I_equatorial/relax.in     iodine vacancy on an equatorial site (in a Pb-I plane)
-    hop_<from>_to_<to>_<d>A/      start and end structures of each distinct vacancy hop
-        initial.in, final.in
+    vac_I_apical/relax.in         one apical iodine removed
+    vac_I_equatorial/relax.in     one equatorial iodine removed
   *.cif next to every input       for viewing in VESTA
-  sites_report.txt                which atoms were chosen, and all hop distances
+  sites_report.txt                which atoms were removed
+
+Vacancy hops (the end points for NEB) are not built here. They will be added
+once the set of distinct hops has been settled.
 
 Usage:
-    python3 build_defects.py final/gamma_CsPbI3_relaxed_scf.in
-    python3 build_defects.py final/gamma_CsPbI3_relaxed_scf.in --pseudo-dir /path/on/cluster
-
-Build the supercell from the TIGHT-relaxed unit cell when you have it: run
-unitcell_tight/vcrelax.in on the cluster first, then run this script again on
-its result.
+    python3 build_defects.py unitcell_tight/unit_tight_relaxed.in
+    python3 build_defects.py unitcell_tight/unit_tight_relaxed.in --pseudo-dir /path/on/cluster
 
 Needs: python3 with numpy and ase.
 """
@@ -44,7 +41,6 @@ ETOT_THR = 1.0e-5       # Ry
 CONV_THR = 1.0e-9       # Ry, SCF
 PRESS_THR = 0.2         # kbar, for the unit-cell relaxation
 PB_I_CUTOFF = 3.6       # Angstrom, Pb-I bonds are about 3.2
-HOP_MAX = 5.3           # Angstrom, neighbouring iodine on the same octahedron are about 4.5
 MASSES = {"Cs": 132.905, "Pb": 207.2, "I": 126.904}
 # ------------------------------------------------------------------------------
 
@@ -187,13 +183,10 @@ def main():
     stags = sc.get_tags()
     ssym = np.array(sc.get_chemical_symbols())
     centre = sc.cell.array.sum(axis=0) / 2.0
-    spb = np.where(ssym == "Pb")[0]
     label = {1: "apical", 2: "equatorial"}
-    short = {1: "ap", 2: "eq"}
-    done_hops = set()
 
-    # Each defect structure is written twice: charge +1 (the mobile species in the
-    # real material, closed shell) and neutral (odd electron count, spin-polarised).
+    # Each vacancy is written twice: charge +1 (the mobile species in the real
+    # material, closed shell) and neutral (odd electron count, spin-polarised).
     states = (("q+1", 1, False, "charge +1"), ("q0", 0, True, "neutral"))
 
     for t in (1, 2):
@@ -212,56 +205,9 @@ def main():
 
         report.append("%s vacancy: removed atom %d at (%.3f, %.3f, %.3f) A" % (label[t].capitalize(), a + 1, *pos_a))
 
-        # Iodine atoms sharing a Pb with the vacancy site: the possible hop partners
-        d_pb = sc.get_distances(a, spb, mic=True)
-        my_pb = spb[d_pb < PB_I_CUTOFF]
-        partners = set()
-        for p in my_pb:
-            io = np.where(ssym == "I")[0]
-            d = sc.get_distances(p, io, mic=True)
-            partners.update(io[d < PB_I_CUTOFF].tolist())
-        partners.discard(a)
-        partners = sorted(partners)
-        dist = sc.get_distances(a, partners, mic=True)
-        keep = dist < HOP_MAX          # drop the iodine straight across the Pb atom
-        partners = [b for b, k in zip(partners, keep) if k]
-        dist = dist[keep]
-        report.append("  hop partners (neighbouring iodine on the same octahedra): %d" % len(partners))
-
-        groups = {}
-        for b, d in zip(partners, dist):
-            groups.setdefault((stags[b], round(float(d), 2)), []).append(b)
-        for (tb, d), members in sorted(groups.items()):
-            report.append("    to %-10s  distance %.2f A  x%d" % (label[tb], d, len(members)))
-            key = (tuple(sorted((t, tb))), d)
-            if key in done_hops:
-                continue            # the reverse hop is the same path
-            done_hops.add(key)
-            b = members[0]
-            hopname = "hop_%s_to_%s_%.2fA" % (short[t], short[tb], d)
-            # initial: vacancy at A.  final: atom B has moved into A, vacancy now at B.
-            ini = sc.copy()
-            fin = sc.copy()
-            vec = sc.get_distance(b, a, mic=True, vector=True)
-            fin.positions[b] = sc.positions[b] + vec
-            del ini[a]
-            del fin[a]
-            for folder, q, opn, qtext in states:
-                hop = sub(os.path.join(folder, hopname))
-                hop_note = "Vacancy hop: %s site -> %s site, %.2f A, %s.\n" % (label[t], label[tb], d, qtext)
-                pre = "hop_%s_%s_%s" % (short[t], short[tb], folder.replace("+", "p"))
-                write_qe(os.path.join(hop, "initial.in"), ini, species, "relax", ksc, pseudo_dir, pre + "_ini",
-                         charge=q, open_shell=opn,
-                         note=hop_note + "Start point: vacancy on the %s site." % label[t])
-                write_qe(os.path.join(hop, "final.in"), fin, species, "relax", ksc, pseudo_dir, pre + "_fin",
-                         charge=q, open_shell=opn,
-                         note=hop_note + "End point: the neighbouring iodine has moved into the vacancy.\n"
-                                         "Same atom order as initial.in, as NEB requires.")
         report.append("")
 
-    report.append("q+1/ holds the +1 charged defects, q0/ the neutral ones (spin-polarised).")
-    report.append("Folders with 'hop_' hold the two end points of each distinct hop.")
-    report.append("Relax both end points, then build the NEB between the relaxed structures.")
+    report.append("q+1/ holds the +1 charged vacancies, q0/ the neutral ones (spin-polarised).")
     with open(os.path.join(args.out, "sites_report.txt"), "w") as f:
         f.write("\n".join(report) + "\n")
     print("\n".join(report))

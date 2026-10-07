@@ -10,10 +10,11 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 |---|---|
 | Convergence test (k-points, cutoff) | Done |
 | Soft relaxation of the 20-atom unit cell | Done |
-| Defect supercell, vacancy and hop inputs | Built from the soft-relaxed cell; to be rebuilt after the tight relaxation |
+| Perfect supercell and vacancy inputs | Built from the soft-relaxed cell; to be rebuilt after the tight relaxation |
 | Cluster setup (job script, pseudopotentials, modules) | Done |
-| Tight relaxation of the unit cell | Submitted on the cluster, waiting in the queue |
+| Tight relaxation of the unit cell | Running on the cluster |
 | Perfect supercell and vacancy relaxations | To do |
+| Vacancy hop inputs | To be built once the set of distinct hops is settled |
 | Migration barriers (NEB) | To do; `neb.x` is not yet installed on the cluster |
 | Interstitial, surface slab, machine-learned potential | Later stages |
 
@@ -66,7 +67,7 @@ Each Pb atom sits at the centre of an octahedron of six iodine atoms. In γ-CsPb
 - **Apical** iodine: the two above and below Pb, along the c axis.
 - **Equatorial** iodine: the four around Pb, in the plane perpendicular to c.
 
-Removing one iodine leaves a vacancy. Because the two sites are different, an apical vacancy and an equatorial vacancy can have different energies, and a vacancy can move by two kinds of nearest-neighbour hop along an octahedron edge: apical ↔ equatorial and equatorial ↔ equatorial (4.4 to 4.6 Å, listed under Results).
+Removing one iodine leaves a vacancy. Because the two sites are different, an apical vacancy and an equatorial vacancy can have different energies, and a vacancy can move by two kinds of nearest-neighbour hop along an octahedron edge, each about 4.4 to 4.6 Å long: apical ↔ equatorial and equatorial ↔ equatorial. The tilting splits each kind into several hops of slightly different length; which of these are truly distinct is still to be settled.
 
 ### Questions
 
@@ -115,10 +116,9 @@ The aim here is the piece these leave open: migration barriers as a function of 
 ├── final/                       the relaxed structure, ready to use
 ├── relax_summary.txt            report of the relaxation
 │
-├── build_defects.py             builds the supercell, vacancy and hop inputs
-├── defects/                     everything that script wrote
+├── build_defects.py             builds the supercell and vacancy inputs
+├── defects/                     everything that script wrote, and the cluster job script
 │
-├── run_qe.pbs                   job script for the cluster queue
 └── assets/                      figures used in this README
 ```
 
@@ -132,7 +132,6 @@ The aim here is the piece these leave open: migration barriers as a function of 
 | `relax2stage.sh` | Relaxes the cell and atoms in two stages (coarse mesh, then converged mesh), exports the result to `final/`, and writes `relax_summary.txt`. |
 | `relax_summary.txt` | Energies, pressure, forces and timing for each stage; lattice parameters compared with experiment; Pb–I–Pb angles before and after. |
 | `build_defects.py` | Reads a relaxed unit cell and writes the inputs for the defect calculations. Does no physics calculation itself. |
-| `run_qe.pbs` | PBS job script for the cluster: loads the modules and runs `pw.x` on one 40-core node. Submit it from the folder that holds the input, for example `qsub -N pristine -v INPUT=relax.in,NK=2 run_qe.pbs`. |
 
 ### Folders
 
@@ -149,19 +148,22 @@ The aim here is the piece these leave open: migration barriers as a function of 
 
 ```
 defects/
-├── sites_report.txt             which atoms were removed, and every hop distance
-├── unitcell_tight/vcrelax.in    tight relaxation of the 20-atom cell
+├── sites_report.txt             which atoms were removed
+├── unitcell_tight/
+│   ├── vcrelax.in               tight relaxation of the 20-atom cell
+│   └── run_qe.pbs               PBS job script for the cluster queue
 ├── pristine_222/relax.in        perfect 2×2×2 supercell (160 atoms), the energy reference
 ├── q+1/                         defects with charge +1
 │   ├── vac_I_apical/relax.in        vacancy on an apical iodine site
-│   ├── vac_I_equatorial/relax.in    vacancy on an equatorial iodine site
-│   └── hop_<from>_to_<to>_<d>A/     one folder per distinct vacancy hop
-│       ├── initial.in               vacancy at the first site
-│       └── final.in                 neighbouring iodine moved in; vacancy at the second site
-└── q0/                          the same structures, neutral and spin-polarised
+│   └── vac_I_equatorial/relax.in    vacancy on an equatorial iodine site
+└── q0/                          the same two vacancies, neutral and spin-polarised
+    ├── vac_I_apical/relax.in
+    └── vac_I_equatorial/relax.in
 ```
 
-Every input has a `.cif` beside it for viewing.
+Every input has a `.cif` beside it for viewing. Inputs for the vacancy hops are not built yet.
+
+`run_qe.pbs` loads the modules and runs `pw.x` on one 40-core node. It runs in the folder it is submitted from. Its defaults suit the unit cell; for a supercell, give the input name and two k-point pools: `qsub -N pristine -v INPUT=relax.in,NK=2 <path>/run_qe.pbs`.
 
 Apical iodine links two Pb atoms along the long c axis. Equatorial iodine lies in the Pb–I plane. The two are different sites in the γ phase because of the octahedral tilting.
 
@@ -218,15 +220,6 @@ Pseudopotential files:
 
 This is a soft relaxation: forces to 10⁻³ Ry/Bohr (0.026 eV/Å), pressure to 0.5 kbar. Stage 1 took 37 energy evaluations and 13 h 54 min; stage 2 took 3 evaluations and 2 h 30 min, on a 6-core laptop.
 
-### Vacancy hops identified
-
-| Hop | Distance (Å) |
-|---|---|
-| Apical ↔ equatorial | 4.44, 4.45, 4.55 |
-| Equatorial ↔ equatorial | 4.42, 4.59 |
-
-Hops are grouped by type and by distance rounded to 0.01 Å, so two different hops of nearly equal length may be merged. This needs checking before the full set of barriers is computed.
-
 ## How to reproduce
 
 ```bash
@@ -254,5 +247,6 @@ Listed in `.gitignore`:
 
 1. Tight relaxation of the unit cell (`defects/unitcell_tight`) on the cluster, then rebuild `defects/` from its result.
 2. Relax the perfect supercell and the two +1 vacancies.
-3. Get `neb.x` on the cluster, relax the end points of one hop and run a trial NEB.
-4. Remaining hops, neutral charge state, interstitial, then the surface slab.
+3. Settle the set of distinct vacancy hops (from symmetry and the literature) and add them to `build_defects.py`.
+4. Get `neb.x` on the cluster, relax the end points of one hop and run a trial NEB.
+5. Remaining hops, neutral charge state, interstitial, then the surface slab.
