@@ -60,7 +60,7 @@ To settle it: compare our +1 and neutral results with their numbers, or ask the 
 | Pb vacancy | | about 1.6 eV |
 | From the MACE MD (Arrhenius) | | 0.42 eV pristine, 0.43 eV with 3% Sn |
 
-- One barrier per type of path. They do not separate the several 8d-to-4c hops of slightly different length that exist in the γ structure (our neighbour list: 4.44, 4.45 and 4.55 Å).
+- One barrier per type of path. They do not separate the symmetry-distinct variants within each type (our set: 6 short and 4 long hops, see the README).
 - The paths are slightly curved, bowing away from the Pb atom.
 - Dopants change the 8d-to-8d barrier only between 0.24 eV (Zn) and 0.44 eV (Cd).
 - Schottky defect 0.18 eV per defect, iodine Frenkel 0.58 eV per defect.
@@ -77,7 +77,7 @@ From Fig. S1: the end of the 8d-to-4c path lies about 0.03 eV above its start. S
 | Same as our bulk stage? | Largely yes: same material, functional, supercell and defect |
 | Open questions in their conclusions | Doping strategies; nothing on surfaces |
 
-**Summary:** the bulk iodine-vacancy barriers in γ-CsPbI₃ are published (0.34 to 0.35 eV for the edge hops). Our bulk stage becomes a validation, plus the separate 8d-to-4c variants.
+**Summary:** the bulk iodine-vacancy barriers in γ-CsPbI₃ are published (0.34 to 0.35 eV for the edge hops). Our bulk stage becomes a validation, plus the symmetry-distinct variants of every hop type.
 
 **Discrepancy to keep in mind:** their cell is less distorted in plane than experiment (8.68 against 8.71 Å); ours is more distorted (8.36 against 8.96 Å). The a/b distortion is very soft in our calculation (1.9 meV per cell over the whole tight relaxation), so different codes and settings can land at different points. This may affect the equatorial hops and needs discussing in a paper.
 
@@ -244,7 +244,7 @@ Earlier we quoted 0.07 to 0.27 eV as the surface preference and up to 30,000-fol
 | Charge correction | C: Freysoldt 3D and 2D | Needed for step 8 only |
 | Interstitial | C: several configurations | Later stage |
 
-**Is our bulk stage already published in paper A?** Largely yes. What is left: the separate 8d-to-4c variants, both charge states with an explicit statement, and serving as the consistent bulk reference for our own slab.
+**Is our bulk stage already published in paper A?** Largely yes. What is left: the symmetry-distinct variants of every hop type, both charge states with an explicit statement, and serving as the consistent bulk reference for our own slab.
 
 **What is still open after these three papers:** depth-resolved migration barriers in γ-CsPbI₃ for all paths, apical and equatorial, in a slab shown to converge to the bulk.
 

@@ -14,8 +14,8 @@ under an output folder (default: defects/):
   *.cif next to every input       for viewing in VESTA
   sites_report.txt                which atoms were removed
 
-Vacancy hops (the end points for NEB) are not built here. They will be added
-once the set of distinct hops has been settled.
+This script builds vacancies only. The end points and NEB inputs for the
+10 distinct hops (S1-S6, L1-L4) will come from a separate script, build_neb.py.
 
 Usage:
     python3 build_defects.py unitcell_tight/unit_tight_relaxed.in
