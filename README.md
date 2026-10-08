@@ -15,7 +15,8 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 | Perfect supercell and vacancy inputs | Built from the tight-relaxed cell |
 | Perfect supercell and vacancy relaxations (5 jobs) | On the cluster |
 | Vacancy hop inputs | To be built once the set of distinct hops is settled |
-| Migration barriers (NEB) | To do; `neb.x` is not yet installed on the cluster |
+| `neb.x` and `pp.x` on the cluster | Done: Quantum ESPRESSO 6.5 compiled in the home folder with the Intel 2020 compilers |
+| Migration barriers (NEB) | To do |
 | Interstitial, surface slab, machine-learned potential | Later stages |
 | Equilibrium vacancy profile against depth (analysis) | Planned, after the slab stage |
 
@@ -81,16 +82,92 @@ Removing one iodine leaves a vacancy. Because the two sites are different, an ap
 
 | Step | Calculation | Result |
 |---|---|---|
-| 1 | Tight relaxation of the 20-atom cell: forces below 0.010 eV/Å (4×10⁻⁴ Ry/Bohr), pressure below 0.2 kbar | Reference lattice for everything that follows |
-| 2 | Build the 2×2×2 supercell (160 atoms) and relax its atoms at fixed cell | Energy of the perfect crystal |
-| 3 | Remove one apical iodine, or one equatorial iodine, and relax. Charge +1 first, neutral afterwards | Energy difference between the two vacancy sites |
-| 4 | For each distinct hop, relax the start and end structures, then find the path between them with the nudged elastic band (NEB) method | Migration barrier of each hop in the bulk |
-| 5 | Repeat steps 3 and 4 for an extra iodine atom (interstitial) | The same quantities for the second mobile defect |
-| 6 | Build a slab with the CsI-terminated (001) surface and repeat for defects at increasing depth | Site energies and barriers as a function of distance from the surface |
-| 7 | Train a machine-learned interatomic potential on these calculations | Hop rates at finite temperature, larger cells, longer times |
-| 8 | Analysis only, no new slab runs: turn the layer-resolved formation energies of step 6 into an equilibrium concentration profile (see below) | Vacancy concentration against depth, for any iodine chemical potential and Fermi level |
+| 1 | Tight relaxation of the 20-atom cell | Reference lattice. **Done** |
+| 2 | Perfect 2×2×2 supercell (160 atoms), atoms relaxed at fixed cell | Energy reference; check of the k-mesh choice |
+| 3 | One 4c (apical) or one 8d (equatorial) vacancy, charge +1 and neutral | Site energy difference; charge-state comparison with paper A |
+| 4 | End points and NEB for every distinct bulk hop | Bulk barriers: validation against paper A, plus the 8d-4c variants |
+| 5 | Iodine interstitial | Later stage |
+| 6 | CsI-terminated (001) slab: vacancies and hops at increasing depth | Site energies and barriers against depth, converging to the bulk values of steps 3 and 4 |
+| 7 | Machine-learned interatomic potential trained on steps 2 to 6 | Hop rates at finite temperature, larger cells, longer times |
+| 8 | Analysis only: equilibrium vacancy profile (see below) | Concentration against depth, μ_I and E_F |
 
 One defect is placed in each supercell. The cell is kept fixed in all defect calculations, so every energy is compared with the same perfect supercell.
+
+### Design of the bulk stage (steps 2 to 4)
+
+**Validation targets from paper A** (same material, functional and supercell):
+
+| Quantity | Paper A | Our check |
+|---|---|---|
+| Vacancy site energy, 4c minus 8d | about +0.03 eV | Step 3, both charge states |
+| Barrier 8d to 8d | 0.34 eV | Step 4 |
+| Barrier 8d to 4c (average of both directions) | 0.35 eV | Step 4 |
+| Barrier 4c to 4c (long jump) | about 0.77 eV | Step 4 |
+
+Paper A does not state its charge state. Whichever of our two charge states reproduces these numbers indicates which one they used.
+
+**Hop set.** Every iodine shares an octahedron edge with 8 neighbours about 4.4 to 4.6 Å away. From a 4c site all 8 are 8d sites; from an 8d site, 4 are 4c and 4 are 8d. Hops are grouped by symmetry, not by length alone: the 4c site lies on a mirror plane, so its 8 neighbours form at most 4 distinct 8d-4c hops, two of which have nearly equal length (4.55 Å). Expected set:
+
+| Type | Distinct hops | Lengths (soft-relaxed cell) |
+|---|---|---|
+| 8d to 8d | 2 | 4.42, 4.59 Å |
+| 8d to 4c | 3 or 4 | 4.44, 4.45, 4.55 Å |
+| 4c to 4c (long jump, not along an edge) | 1 | about 6 Å |
+
+End points that relax to the same energy within a few meV are treated as one hop.
+
+**NEB settings**
+
+| Setting | Choice | Reason |
+|---|---|---|
+| Images | 7 for the first trial, more if the profile is not smooth | Paper A used about 9 to 11; paper B only 3 |
+| Climbing image | On, after the path has roughly converged | Locates the saddle point exactly |
+| Path force limit | 0.05 eV/Å | Barriers converge long before the path does |
+| Reported value | Forward and backward barriers, and their average | Paper A reports the average |
+| Parallelisation | One image per node (`-ni`) | Images are independent within each step |
+
+**Checks**
+
+- Neutral vacancy: total magnetisation about 1 μB per cell, otherwise the result is invalid.
+- Each hop's final state must match the energy of the corresponding vacancy within a few meV.
+- Optional: one +1 structure with spin polarisation (expect zero magnetisation, unchanged energy); one spin-orbit single point on the two +1 vacancies.
+
+### Design of the slab stage (step 6)
+
+The two earlier surface studies did not show their slab interior returning to bulk values (see the literature section). The slab here is built so that it can.
+
+**Geometry**
+
+| Item | Choice | Reason |
+|---|---|---|
+| Surface | (001), the plane perpendicular to c | Layers alternate CsI (containing 4c iodine) and PbI₂ (containing 8d iodine), 3.09 Å apart |
+| Termination | CsI on both faces first; PbI₂ later | Symmetric slab; both terminations were found to differ in paper B |
+| In-plane cell | 2 × 2 of the tight-relaxed cell (16.72 × 17.92 Å), lattice held at the bulk values | Same defect-to-image distance in plane as the bulk supercell; paper B showed a 2 × 1 cell distorts the surface |
+| Thickness | Start with 5 PbI₂ and 6 CsI layers (11 layers, about 31 Å, 216 atoms); test 7 PbI₂ layers (15 layers, about 43 Å, 296 atoms) | The middle layers must reproduce the bulk |
+| Fixed layers | None: symmetric slab, all atoms free | Paper B's frozen bottom layers are a suspected cause of its non-converging barriers |
+| Vacuum | 15 to 20 Å, tested | Charged slabs are sensitive to vacuum size |
+| k-mesh | 2 × 2 × 1 | Same in-plane sampling as the bulk supercell |
+| Defects | In the top half only; the middle layer serves as the bulk-like reference inside the slab | Uses the slab symmetry |
+
+**What is computed at each depth**
+
+| Depth | Site energies | Hops |
+|---|---|---|
+| CsI layer 0 (surface), 1, 2 | 4c vacancy | 4c-4c within the layer |
+| PbI₂ layer 1, 2, 3 | 8d vacancy | 8d-8d within the layer |
+| Between neighbouring layers | | 8d-4c, both towards and away from the surface |
+
+Near a surface the two directions of an 8d-4c hop are no longer equivalent. The difference between them is a direct measure of the drift of vacancies towards or away from the surface.
+
+**Convergence tests** (each reported as a figure or table)
+
+1. Clean slab: surface energy against thickness.
+2. Vacancy site energy and one barrier in the middle layer, against the bulk values of steps 3 and 4.
+3. The same in the thicker slab.
+4. For the charged vacancy: one barrier at two vacuum sizes.
+5. Neutral and +1 vacancy in the middle layer side by side. If the neutral one matches the bulk and the +1 does not, the mismatch is in how the charge is referenced, not in the atoms.
+
+**Cost.** A 216-atom slab is about 1.4 times the supercell; a 296-atom slab nearly twice. NEB at these sizes will need several nodes per job, and is where the machine-learned potential of step 7 starts to pay off. The node request will be planned once the time per step of the supercell jobs is known.
 
 ### Planned analysis: equilibrium vacancy profile near the surface (step 8)
 
@@ -138,14 +215,17 @@ Combined with the depth-resolved barriers of step 6, this gives both how many va
 
 ### Where this sits in the literature
 
-- Vacancy migration at surfaces has been computed for CsPbBr₃, where the barrier at the surface is about half the bulk value (Biega and Leppert, J. Phys.: Energy 3, 2021).
-- Ion migration in bulk γ-CsPbI₃ has been studied with ab initio and machine-learning methods (Chem. Mater. 37, 4416, 2025).
-- Formation energies of iodine vacancies and interstitials as a function of depth below the (001) surface of orthorhombic CsPbI₃ have been reported, without migration barriers (Ahmad, Limon and Ahmad, Phys. Rev. Materials 8, 125402, 2024).
+Details and numbers are in `Literature Reviews.md`.
 
-- Surface phase diagrams of CsPbI₃ from ab initio thermodynamics exist (Seidu et al., J. Chem. Phys. 154, 074712, 2021); what they cover needs checking before step 8.
-- The general framework of defect phase diagrams is reviewed in Korte-Kerzel et al., Int. Mater. Rev. 67, 89 (2022).
+| Paper | What it did | What it leaves open |
+|---|---|---|
+| A. Arber et al., Chem. Mater. 37, 4416 (2025) | Bulk γ-CsPbI₃: iodine vacancy barriers 0.34 eV (8d-8d), 0.35 eV (8d-4c), about 0.77 eV (4c-4c), PBEsol, 2×2×2 supercell; MACE potential and 80 ns MD | No surfaces; one barrier per path type; charge state not stated |
+| B. Biega and Leppert, J. Phys.: Energy 3, 034017 (2021) | Cubic CsPbBr₃ slabs: the long axial-to-axial barrier is about half the bulk value at the surface | Edge hops not computed; 6-layer slab with frozen bottom; barriers never return to the bulk value |
+| C. Ahmad et al., Phys. Rev. Materials 8, 125402 (2024) | Orthorhombic CsPbI₃ 17-layer slabs: vacancy and interstitial formation energies against depth; +1 vacancy only 0.07 eV more stable at the surface | No barriers; equatorial sites only; slab interior differs from its bulk reference by 0.05 to 0.66 eV |
 
-The aim here is the piece these leave open: migration barriers as a function of depth below the surface in γ-CsPbI₃. Steps 1 to 4 reproduce bulk values and serve as the reference and as a check against published numbers.
+Also relevant: surface phase diagrams of CsPbI₃ (Seidu et al., J. Chem. Phys. 154, 074712, 2021), and the general framework of defect phase diagrams (Korte-Kerzel et al., Int. Mater. Rev. 67, 89, 2022).
+
+**The aim here:** depth-resolved migration barriers in γ-CsPbI₃, for the edge hops and the long jump, for both 4c and 8d vacancies, in a slab and bulk reference built consistently so that the slab interior reproduces the bulk. The bulk stage reproduces paper A as validation.
 
 ## File structure
 
@@ -225,6 +305,8 @@ Apical iodine links two Pb atoms along the long c axis. Equatorial iodine lies i
 |---|---|
 | Code | Quantum ESPRESSO `pw.x`: version 7.6 on the laptop (convergence test, soft relaxation), version 6.5 on the cluster (tight relaxation and all defect calculations) |
 | Functional | PBEsol |
+| Spin-orbit coupling | Not included (scalar-relativistic pseudopotentials) |
+| Dispersion correction | None |
 | Pseudopotentials | SSSP 1.3.0 PBEsol efficiency |
 | Plane-wave cutoff | 60 Ry (density 480 Ry) |
 | k-mesh, 20-atom cell | 4×4×3 |
@@ -311,8 +393,8 @@ Listed in `.gitignore`:
 
 ## Next steps
 
-1. Relax the perfect supercell and the four vacancies (two sites, charge +1 and neutral) on the cluster.
-2. From the first step of the perfect supercell, check that the 4×4×3 unit-cell mesh and the 2×2×2 supercell mesh agree (small forces and pressure).
-3. Settle the set of distinct vacancy hops (from symmetry and the literature) and add them to `build_defects.py`.
-4. Get `neb.x` on the cluster, relax the end points of one hop and run a trial NEB.
-5. Remaining hops, neutral charge state, interstitial, then the surface slab.
+1. Five supercell relaxations on the cluster (perfect, two vacancy sites × two charge states). Check the k-mesh on the first step of the perfect supercell.
+2. Compare the 4c and 8d vacancy energies with paper A (about +0.03 eV), for both charge states; check the neutral magnetisation.
+3. Rewrite the hop part of `build_defects.py` to group hops by symmetry; relax the end points.
+4. Trial NEB for one 8d-8d hop with `neb.x`; compare with 0.34 eV. Then the remaining bulk hops.
+5. Build the CsI-terminated slab and run the convergence tests before any defect in it.
