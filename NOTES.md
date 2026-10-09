@@ -13,7 +13,7 @@ Last updated: 2026-10-08
 | GitHub | `daoduywork-maker/gamma-CsPbI3-defects` (public) | Backup and sharing |
 | Cluster work folder | `/public/home/daomduy/cspbi3` | Calculations |
 | Cluster pseudopotentials | `/public/home/daomduy/cspbi3/pseudo_pbesol` | The three SSSP PBEsol files |
-| Cluster job script | `/public/home/daomduy/cspbi3/run_qe.pbs` | Same file as `defects/unitcell_tight/run_qe.pbs` here |
+| Cluster job script | `/public/home/daomduy/cspbi3/run_qe.pbs` | Same file as `run_qe.pbs` in the repository root |
 | Own Quantum ESPRESSO build | `/public/home/daomduy/apps/q-e-qe-6.5/bin/` | `pw.x`, `neb.x`, `pp.x`, version 6.5 |
 
 Change flow: edit in the Desktop copy, review with `git diff`, commit there, then in WSL `cd ~/Project-1 && git pull desktop main && git push origin main`. To refresh the Desktop copy after work in WSL: `git pull` inside it.
@@ -45,7 +45,18 @@ make -j 4 pw neb pp
 | Job | What | Outcome |
 |---|---|---|
 | 217362 `unit_tight` | Tight vc-relax of the 20-atom cell, 1 node, 4 pools | Done 7 Oct, node32, 14 steps, 1 h 32 min, about 5 min per step |
-| five supercell jobs | `pristine`, `qp1_apical`, `qp1_equatorial`, `q0_apical`, `q0_equatorial` | Prepared and uploaded 7 Oct. Submission was not confirmed in the notes: check with `qstat -u daomduy` |
+| 217376–217380, five supercell jobs | `pristine`, `qp1_apical`, `qp1_equatorial`, `q0_apical`, `q0_equatorial`, 1 node each | **Failed 9 Oct: out of memory** (see below). About two days of queue time lost |
+| 217406–217410, the same five | 2 nodes each for `pristine` and +1, 3 nodes each for the neutral jobs | Submitted 9 Oct, queued |
+
+**Incident, 9 Oct: jobs submitted without a memory check.** A std40 node has 92 GB. QE's estimate (printed in the first minute, `Estimated total dynamical RAM`) was 137 GB for the pristine and +1 supercells and 193 GB for the spin-polarised neutral ones. On one node the jobs ran out of memory: node32 showed 92 GB used plus 45 GB of swap, 92% of CPU time waiting on the disk, pw.x in state `D`. The +1 jobs were killed, the pristine one never finished its first SCF iteration. Fix: resubmit on 2 or 3 nodes; the job script takes the process count from the node list, so only `-l nodes=N:ppn=40` changes.
+
+**Before every submission (memory checklist)**
+
+1. Node limit: 92 GB per std40 node; plan for at most about 75 GB per node.
+2. Job memory: from an earlier run of the same size, or start the job, read `grep "Estimated total dynamical RAM" *.out` within a minute or two, and stop it if total ÷ nodes is over about 75 GB.
+3. Nodes = total ÷ 75 GB, rounded up. Spin-polarised (neutral) runs need about 1.4× the closed-shell ones.
+4. After the start: `ssh <node> free -g`; swap use must stay near 0.
+5. NEB: memory per image × images run at once (`-ni`). With about 136 GB per +1 image, running 7 images at once would need about 14 nodes; run fewer at a time, use fewer images, or test a lighter k-mesh first.
 
 Submit command for the five (run from `~/cspbi3`, which holds `pristine_222`, `q+1`, `q0`):
 
@@ -53,7 +64,7 @@ Submit command for the five (run from `~/cspbi3`, which holds `pristine_222`, `q
 PBS=~/cspbi3/run_qe.pbs
 for d in pristine_222 q+1/vac_I_apical q+1/vac_I_equatorial q0/vac_I_apical q0/vac_I_equatorial; do
   name=$(echo "$d" | sed 's|/vac_I_|_|; s|pristine_222|pristine|; s|+|p|')
-  (cd "$d" && qsub -N "$name" -l walltime=360:00:00 -v INPUT=relax.in,NK=2 "$PBS")
+  (cd "$d" && qsub -N "$name" -l nodes=2:ppn=40 -l walltime=360:00:00 -v INPUT=relax.in,NK=2 "$PBS")   # use nodes=3 for the q0 jobs
 done
 ```
 
@@ -126,10 +137,10 @@ awk '/Begin final coordinates/{f=1;next} /End final coordinates/{f=0} f && !/vol
 printf "\nK_POINTS automatic\n4 4 3  0 0 0\n" >> relaxed.in
 ```
 
-Rebuild the defect inputs (needs Python with NumPy and ASE; run in WSL):
+Rebuild the supercell and vacancy inputs (needs Python with NumPy and ASE; run in WSL):
 
 ```bash
-python3 build_defects.py defects/unitcell_tight/unit_tight_relaxed.in --pseudo-dir /public/home/daomduy/cspbi3/pseudo_pbesol
+python3 03_vacancies/build_defects.py 01_unitcell/tight/unit_tight_relaxed.in --pseudo-dir /public/home/daomduy/cspbi3/pseudo_pbesol   # from the repository root
 ```
 
 NEB launch line, for later (images in parallel with `-ni`):

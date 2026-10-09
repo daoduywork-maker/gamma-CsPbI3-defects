@@ -16,9 +16,9 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 | Bulk barriers (NEB) | To do |
 | CsI-terminated slab: vacancies and barriers against depth | To do |
 
-## The material: γ-CsPbI₃
+## Introduction
 
-### What it is
+### γ-CsPbI₃
 
 CsPbI₃ is a halide perovskite with the formula ABX₃. Each Pb atom sits at the centre of an octahedron of six iodine atoms. The octahedra share corners and form a three-dimensional network, and the Cs atoms fill the cavities between them.
 
@@ -33,15 +33,11 @@ The compound exists in several phases:
 
 The γ phase is the one used in solar cells and light emitters, with a band gap of about 1.7 eV.
 
-### Why γ and not the cubic α phase
-
 At zero temperature the cubic structure is not a minimum of the energy: the octahedra lower their energy by tilting. A relaxation without thermal motion, such as the calculations here, therefore belongs to the γ structure. It is also the perovskite phase present in devices at room temperature.
-
-### The structure
 
 ![Top and side views of the relaxed γ-CsPbI₃ lattice](assets/gamma_CsPbI3_lattice_tilted_octahedra.png)
 
-The figure is drawn from the soft-relaxed structure in `final/`; the tight relaxation changes it by less than 0.03 Å, which is not visible at this scale. The top view shows one layer of octahedra (Pb with its four in-plane iodine atoms) and the Cs atoms above it; the octahedra are rotated about c, in opposite senses for neighbours. The side view shows one sheet of octahedra seen along the in-plane diagonal; the Pb–I–Pb links along c are bent instead of straight.
+The figure is drawn from the soft-relaxed structure in `01_unitcell/final/`; the tight relaxation changes it by less than 0.03 Å, which is not visible at this scale. The top view shows one layer of octahedra (Pb with its four in-plane iodine atoms) and the Cs atoms above it; the octahedra are rotated about c, in opposite senses for neighbours. The side view shows one sheet of octahedra seen along the in-plane diagonal; the Pb–I–Pb links along c are bent instead of straight.
 
 | Property | Value (this work, PBEsol) |
 |---|---|
@@ -54,11 +50,7 @@ The figure is drawn from the soft-relaxed structure in `final/`; the tight relax
 
 The tilting is what makes the two iodine sites different, and it is the reason the defect study below treats apical and equatorial positions separately.
 
-## Defect study: what we are going to do
-
-**Scope:** iodine vacancies only, in the bulk and at the CsI-terminated (001) surface.
-
-### The two iodine sites
+### Defect - The two iodine sites
 
 ![Apical and equatorial iodine vacancies around one Pb atom](assets/iodine_vacancy_sites_apical_vs_equatorial.png)
 
@@ -67,13 +59,60 @@ Each Pb sits at the centre of an octahedron of six iodines. Because the octahedr
 - **Apical (4c)**: the two above and below Pb, along c, in the CsI layers.
 - **Equatorial (8d)**: the four around Pb, in the PbI₂ layers.
 
-### Questions
+## Literature review
+
+Details and numbers are in `Literatures/literature_review.md`.
+
+| Paper | What it did | What it leaves open |
+|---|---|---|
+| A. Arber et al., Chem. Mater. 37, 4416 (2025) | Bulk γ-CsPbI₃: iodine vacancy barriers 0.34 eV (8d-8d), 0.35 eV (8d-4c), about 0.77 eV (4c-4c), PBEsol, 2×2×2 supercell | No surfaces; one barrier per path type; charge state not stated |
+| B. Biega and Leppert, J. Phys.: Energy 3, 034017 (2021) | Cubic CsPbBr₃ slabs: the long axial-to-axial barrier is about half the bulk value at the surface | Edge hops not computed; frozen bottom layers; barriers never return to the bulk value |
+| C. Ahmad et al., Phys. Rev. Materials 8, 125402 (2024) | Orthorhombic CsPbI₃ 17-layer slabs: vacancy formation energies against depth | No barriers; slab interior differs from its bulk reference by 0.05 to 0.66 eV |
+
+### The gap
+
+- **Paper A** gives the bulk barriers of γ-CsPbI₃, but one per type of path. The tilted structure has several symmetry-distinct variants of each type, and they are not separated. The charge state is not stated.
+- **Paper B** shows that a surface can halve a vacancy barrier, but for cubic CsPbBr₃, for the long jump only, and in a thin, partly frozen slab whose barriers never return to the bulk value. How deep the surface effect reaches is therefore not known.
+- **Paper C** studies the same material and surface type, but only formation energies, not barriers. Its slab interior does not reproduce its own bulk reference.
+
+No study gives vacancy migration barriers in γ-CsPbI₃ as a function of depth below the surface, in a slab whose interior converges to its own bulk.
+
+### Research questions
 
 1. Which site does the vacancy prefer, and by how much?
-2. What are the barriers of the distinct hops in the bulk?
-3. How do site energies and barriers change layer by layer below the CsI-terminated surface?
+2. What are the barriers of the symmetry-distinct hops in the bulk?
+3. How do site energies and barriers change layer by layer below the CsI-terminated surface, and at what depth do they return to the bulk values?
 
-### Steps
+### Scope
+
+- Iodine vacancies, charge +1 and neutral.
+- Bulk γ-CsPbI₃, and the CsI-terminated (001) surface.
+- PBEsol, no spin-orbit coupling, no dispersion correction.
+- **Not in the current scope:** interstitials, PbI₂ termination and other facets, a machine-learned potential, absolute formation energies against μ_I and E_F, spin-orbit coupling.
+
+## Methods
+
+### Settings
+
+| Item | Value |
+|---|---|
+| Code | Quantum ESPRESSO `pw.x`: version 7.6 on the laptop (convergence test, soft relaxation), version 6.5 on the cluster (tight relaxation and all defect calculations) |
+| Functional | PBEsol |
+| Spin-orbit coupling | Not included (scalar-relativistic pseudopotentials) |
+| Dispersion correction | None |
+| Pseudopotentials | SSSP 1.3.0 PBEsol efficiency |
+| Plane-wave cutoff | 60 Ry (density 480 Ry) |
+| k-mesh, 20-atom cell | 4×4×3 |
+| k-mesh, 160-atom supercell | 2×2×2 |
+
+Pseudopotential files:
+
+| Element | File |
+|---|---|
+| Cs | `cs_pbesol_v1.uspp.F.UPF` |
+| Pb | `Pb.pbesol-dn-kjpaw_psl.0.2.2.UPF` |
+| I | `I.pbesol-n-kjpaw_psl.0.2.UPF` |
+
 
 | Step | Calculation | Result |
 |---|---|---|
@@ -115,152 +154,9 @@ Paper A does not state its charge state; whichever of ours reproduces these numb
 
 Lengths from the tight-relaxed cell. One vacancy per site type is enough in the bulk. Each 4c–8d NEB gives both directions.
 
-**NEB settings**
-
-| Setting | Choice |
-|---|---|
-| Images | 7 for the first trial, more if the profile is not smooth |
-| Climbing image | On, after the path has roughly converged |
-| Path force limit | 0.05 eV/Å |
-| Reported value | Forward and backward barriers, and their average |
-| Parallelisation | One image per node (`-ni`) |
-
 **Checks**
 
 - Neutral vacancy: total magnetisation about 1 μB per cell.
-- Each NEB end point matches the energy of the corresponding relaxed vacancy within a few meV.
-
-### Slab (steps 5 to 7)
-
-**Geometry**
-
-| Item | Choice | Reason |
-|---|---|---|
-| Surface | (001), perpendicular to c, CsI-terminated on both faces | Symmetric slab; CsI and PbI₂ layers alternate, 3.09 Å apart |
-| In-plane cell | 2 × 2 of the tight-relaxed cell, lattice at bulk values | Same in-plane defect spacing as the bulk supercell |
-| Thickness | 11 layers (216 atoms); test 15 layers (296 atoms) | The middle layers must reproduce the bulk |
-| Fixed layers | None | Frozen layers are a suspected cause of paper B's non-converging barriers |
-| Vacuum | 15 to 20 Å, tested | |
-| k-mesh | 2 × 2 × 1 | Same in-plane sampling as the bulk supercell |
-
-**Symmetry at the surface.** The slab keeps only the identity and the b-glide. The inversion is lost, so the parallel-edge pairs split: each PbI₂ layer has **12 distinct short hops** (one octahedron per layer is enough, the b-glide maps it onto the other), and the long hops roughly double. In each PbI₂ layer the 8d sites above and below the Pb plane also become distinct. Distinct sites and hops are confirmed with spglib on the relaxed slab.
-
-**What is computed**
-
-- Vacancy site energy in every layer of the top half, relative to the middle layer. μ_I, band edges and charge corrections cancel.
-- All hops in the top one or two layers. Deeper, a few former twin pairs (for example the two S1 edges), until they merge back to the bulk value within about 0.02 eV.
-- Neutral vacancy first. Consistency test: its formation energy in the middle layer, relative to the perfect slab, matches the bulk value of step 3.
-
-**Convergence tests:** clean-slab surface energy against thickness; vacancy site energy and one barrier in the middle layer against the bulk; the same in the 15-layer slab.
-
-**Cost.** A 216-atom slab is about 1.4 times the supercell. Node requests will be planned from the timing of the supercell jobs.
-
-### Where this sits in the literature
-
-Details and numbers are in `Literature Reviews.md`.
-
-| Paper | What it did | What it leaves open |
-|---|---|---|
-| A. Arber et al., Chem. Mater. 37, 4416 (2025) | Bulk γ-CsPbI₃: iodine vacancy barriers 0.34 eV (8d-8d), 0.35 eV (8d-4c), about 0.77 eV (4c-4c), PBEsol, 2×2×2 supercell | No surfaces; one barrier per path type; charge state not stated |
-| B. Biega and Leppert, J. Phys.: Energy 3, 034017 (2021) | Cubic CsPbBr₃ slabs: the long axial-to-axial barrier is about half the bulk value at the surface | Edge hops not computed; frozen bottom layers; barriers never return to the bulk value |
-| C. Ahmad et al., Phys. Rev. Materials 8, 125402 (2024) | Orthorhombic CsPbI₃ 17-layer slabs: vacancy formation energies against depth | No barriers; slab interior differs from its bulk reference by 0.05 to 0.66 eV |
-
-**The aim:** symmetry-resolved vacancy barriers in γ-CsPbI₃, in the bulk and layer by layer below the CsI-terminated surface, in a slab whose interior reproduces the bulk.
-
-**Not in the current scope:** interstitials, PbI₂ termination and other facets, a machine-learned potential, absolute formation energies against μ_I and E_F, spin-orbit coupling.
-
-## File structure
-
-```
-.
-├── README.md                    this file
-├── LICENSE                      licence for the repository
-│
-├── gamma_CsPbI3_vcrelax.in      base input: experimental γ-CsPbI₃ cell (20 atoms) and settings
-│
-├── kconv.sh                     runs the convergence test
-├── conv/                        its inputs and outputs, one pair per setting
-├── conv_summary.txt             energies from the convergence test
-│
-├── relax2stage.sh               runs the two-stage variable-cell relaxation
-├── stage1_k332/                 stage 1: relaxation at the coarse 3×3×2 k-mesh
-├── stage2_k443/                 stage 2: relaxation at the converged 4×4×3 k-mesh
-├── final/                       the relaxed structure, ready to use
-├── relax_summary.txt            report of the relaxation
-│
-├── build_defects.py             builds the supercell and vacancy inputs (vacancies only)
-├── defects/                     everything that script wrote, and the cluster job script
-│
-└── assets/                      figures used in this README
-```
-
-### Top-level files
-
-| File | Purpose |
-|---|---|
-| `gamma_CsPbI3_vcrelax.in` | Starting point for everything. Holds the experimental room-temperature structure (Sutton et al., ACS Energy Lett. 2018) and the calculation settings. Both shell scripts read it and neither changes it. |
-| `kconv.sh` | Makes copies of the base input as single-point calculations with different k-meshes and cutoffs, runs them, and prints the energy per atom for each. |
-| `conv_summary.txt` | The table printed by `kconv.sh`. |
-| `relax2stage.sh` | Relaxes the cell and atoms in two stages (coarse mesh, then converged mesh), exports the result to `final/`, and writes `relax_summary.txt`. |
-| `relax_summary.txt` | Energies, pressure, forces and timing for each stage; lattice parameters compared with experiment; Pb–I–Pb angles before and after. |
-| `build_defects.py` | Reads a relaxed unit cell and writes the perfect-supercell and vacancy inputs. Builds vacancies only; hop end points will come from a separate script, `build_neb.py` (planned). Does no physics calculation itself. |
-
-### Folders
-
-| Folder | Contents |
-|---|---|
-| `conv/` | `k221`, `k332`, `k443`, `k554`, `k664`: k-mesh series at 50 Ry. `e40` to `e80`: cutoff series at 4×4×3. Each has an `.in` and an `.out`. |
-| `stage1_k332/` | `vcrelax.in` and `vcrelax.out` for stage 1. The output contains every geometry step. |
-| `stage2_k443/` | The same for stage 2, which started from the stage 1 result. |
-| `final/` | `gamma_CsPbI3_relaxed_scf.in`: complete input with the relaxed structure. `structure_blocks.txt`: cell and positions only. `gamma_CsPbI3_relaxed.cif`: for viewing. |
-| `defects/` | See below. |
-| `assets/` | `gamma_CsPbI3_lattice_tilted_octahedra.png`: the relaxed lattice. `iodine_vacancy_sites_apical_vs_equatorial.png`: the two vacancy sites. `octahedra_hops.png` (and `.pdf`): the 10 distinct hops. |
-
-### Inside `defects/`
-
-```
-defects/
-├── sites_report.txt             which atoms were removed
-├── unitcell_tight/
-│   ├── unit_tight_relaxed.in    the tight-relaxed 20-atom cell; everything below is built from it
-│   ├── vcrelax.out              output of the tight relaxation
-│   ├── vcrelax.in               tight-relaxation input, restarting from the relaxed cell
-│   └── run_qe.pbs               PBS job script for the cluster queue
-├── pristine_222/relax.in        perfect 2×2×2 supercell (160 atoms), the energy reference
-├── q+1/                         defects with charge +1
-│   ├── vac_I_apical/relax.in        vacancy on an apical iodine site
-│   └── vac_I_equatorial/relax.in    vacancy on an equatorial iodine site
-└── q0/                          the same two vacancies, neutral and spin-polarised
-    ├── vac_I_apical/relax.in
-    └── vac_I_equatorial/relax.in
-```
-
-Every input has a `.cif` beside it for viewing. Hop end points and NEB inputs are not built yet; they will come from `build_neb.py`.
-
-`run_qe.pbs` loads the modules and runs `pw.x` on one 40-core node. It runs in the folder it is submitted from. Its defaults suit the unit cell; for a supercell, give the input name and two k-point pools: `qsub -N pristine -v INPUT=relax.in,NK=2 <path>/run_qe.pbs`.
-
-Apical iodine links two Pb atoms along the long c axis. Equatorial iodine lies in the Pb–I plane. The two are different sites in the γ phase because of the octahedral tilting.
-
-## Settings
-
-| Item | Value |
-|---|---|
-| Code | Quantum ESPRESSO `pw.x`: version 7.6 on the laptop (convergence test, soft relaxation), version 6.5 on the cluster (tight relaxation and all defect calculations) |
-| Functional | PBEsol |
-| Spin-orbit coupling | Not included (scalar-relativistic pseudopotentials) |
-| Dispersion correction | None |
-| Pseudopotentials | SSSP 1.3.0 PBEsol efficiency |
-| Plane-wave cutoff | 60 Ry (density 480 Ry) |
-| k-mesh, 20-atom cell | 4×4×3 |
-| k-mesh, 160-atom supercell | 2×2×2 |
-
-Pseudopotential files:
-
-| Element | File |
-|---|---|
-| Cs | `cs_pbesol_v1.uspp.F.UPF` |
-| Pb | `Pb.pbesol-dn-kjpaw_psl.0.2.2.UPF` |
-| I | `I.pbesol-n-kjpaw_psl.0.2.UPF` |
 
 ## Results so far
 
@@ -310,20 +206,89 @@ The tight relaxation lowered the energy by 1.9 meV per 20-atom cell. The volume 
 
 The defect calculations use the tight-relaxed cell.
 
+
+## File structure
+
+One folder per step of the Methods. The steps that have not started yet hold only a `.gitkeep`.
+
+```
+.
+├── README.md                    this file
+├── NOTES.md                     working notes: cluster, jobs, decisions, commands
+├── Literatures/                 literature_review.md (papers A, B and C in detail) and the papers as PDF (not tracked)
+├── LICENSE
+├── run_qe.pbs                   PBS job script for pw.x, shared by all cluster jobs
+├── assets/                      figures used in this README
+│
+├── 01_unitcell/                 step 1: convergence test, soft and tight relaxation of the 20-atom cell
+├── 02_pristine/                 step 2: perfect 2×2×2 supercell (160 atoms)
+├── 03_vacancies/                step 3: 4c and 8d vacancies, charge +1 and neutral
+├── 04_bulk_neb/                 step 4: NEB for the 10 bulk hops (to do)
+├── 05_slab/                     step 5: CsI-terminated (001) slab, build and convergence (to do)
+├── 06_slab_vacancies/           step 6: vacancies at increasing depth (to do)
+└── 07_slab_neb/                 step 7: NEB at increasing depth (to do)
+```
+
+### `01_unitcell/`
+
+```
+01_unitcell/
+├── gamma_CsPbI3_vcrelax.in      base input: experimental γ-CsPbI₃ cell (20 atoms) and settings
+├── kconv.sh                     convergence test (k-mesh and cutoff)
+├── conv/                        its inputs and outputs: k221 … k664 at 50 Ry, e40 … e80 at 4×4×3
+├── conv_summary.txt             energies from the convergence test
+├── relax2stage.sh               two-stage variable-cell relaxation (soft)
+├── stage1_k332/                 stage 1, coarse 3×3×2 k-mesh: vcrelax.in, vcrelax.out
+├── stage2_k443/                 stage 2, converged 4×4×3 k-mesh: vcrelax.in, vcrelax.out
+├── final/                       soft-relaxed structure: scf-ready input, structure blocks, .cif
+├── relax_summary.txt            energies, forces, timing; lattice against experiment
+└── tight/                       tight relaxation, run on the cluster
+    ├── unit_tight_relaxed.in    the tight-relaxed cell; every later structure is built from it
+    ├── vcrelax.in               tight-relaxation input
+    ├── vcrelax.out              its output
+    └── vcrelax.cif
+```
+
+The base input holds the experimental room-temperature structure (Sutton et al., ACS Energy Lett. 2018). Both shell scripts read it from their own folder and neither changes it.
+
+### `02_pristine/` and `03_vacancies/`
+
+```
+02_pristine/
+├── relax.in                     perfect supercell, atoms relaxed at fixed cell: the energy reference
+└── relax.cif
+
+03_vacancies/
+├── build_defects.py             writes 01_unitcell/tight/vcrelax.in, 02_pristine/ and 03_vacancies/
+├── sites_report.txt             which atoms were removed
+├── q+1/                         charge +1
+│   ├── vac_I_apical/            vacancy on a 4c site: relax.in, relax.cif
+│   └── vac_I_equatorial/        vacancy on an 8d site
+└── q0/                          the same two, neutral and spin-polarised
+    ├── vac_I_apical/
+    └── vac_I_equatorial/
+```
+
+`build_defects.py` builds vacancies only; the NEB end points will come from a separate script, `build_neb.py`, in `04_bulk_neb/`.
+
+`run_qe.pbs` loads the modules and runs `pw.x` in the folder it is submitted from, with as many processes as nodes × 40. Give the node count, input name and k-point pools on the `qsub` line, for example `qsub -N pristine -l nodes=2:ppn=40 -v INPUT=relax.in,NK=2 <path>/run_qe.pbs`. Check memory first: see `NOTES.md`.
+
+The cluster copy lives in `~/cspbi3/` with its own layout (`pristine_222/`, `q+1/`, `q0/`).
+
 ## How to reproduce
 
 ```bash
-# 1. convergence test
+# 1. convergence test and soft relaxation
+cd 01_unitcell
 bash kconv.sh | tee conv_summary.txt
-
-# 2. two-stage relaxation
 bash relax2stage.sh
+cd ..
 
-# 3. defect inputs
-python3 build_defects.py defects/unitcell_tight/unit_tight_relaxed.in --pseudo-dir /path/to/pseudo
+# 2-3. supercell and vacancy inputs (from the project root, after the tight relaxation)
+python3 03_vacancies/build_defects.py 01_unitcell/tight/unit_tight_relaxed.in --pseudo-dir /path/to/pseudo
 ```
 
-Set `PW` (path to `pw.x`) and `NP` (number of MPI processes) at the top of each shell script. Set `pseudo_dir` in `gamma_CsPbI3_vcrelax.in`. `build_defects.py` needs Python 3 with NumPy and ASE.
+Set `PW` (path to `pw.x`) and `NP` (number of MPI processes) at the top of each shell script. Set `pseudo_dir` in `01_unitcell/gamma_CsPbI3_vcrelax.in`. `build_defects.py` needs Python 3 with NumPy and ASE.
 
 ## Not tracked
 
@@ -332,6 +297,7 @@ Listed in `.gitignore`:
 - `tmp/` and `*.save/`: Quantum ESPRESSO scratch data
 - `*.wfc*`, `*.xml`: wavefunctions and data files
 - `backup/`, `*:Zone.Identifier`, `__pycache__/`
+- `Literatures/*.pdf`: the papers themselves (copyrighted), kept locally only
 
 ## Next steps
 

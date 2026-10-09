@@ -3,23 +3,24 @@
 Build the bulk iodine-vacancy structures for gamma-CsPbI3 from a relaxed unit cell.
 
 Reads a Quantum ESPRESSO input holding the relaxed 20-atom cell and writes,
-under an output folder (default: defects/):
+under the project folder (default: the current folder, run from the project root):
 
-  unitcell_tight/vcrelax.in       tight variable-cell relaxation of the unit cell
-  pristine_222/relax.in           perfect 2x2x2 supercell (160 atoms), energy reference
-  q+1/ and q0/                    the same vacancies in two charge states:
-                                  +1 (closed shell) and neutral (spin-polarised)
-    vac_I_apical/relax.in         one apical iodine removed
-    vac_I_equatorial/relax.in     one equatorial iodine removed
-  *.cif next to every input       for viewing in VESTA
-  sites_report.txt                which atoms were removed
+  01_unitcell/tight/vcrelax.in        tight variable-cell relaxation of the unit cell
+  02_pristine/relax.in                perfect 2x2x2 supercell (160 atoms), energy reference
+  03_vacancies/q+1/ and q0/           the same vacancies in two charge states:
+                                      +1 (closed shell) and neutral (spin-polarised)
+    vac_I_apical/relax.in             one apical iodine removed
+    vac_I_equatorial/relax.in         one equatorial iodine removed
+  *.cif next to every input           for viewing in VESTA
+  03_vacancies/sites_report.txt       which atoms were removed
 
 This script builds vacancies only. The end points and NEB inputs for the
 10 distinct hops (S1-S6, L1-L4) will come from a separate script, build_neb.py.
 
 Usage:
-    python3 build_defects.py unitcell_tight/unit_tight_relaxed.in
-    python3 build_defects.py unitcell_tight/unit_tight_relaxed.in --pseudo-dir /path/on/cluster
+    (run from the project root)
+    python3 03_vacancies/build_defects.py 01_unitcell/tight/unit_tight_relaxed.in
+    python3 03_vacancies/build_defects.py 01_unitcell/tight/unit_tight_relaxed.in --pseudo-dir /path/on/cluster
 
 Needs: python3 with numpy and ase.
 """
@@ -121,7 +122,7 @@ def write_qe(path, atoms, species, calc, kpts, pseudo_dir, prefix, charge=0, ope
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("unitcell", help="QE input with the relaxed 20-atom cell")
-    ap.add_argument("--out", default="defects", help="output folder (default: defects)")
+    ap.add_argument("--out", default=".", help="project folder to write into (default: current folder)")
     ap.add_argument("--rep", default="2,2,2", help="supercell repetitions (default: 2,2,2)")
     ap.add_argument("--pseudo-dir", default=None, help="pseudopotential folder on the machine that will run the jobs")
     args = ap.parse_args()
@@ -170,13 +171,13 @@ def main():
         return p
 
     # Tight relaxation of the unit cell
-    write_qe(os.path.join(sub("unitcell_tight"), "vcrelax.in"), unit, species, "vc-relax", K_UNIT,
+    write_qe(os.path.join(sub(os.path.join("01_unitcell", "tight")), "vcrelax.in"), unit, species, "vc-relax", K_UNIT,
              pseudo_dir, "unit_tight",
              note="Tight variable-cell relaxation of the 20-atom gamma-CsPbI3 cell.\n"
                   "Run this first, then rebuild the supercell from its result.")
 
     # Perfect supercell
-    write_qe(os.path.join(sub("pristine_%d%d%d" % rep), "relax.in"), sc, species, "relax", ksc,
+    write_qe(os.path.join(sub("02_pristine"), "relax.in"), sc, species, "relax", ksc,
              pseudo_dir, "pristine",
              note="Perfect supercell. Fixed cell, atoms relaxed. Energy reference for all defects.")
 
@@ -198,7 +199,7 @@ def main():
         del vac[a]
         name = "vac_I_%s" % label[t]
         for folder, q, opn, qtext in states:
-            write_qe(os.path.join(sub(os.path.join(folder, name)), "relax.in"), vac, species, "relax", ksc,
+            write_qe(os.path.join(sub(os.path.join("03_vacancies", folder, name)), "relax.in"), vac, species, "relax", ksc,
                      pseudo_dir, "%s_%s" % (name, folder.replace("+", "p")), charge=q, open_shell=opn,
                      note="Iodine vacancy on an %s site, %s (atom %d of the perfect supercell removed)."
                           % (label[t], qtext, a + 1))
@@ -208,7 +209,7 @@ def main():
         report.append("")
 
     report.append("q+1/ holds the +1 charged vacancies, q0/ the neutral ones (spin-polarised).")
-    with open(os.path.join(args.out, "sites_report.txt"), "w") as f:
+    with open(os.path.join(args.out, "03_vacancies", "sites_report.txt"), "w") as f:
         f.write("\n".join(report) + "\n")
     print("\n".join(report))
     print("\nWritten to: %s/" % args.out)

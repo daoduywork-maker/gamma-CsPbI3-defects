@@ -8,3 +8,6 @@ backup/
 *:Zone.Identifier
 # Python
 __pycache__/
+
+# Papers (copyrighted; kept locally only)
+Literatures/*.pdf
