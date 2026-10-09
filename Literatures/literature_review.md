@@ -249,3 +249,20 @@ Earlier we quoted 0.07 to 0.27 eV as the surface preference and up to 30,000-fol
 **What is still open after these three papers:** depth-resolved migration barriers in γ-CsPbI₃ for all paths, apical and equatorial, in a slab shown to converge to the bulk.
 
 **Anything that surprised me or that I did not understand:**
+
+## Related work
+
+Papers outside A, B and C that the project uses. Notes are short; entries marked **(title and abstract only)** have not been read in full.
+
+| Paper | What it gives us | Where we use it |
+|---|---|---|
+| N. Xu et al., *Point defects in metal halide perovskites*, Nat. Rev. Mater. (2025) | Review of point defects, their electronic tolerance and their role in instability | Citation for "Why defects matter" **(title and abstract only)** |
+| Z. Wylie et al., *Surface iodide defects control the kinetics of the CsPbI₃ perovskite phase transformation*, ACS Energy Lett. 9, 4378 (2024), doi:10.1021/acsenergylett.4c01465 | Experiment: CsI or CdI₂ treatment slows the change to δ-CsPbI₃ about fivefold; X-ray photoelectron spectroscopy ties this to surface iodide; surface iodide vacancies are proposed as nucleation sites for the δ phase | Motivation for the surface focus **(abstract only)** |
+| M. Pols, T. Hilpert, I. A. W. Filot, A. C. T. van Duin, S. Calero, S. Tao, *What happens at surfaces and grain boundaries of halide perovskites: insights from reactive molecular dynamics simulations of CsPbI₃*, ACS Appl. Mater. Interfaces (2022), arXiv:2205.10545 | Reactive MD (ReaxFF) of orthorhombic CsPbI₃ slabs, 300–700 K: a cubic-like surface shell about 2 nm thick; iodine vacancies seen moving into and out of the surface, without barriers or rates | Closest earlier work for G2; the 2 nm shell is a guide for how deep the surface effect may reach (H3) |
+| T. J. A. M. Smolders, R. A. De Souza, A. B. Walker, M. J. Wolf, *Diffusivity tensors of Br and Cs vacancies in biaxially strained perovskite CsPbBr₃*, Chem. Mater. (2024) | Direction-resolved vacancy diffusivity in bulk CsPbBr₃ under strain | Method reference for the deferred diffusion-tensor (kinetic Monte Carlo) add-on **(title only)** |
+
+## Novelty check (October 2026)
+
+- **Keyword search** for depth-resolved vacancy migration at CsPbI₃ and halide perovskite surfaces. Closest hits: Pols 2022 (above); CsI-terminated (100) surfaces of cubic and tetragonal CsPbI₃, formation energies only (arXiv:2309.04870); surface stability of orthorhombic CsPbI₃, no migration (Li et al., arXiv:2411.01599); machine-learned force field for bulk CsPbI₃ only (Tyagi et al., arXiv:2409.16051); bulk orthorhombic CsPbBr₃ NEB only (Miskin et al., PCCP 2025).
+- **Cited-by check** of papers A (11 citing works), B (about 28) and C (about 13): reviews, devices, other materials, and the Ahmad group's work on battery materials and halide segregation. None computes vacancy barriers against depth in γ-CsPbI₃.
+- **Result:** N2 and N3 stand. The Ahmad group (paper C) is the most likely to extend their study to barriers; check their new papers until ours is out.

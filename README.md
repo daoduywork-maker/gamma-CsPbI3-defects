@@ -59,36 +59,88 @@ Each Pb sits at the centre of an octahedron of six iodines. Because the octahedr
 - **Apical (4c)**: the two above and below Pb, along c, in the CsI layers.
 - **Equatorial (8d)**: the four around Pb, in the PbI₂ layers.
 
+### Why defects matter
+
+Halide perovskites tolerate defects electronically: most native defects leave no deep trap states, which is why solution-processed films still perform well. Their weak point is ionic. Iodine vacancies form easily and move at room temperature, and moving ions cause:
+
+- current–voltage hysteresis and slow, drifting response in solar cells and detectors;
+- ions piling up at interfaces and reacting with contacts;
+- loss of stability, including the change of γ-CsPbI₃ to the yellow δ phase, which tends to start at surfaces and grain boundaries.
+
+Surfaces are where vacancies form, collect and escape, and where the perovskite meets the other device layers. How fast vacancies move near the surface, and whether they are drawn to it, guides surface passivation and interface design.
+
 ## Literature review
 
-Details and numbers are in `Literatures/literature_review.md`.
+Full notes, numbers and sources: [`Literatures/literature_review.md`](Literatures/literature_review.md).
 
 | Paper | What it did | What it leaves open |
 |---|---|---|
-| A. Arber et al., Chem. Mater. 37, 4416 (2025) | Bulk γ-CsPbI₃: iodine vacancy barriers 0.34 eV (8d-8d), 0.35 eV (8d-4c), about 0.77 eV (4c-4c), PBEsol, 2×2×2 supercell | No surfaces; one barrier per path type; charge state not stated |
-| B. Biega and Leppert, J. Phys.: Energy 3, 034017 (2021) | Cubic CsPbBr₃ slabs: the long axial-to-axial barrier is about half the bulk value at the surface | Edge hops not computed; frozen bottom layers; barriers never return to the bulk value |
-| C. Ahmad et al., Phys. Rev. Materials 8, 125402 (2024) | Orthorhombic CsPbI₃ 17-layer slabs: vacancy formation energies against depth | No barriers; slab interior differs from its bulk reference by 0.05 to 0.66 eV |
+| **Arber 2025** (anchor) | Bulk γ-CsPbI₃, PBEsol, 2×2×2 supercell: iodine vacancy barriers 0.34 eV (8d-8d), 0.35 eV (8d-4c), about 0.77 eV (4c-4c); MD activation energy 0.42 eV | Surfaces; more than one barrier per type of path; the charge state |
+| Biega 2021 | Cubic CsPbBr₃ slabs: the long axial-to-axial barrier is about half the bulk value at the surface | Edge hops; the tilted phase; a slab whose barriers return to the bulk value |
+| Ahmad 2024 | Orthorhombic CsPbI₃ 17-layer slabs: vacancy and interstitial formation energies against depth | Barriers; a slab interior that matches its own bulk (off by 0.05 to 0.66 eV) |
 
 ### The gap
 
-- **Paper A** gives the bulk barriers of γ-CsPbI₃, but one per type of path. The tilted structure has several symmetry-distinct variants of each type, and they are not separated. The charge state is not stated.
-- **Paper B** shows that a surface can halve a vacancy barrier, but for cubic CsPbBr₃, for the long jump only, and in a thin, partly frozen slab whose barriers never return to the bulk value. How deep the surface effect reaches is therefore not known.
-- **Paper C** studies the same material and surface type, but only formation energies, not barriers. Its slab interior does not reproduce its own bulk reference.
+One point per paper:
 
-No study gives vacancy migration barriers in γ-CsPbI₃ as a function of depth below the surface, in a slab whose interior converges to its own bulk.
+- **Arber 2025** gives one barrier per type of path, although the tilted structure has several distinct variants of each, and does not state the charge state.
+- **Biega 2021** shows a surface effect for one long jump only, in the cubic bromide, in a thin, partly frozen slab that never returns to the bulk.
+- **Ahmad 2024** has the right material and surface, but only formation energies, and its slab interior does not reproduce its bulk.
+
+**Overall gap:** nobody has computed iodine vacancy migration barriers in γ-CsPbI₃ layer by layer below the surface, in a slab whose interior reproduces the bulk.
+
+This appears as three specific gaps:
+
+| Gap | Statement |
+|---|---|
+| **G1 — Hop resolution** | Bulk barriers are known only per type of path. The tilted structure has 10 symmetry-distinct hops (6 short, 4 long), and which charge state the published values belong to is not stated. |
+| **G2 — Depth** | The surface effect on vacancy migration is known for one long jump in cubic CsPbBr₃ only. For γ-CsPbI₃ there are no barriers against depth, and how deep the surface reaches is unknown. |
+| **G3 — Slab–bulk consistency** | Neither surface study recovers its own bulk inside the slab, so surface and bulk values cannot be compared cleanly. |
 
 ### Research questions
 
-1. Which site does the vacancy prefer, and by how much?
-2. What are the barriers of the symmetry-distinct hops in the bulk?
-3. How do site energies and barriers change layer by layer below the CsI-terminated surface, and at what depth do they return to the bulk values?
+| | Question | Gap | Hypothesis |
+|---|---|---|---|
+| **RQ1** | Which site does the vacancy prefer, and by how much, in each charge state? | G1 | **H1.** 8d by a few hundredths of an eV in both; one charge state reproduces paper A's +0.03 eV. |
+| **RQ2** | What are the barriers of the 10 distinct bulk hops? | G1 | **H2.** Variants of one type differ by up to about 0.1 eV, rising with hop length; long hops are clearly higher. |
+| **RQ3** | How do site energies and barriers change layer by layer below the CsI-terminated surface? | G2 | **H3.** Barriers drop and the vacancy is slightly more stable in the top layers; the effect fades within two to three layers (about 1 nm). |
+| **RQ4** | Once the surface splits each pair of equivalent hops, which direction is favoured? | G2 | **H4.** Hops towards the surface are easier, giving a net drift of vacancies to the surface. |
+| **RQ5** | Does the middle of the slab reproduce the bulk site energy and barrier? | G3 | **H5.** Yes, within about 0.02 eV, for a symmetric 11-layer slab with all atoms free. |
+
+**Novelty**
+
+| | Contribution | Gap |
+|---|---|---|
+| **N1** | All 10 symmetry-distinct bulk hops, with both charge states stated | G1 |
+| **N2** | First depth-resolved vacancy barriers in γ-CsPbI₃, followed back to the bulk | G2 |
+| **N3** | The surface splitting of equivalent hops as a measure of directional drift | G2 |
+| **N4** | A slab checked against its own bulk reference | G3 |
+
+Limits on the novelty claim: a web search and a cited-by check of papers A, B and C (October 2026, Google Scholar and the publishers' "cited by" lists) found no depth-resolved vacancy barriers in γ-CsPbI₃. The closest work: Pols 2022 (reactive MD of CsPbI₃ slabs; iodine vacancies seen moving in and out of the surface, no barriers), surface studies of CsPbI₃ with formation energies only (Li et al., arXiv 2411.01599; arXiv 2309.04870), and bulk-only migration studies (Tyagi et al., arXiv 2409.16051; Miskin 2025). Paper C's group (Ahmad) works on defect mobility near interfaces in other materials and is the most likely to extend C to barriers.
+
+**If the hypotheses fail.** If H3 is false (no change below the top layer), the surface effect is confined to one layer; that still answers G2. If H5 is false, comparing the neutral and +1 vacancy separates a structural mismatch from a charge-referencing one; that answers G3.
 
 ### Scope
 
-- Iodine vacancies, charge +1 and neutral.
-- Bulk γ-CsPbI₃, and the CsI-terminated (001) surface.
-- PBEsol, no spin-orbit coupling, no dispersion correction.
-- **Not in the current scope:** interstitials, PbI₂ termination and other facets, a machine-learned potential, absolute formation energies against μ_I and E_F, spin-orbit coupling.
+The scope is exactly what G1–G3 require.
+
+| In scope | Needed for |
+|---|---|
+| Bulk 4c and 8d vacancy, charge +1 and neutral: site energies | G1 |
+| NEB for the 10 distinct bulk hops | G1 |
+| CsI-terminated (001) slab: site energies and hops layer by layer, down to the bulk-like middle | G2 |
+| Middle-layer site energy and barrier against the bulk; 15-layer thickness test | G3 |
+
+**Settings.** PBEsol, no spin-orbit coupling, no dispersion correction.
+
+**Not in the current scope**
+
+- Interstitials and other defects
+- PbI₂ termination and other facets
+- Absolute formation energies against μ_I and E_F
+- Machine-learned potentials and long-time dynamics
+
+**Deferred:** diffusion coefficients from the 10 barriers by kinetic Monte Carlo (cheap, would add the anisotropy); a spin-orbit check on the site energies.
 
 ## Methods
 
