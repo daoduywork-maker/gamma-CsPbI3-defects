@@ -46,9 +46,14 @@ make -j 4 pw neb pp
 |---|---|---|
 | 217362 `unit_tight` | Tight vc-relax of the 20-atom cell, 1 node, 4 pools | Done 7 Oct, node32, 14 steps, 1 h 32 min, about 5 min per step |
 | 217376–217380, five supercell jobs | `pristine`, `qp1_apical`, `qp1_equatorial`, `q0_apical`, `q0_equatorial`, 1 node each | **Failed 9 Oct: out of memory** (see below). About two days of queue time lost |
-| 217406–217410, the same five | 2 nodes each for `pristine` and +1, 3 nodes each for the neutral jobs | Submitted 9 Oct, queued |
+| 217406 `pristine` | 2 nodes (80 cores), `NK=2` | **Done 11 Oct 01:28.** Started 10 Oct 22:21 after about 32 h in the queue. Converged on the first SCF (17 iterations), 0 BFGS steps, 3 h 6 min. E = −65326.88713687 Ry, total force 0.0022 Ry/Bohr, highest occupied level 3.4105 eV. Memory 62 GB used per node, no swap. Keep `tmp/` for the potential alignment |
+| 217407 `qp1_apical` | 2 nodes, `NK=2` | Running since 10 Oct 22:21; 1.71 GB per process (68 GB per node), no swap, about 10 min per SCF iteration |
+| 217408 `qp1_equatorial` | 2 nodes, `NK=2` | Running since 11 Oct |
+| 217409–217410 `q0_apical`, `q0_equatorial` | 3 nodes each, `NK=2` | Queued. 3 nodes leaves one node of a 4-node group idle; see the node rule below |
 
 **Incident, 9 Oct: jobs submitted without a memory check.** A std40 node has 92 GB. QE's estimate (printed in the first minute, `Estimated total dynamical RAM`) was 137 GB for the pristine and +1 supercells and 193 GB for the spin-polarised neutral ones. On one node the jobs ran out of memory: node32 showed 92 GB used plus 45 GB of swap, 92% of CPU time waiting on the disk, pw.x in state `D`. The +1 jobs were killed, the pristine one never finished its first SCF iteration. Fix: resubmit on 2 or 3 nodes; the job script takes the process count from the node list, so only `-l nodes=N:ppn=40` changes.
+
+**Node rule (from a senior, 10 Oct):** the std40 nodes are grouped in fours and most jobs take whole groups. Long jobs use 4 or 8 nodes; 1 or 3 nodes leave nodes of a group idle.
 
 **Before every submission (memory checklist)**
 
@@ -75,7 +80,7 @@ The job runs in the folder `qsub` was typed in. Options on the `qsub` line overr
 | Decision | Reason |
 |---|---|
 | Unit-cell k-mesh kept at 4×4×3, not 4×4×4 | User's choice. 4×4×4 would match the 2×2×2 supercell mesh exactly. To be checked on the first step of `pristine_222` |
-| One 40-core node per job | Five independent jobs already run side by side; one node is easy to get. More nodes are justified for NEB, where images run in parallel |
+| Nodes per job: 2 for the pristine and +1 supercells, 3 for the neutral ones; from now on 4 or 8 | Memory: 137 GB (+1) and 193 GB (neutral, spin-polarised) do not fit one 92 GB node (incident, 9 Oct). Nodes come in groups of four, so long jobs take 4 or 8 to leave none idle |
 | Five separate jobs, not one merged job | Same queue wait, run simultaneously, one failure does not stop the others |
 | Walltime 360 h for supercells | Step time unknown; estimated a few hours per step. A killed job loses its run |
 | Charge +1 first | Closed shell; the usual state of the iodine vacancy; least sensitive to spin-orbit coupling |
@@ -86,14 +91,13 @@ The job runs in the folder `qsub` was typed in. Options on the `qsub` line overr
 
 ## Open checks
 
-1. **Mesh consistency.** First step of `pristine_222`: largest force component below about 0.01 eV/Å and pressure within about 0.5 kbar means the 4×4×3 choice is harmless.
-2. **Time per supercell step.** Needed to judge the walltime and to cost the NEB runs.
+1. **Mesh consistency.** Passed on forces: `pristine_222` converged on its first SCF, so every force component was below 0.010 eV/Å. Pressure not printed in a `relax` run.
+2. **Time per supercell step.** About 10 min per SCF iteration on 2 nodes; first SCF 17 iterations, about 3 h.
 3. **Final-state energies.** Each hop end point is a vacancy on a neighbouring site and should match the corresponding vacancy energy to a few meV.
-4. **Distinct hops.** Apical iodine lies on a mirror plane, so its 8 neighbours form 4 pairs: up to 4 distinct apical-equatorial hops, not 3. The 4.55 Å group (4 neighbours) is probably two hops. Neighbour distances from the soft structure: apical to equatorial 4.44 (×2), 4.45 (×2), 4.55 (×4) Å; equatorial to equatorial 4.42 (×2), 4.59 (×2) Å. No direct apical-apical hop (over 6 Å).
+4. **Distinct hops.** Settled: 10 symmetry-distinct bulk hops, 6 short (S1–S6, 4.41–4.60 Å) and 4 long (L1–L4, 4.80–5.93 Å), from the tight structure. Checked by symmetry and by a neighbour-graph fingerprint (544 I–I pairs fall into 10 classes). Table and figure in the README.
 5. **Finite-size error.** One vacancy per 96 iodine sites. Affects absolute formation energies; cancels in site differences and barriers. Needs a correction (and the dielectric constant) or one larger-cell test.
 6. **Spin-orbit coupling.** Not included. Planned single-point check on the two +1 vacancy structures. Neutral (`q0`) results are the least reliable.
-7. **Paper A** (Chem. Mater. 37, 4416, 2025) has not been read by Claude; it may already contain the bulk barriers.
-8. **Seidu et al. 2021** surface phase diagrams: check coverage before the step 8 analysis.
+7. **Comparison with Arber 2025** (Chem. Mater. 37, 4416), now read and the anchor paper. It gives one barrier per type of path: 0.34 eV (8d–8d), 0.35 eV (8d–4c), about 0.77 eV (4c–4c), and 4c 0.03 eV above 8d; the charge state is not stated. Check which of our charge states reproduces the +0.03 eV site difference, and compare S1 with 0.34 eV in the first NEB.
 
 ## Commands that work
 

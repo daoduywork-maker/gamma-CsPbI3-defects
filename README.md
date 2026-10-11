@@ -10,7 +10,8 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 |---|---|
 | Convergence test, soft and tight relaxation of the unit cell | Done |
 | Cluster setup; `neb.x` and `pp.x` compiled (Quantum ESPRESSO 6.5) | Done |
-| Perfect supercell and vacancy relaxations (5 jobs) | On the cluster |
+| Perfect 2×2×2 supercell relaxation | Done |
+| Vacancy relaxations (4 jobs) | On the cluster |
 | Set of distinct bulk hops | Settled: 10 (6 short, 4 long) |
 | Hop end points and NEB inputs (`build_neb.py`) | To do |
 | Bulk barriers (NEB) | To do |
@@ -258,6 +259,18 @@ The tight relaxation lowered the energy by 1.9 meV per 20-atom cell. The volume 
 
 The defect calculations use the tight-relaxed cell.
 
+
+### Perfect supercell (2×2×2, 160 atoms)
+
+| | Value |
+|---|---|
+| Total energy | −65326.88713687 Ry (−888,817.58 eV) |
+| Highest occupied level (VBM) | 3.4105 eV |
+| Relaxation | Converged on the first SCF, 0 BFGS steps: every force component already below 0.010 eV/Å (4×10⁻⁴ Ry/Bohr) |
+| Total force (all atoms) | 0.058 eV/Å (0.0022 Ry/Bohr) |
+| Run | Job 217406, 2 nodes (80 cores), 17 SCF iterations, 3 h 6 min |
+
+The supercell built from the tightly relaxed unit cell needed no relaxation, so the 4×4×3 unit-cell mesh and the supercell mesh agree on the forces. Its energy and VBM are the references for the vacancy cells.
 
 ## File structure
 
