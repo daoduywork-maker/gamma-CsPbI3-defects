@@ -342,6 +342,8 @@ The cluster copy lives in `~/cspbi3/` with its own layout (`pristine_222/`, `q+1
 
 ## How to reproduce
 
+Python used for the scripts (WSL, system Python): Python 3.14.4, numpy 2.3.5, scipy 1.16.3, ASE 3.26.0, spglib 2.7.0. The cluster has no Python; scripts run locally and their outputs are copied to the cluster.
+
 ```bash
 # 1. convergence test and soft relaxation
 cd 01_unitcell

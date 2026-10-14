@@ -47,9 +47,10 @@ make -j 4 pw neb pp
 | 217362 `unit_tight` | Tight vc-relax of the 20-atom cell, 1 node, 4 pools | Done 7 Oct, node32, 14 steps, 1 h 32 min, about 5 min per step |
 | 217376–217380, five supercell jobs | `pristine`, `qp1_apical`, `qp1_equatorial`, `q0_apical`, `q0_equatorial`, 1 node each | **Failed 9 Oct: out of memory** (see below). About two days of queue time lost |
 | 217406 `pristine` | 2 nodes (80 cores), `NK=2` | **Done 11 Oct 01:28.** Started 10 Oct 22:21 after about 32 h in the queue. Converged on the first SCF (17 iterations), 0 BFGS steps, 3 h 6 min. E = −65326.88713687 Ry, total force 0.0022 Ry/Bohr, highest occupied level 3.4105 eV. Memory 62 GB used per node, no swap. Keep `tmp/` for the potential alignment |
-| 217407 `qp1_apical` | 2 nodes, `NK=2` | Running since 10 Oct 22:21; 1.71 GB per process (68 GB per node), no swap, about 10 min per SCF iteration |
+| 217407 `qp1_apical` | 2 nodes, `NK=2` | **Done 14 Oct 09:26.** 47 SCF cycles, 46 BFGS steps, 3 d 11 h wall (about 1.8 h per step). E = −64954.16973158 Ry, largest force 3.1×10⁻⁴ Ry/Bohr, highest occupied level 3.3779 eV. Memory 1.71 GB per process, no swap |
 | 217408 `qp1_equatorial` | 2 nodes, `NK=2` | Running since 11 Oct |
 | 217409–217410 `q0_apical`, `q0_equatorial` | 3 nodes each, `NK=2` | Queued. 3 nodes leaves one node of a 4-node group idle; see the node rule below |
+| `kmesh221` | SCF of the relaxed +1 apical structure with a 2×2×1 mesh (4 k-points), 2 nodes | **Done 14 Oct.** 1.50 GB per process. E = −64954.14911857 Ry: +0.28 eV per cell (1.8 meV/atom) above 2×2×2; largest force 1.2×10⁻³ Ry/Bohr (0.031 eV/Å) against 3.1×10⁻⁴ at 2×2×2. Fails; see Decisions |
 
 **Incident, 9 Oct: jobs submitted without a memory check.** A std40 node has 92 GB. QE's estimate (printed in the first minute, `Estimated total dynamical RAM`) was 137 GB for the pristine and +1 supercells and 193 GB for the spin-polarised neutral ones. On one node the jobs ran out of memory: node32 showed 92 GB used plus 45 GB of swap, 92% of CPU time waiting on the disk, pw.x in state `D`. The +1 jobs were killed, the pristine one never finished its first SCF iteration. Fix: resubmit on 2 or 3 nodes; the job script takes the process count from the node list, so only `-l nodes=N:ppn=40` changes.
 
@@ -80,6 +81,7 @@ The job runs in the folder `qsub` was typed in. Options on the `qsub` line overr
 | Decision | Reason |
 |---|---|
 | Unit-cell k-mesh kept at 4×4×3, not 4×4×4 | User's choice. 4×4×4 would match the 2×2×2 supercell mesh exactly. To be checked on the first step of `pristine_222` |
+| NEB keeps the 2×2×2 supercell mesh, not 2×2×1 | 2×2×1 test on the relaxed +1 apical cell: forces 4× larger (0.031 eV/Å) and 1.8 meV/atom energy shift, so end points and barriers would change. Memory per process fell only from 1.71 to 1.50 GB, so the coarse mesh would save time (about 2×) but not nodes |
 | Nodes per job: 2 for the pristine and +1 supercells, 3 for the neutral ones; from now on 4 or 8 | Memory: 137 GB (+1) and 193 GB (neutral, spin-polarised) do not fit one 92 GB node (incident, 9 Oct). Nodes come in groups of four, so long jobs take 4 or 8 to leave none idle |
 | Five separate jobs, not one merged job | Same queue wait, run simultaneously, one failure does not stop the others |
 | Walltime 360 h for supercells | Step time unknown; estimated a few hours per step. A killed job loses its run |
