@@ -1,0 +1,80 @@
+#!/bin/bash
+# PBS job script for Quantum ESPRESSO neb.x (NEB barriers) on the group cluster.
+#
+# Submit from the hop folder that holds neb.in (made by 04_bulk_neb/build_neb.py):
+#     qsub -N S1_qp1 ../../run_neb.pbs                      (defaults below: 2 fat96 nodes, 4 images at once)
+#     qsub -N S1_qp1 -v NI=2,NK=2 ../../run_neb.pbs        (fallback: 2 images at once, 2 pools each)
+#
+# Memory (QE estimates for one 159-atom image, 2x2x2 k-mesh):
+#     +1, -nk 1: 116 GB   +1, -nk 2: 137 GB   q0 (spin-polarised), -nk 2: 193 GB
+#     A fat96 node has 263 GB. Plan for at most about 210 GB per node.
+#     +1:  NI=4, NK=1 -> 2 images per node (about 210 GB, tight)   or  NI=2, NK=2 -> 1 per node
+#     q0:  NI=2, NK=2 -> 1 image per node only
+# Images per node = NI / number of nodes. Use as many intermediate images as NI (build_neb.py --images).
+#
+# Safety: a background check reads swap on every node every 5 min (mem.log).
+# If any node uses more than SWAP_LIMIT_GB of swap, the run is stopped, so a job
+# that does not fit fails in minutes instead of swapping for days.
+# Output: neb.out next to neb.in; the energy profile is in <prefix>.dat and <prefix>.int.
+
+#PBS -N neb
+#PBS -q fat96
+#PBS -l nodes=2:ppn=96
+#PBS -l walltime=480:00:00
+#PBS -j oe
+
+# ---- settings (can be overridden with qsub -v) ----
+INPUT="${INPUT:-neb.in}"        # input file name
+NI="${NI:-4}"                   # images run side by side (-ni)
+NK="${NK:-1}"                   # k-point pools per image (-nk)
+SWAP_LIMIT_GB="${SWAP_LIMIT_GB:-2}"
+NEB_X="${NEB_X:-$HOME/apps/q-e-qe-6.5/bin/neb.x}"   # the cluster module has no neb.x
+# ---------------------------------------------------
+
+cd "$PBS_O_WORKDIR" || exit 1
+
+source /etc/profile 2>/dev/null
+module purge
+module load intel/intel2020
+
+NP=$(wc -l < "$PBS_NODEFILE")
+NODES=$(sort -u "$PBS_NODEFILE" | tr '\n' ' ')
+OUTPUT="${INPUT%.in}.out"
+
+echo "job id    : $PBS_JOBID"
+echo "node(s)   : $NODES"
+echo "processes : $NP, images at once (-ni): $NI, pools per image (-nk): $NK"
+echo "input     : $INPUT  ->  $OUTPUT"
+echo "neb.x     : $NEB_X"
+echo "started   : $(date)"
+
+if [ ! -f "$INPUT" ]; then echo "Input file $INPUT not found in $PWD"; exit 1; fi
+if [ ! -x "$NEB_X" ]; then echo "neb.x not found at $NEB_X"; exit 1; fi
+if [ $((NP % NI)) -ne 0 ]; then echo "processes ($NP) not divisible by NI ($NI)"; exit 1; fi
+
+mpirun -np "$NP" -machinefile "$PBS_NODEFILE" "$NEB_X" -ni "$NI" -nk "$NK" -inp "$INPUT" > "$OUTPUT" 2>&1 &
+RUN=$!
+
+# ---- memory watch ----
+(
+  while kill -0 "$RUN" 2>/dev/null; do
+    for n in $NODES; do
+      line=$(ssh -o BatchMode=yes "$n" "free -g | awk '/Mem/{m=\$3} /Swap/{s=\$3} END{print m, s}'" 2>/dev/null)
+      echo "$(date '+%m-%d %H:%M') $n used=${line% *}G swap=${line#* }G" >> mem.log
+      swap=${line#* }
+      if [ -n "$swap" ] && [ "$swap" -gt "$SWAP_LIMIT_GB" ] 2>/dev/null; then
+        echo "$(date) swap ${swap} GB on $n > ${SWAP_LIMIT_GB} GB: stopping the run" | tee -a mem.log
+        kill "$RUN"
+        exit 0
+      fi
+    done
+    sleep 300
+  done
+) &
+WATCH=$!
+
+wait "$RUN"
+kill "$WATCH" 2>/dev/null
+
+echo "finished  : $(date)"
+grep -E "neb: convergence achieved|activation energy|JOB DONE" "$OUTPUT" | tail -4
