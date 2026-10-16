@@ -11,7 +11,7 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 | Convergence test, soft and tight relaxation of the unit cell | Done |
 | Cluster setup; `neb.x` and `pp.x` compiled (Quantum ESPRESSO 6.5) | Done |
 | Perfect 2×2×2 supercell relaxation | Done |
-| Vacancy relaxations (4 jobs) | On the cluster |
+| Vacancy relaxations (4 jobs) | +1 pair done; q0 pair on the cluster |
 | Set of distinct bulk hops | Settled: 10 (6 short, 4 long) |
 | Hop end points and NEB inputs (`build_neb.py`) | To do |
 | Bulk barriers (NEB) | To do |
@@ -271,6 +271,15 @@ The defect calculations use the tight-relaxed cell.
 | Run | Job 217406, 2 nodes (80 cores), 17 SCF iterations, 3 h 6 min |
 
 The supercell built from the tightly relaxed unit cell needed no relaxation, so the 4×4×3 unit-cell mesh and the supercell mesh agree on the forces. Its energy and VBM are the references for the vacancy cells.
+
+### Iodine vacancy, charge +1
+
+| Site | Total energy (Ry) | Run | Convergence |
+|---|---|---|---|
+| Apical (4c) | −64954.16973158 | Job 217407, 2 nodes | 47 SCF cycles, 46 BFGS steps, largest force 3.1×10⁻⁴ Ry/Bohr, highest occupied level 3.3779 eV |
+| Equatorial (8d) | −64954.16980915 | Job 217408, 2 nodes | 59 SCF cycles, 58 BFGS steps, largest force 3.7×10⁻⁴ Ry/Bohr |
+
+E(8d) − E(4c) = −1.06 meV: the two sites are nearly degenerate, equatorial very slightly lower. Same sign as Arber 2025's reported +0.03 eV (4c above 8d), but about 30 times smaller; Arber's charge state is not stated, so the comparison is not yet conclusive (see NOTES.md, open check 7). The q0 pair is still running.
 
 ## File structure
 
