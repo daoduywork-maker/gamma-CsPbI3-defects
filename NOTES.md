@@ -2,7 +2,7 @@
 
 Practical details that are not in the README: where things live, how jobs were run, decisions and their reasons, open checks, and commands that work. The README holds the science, the plan and the results.
 
-Last updated: 2026-10-08
+Last updated: 2026-10-19
 
 ## Where things are
 
@@ -49,7 +49,8 @@ make -j 4 pw neb pp
 | 217406 `pristine` | 2 nodes (80 cores), `NK=2` | **Done 11 Oct 01:28.** Started 10 Oct 22:21 after about 32 h in the queue. Converged on the first SCF (17 iterations), 0 BFGS steps, 3 h 6 min. E = −65326.88713687 Ry, total force 0.0022 Ry/Bohr, highest occupied level 3.4105 eV. Memory 62 GB used per node, no swap. Keep `tmp/` for the potential alignment |
 | 217407 `qp1_apical` | 2 nodes, `NK=2` | **Done 14 Oct 09:26.** 47 SCF cycles, 46 BFGS steps, 3 d 11 h wall (about 1.8 h per step). E = −64954.16973158 Ry, largest force 3.1×10⁻⁴ Ry/Bohr, highest occupied level 3.3779 eV. Memory 1.71 GB per process, no swap |
 | 217408 `qp1_equatorial` | 2 nodes, `NK=2` | **Done 16 Oct.** 59 SCF cycles, 58 BFGS steps. E = −64954.16980915 Ry, largest force 3.7×10⁻⁴ Ry/Bohr |
-| 217409–217410 `q0_apical`, `q0_equatorial` | 3 nodes each, `NK=2` | Running |
+| 217409 `q0_apical` | 3 nodes, `NK=2` | Running (started 11 Oct 12:37, walltime ends about 26 Oct 12:37). At step 56: E = −64953.80080990 Ry, largest force 8.7×10⁻⁴ Ry/Bohr; energy still falling 0.4–1.0 meV per step, magnetisation 0 |
+| 217410 `q0_equatorial` | 3 nodes, `NK=2` | **Done 18 Oct.** 54 SCF cycles, 53 BFGS steps. E = −64953.79815909 Ry, largest force 3.6×10⁻⁴ Ry/Bohr, magnetisation 0. Final coordinates printed; then aborted while writing `tmp/` (`seqopn` error 90, could not open `restart89`, `/public` 94% full but 4.1 TB free). Result valid, `tmp/` likely incomplete |
 | `kmesh221` | SCF of the relaxed +1 apical structure with a 2×2×1 mesh (4 k-points), 2 nodes | **Done 14 Oct.** 1.50 GB per process. E = −64954.14911857 Ry: +0.28 eV per cell (1.8 meV/atom) above 2×2×2; largest force 1.2×10⁻³ Ry/Bohr (0.031 eV/Å) against 3.1×10⁻⁴ at 2×2×2. Fails; see Decisions |
 
 **Incident, 9 Oct: jobs submitted without a memory check.** A std40 node has 92 GB. QE's estimate (printed in the first minute, `Estimated total dynamical RAM`) was 137 GB for the pristine and +1 supercells and 193 GB for the spin-polarised neutral ones. On one node the jobs ran out of memory: node32 showed 92 GB used plus 45 GB of swap, 92% of CPU time waiting on the disk, pw.x in state `D`. The +1 jobs were killed, the pristine one never finished its first SCF iteration. Fix: resubmit on 2 or 3 nodes; the job script takes the process count from the node list, so only `-l nodes=N:ppn=40` changes.
@@ -99,7 +100,7 @@ The job runs in the folder `qsub` was typed in. Options on the `qsub` line overr
 4. **Distinct hops.** Settled: 10 symmetry-distinct bulk hops, 6 short (S1–S6, 4.41–4.60 Å) and 4 long (L1–L4, 4.80–5.93 Å), from the tight structure. Checked by symmetry and by a neighbour-graph fingerprint (544 I–I pairs fall into 10 classes). Table and figure in the README.
 5. **Finite-size error.** One vacancy per 96 iodine sites. Affects absolute formation energies; cancels in site differences and barriers. Needs a correction (and the dielectric constant) or one larger-cell test.
 6. **Spin-orbit coupling.** Not included. Planned single-point check on the two +1 vacancy structures. Neutral (`q0`) results are the least reliable.
-7. **Comparison with Arber 2025** (Chem. Mater. 37, 4416), now read and the anchor paper. It gives one barrier per type of path: 0.34 eV (8d–8d), 0.35 eV (8d–4c), about 0.77 eV (4c–4c), and 4c 0.03 eV above 8d; the charge state is not stated. Our +1 result (both relaxations done, 16 Oct): E(8d) − E(4c) = −1.06 meV, same sign as Arber (8d lower) but about 30× smaller. q0 pair still running; compare both against the +0.03 eV once q0 converges, since Arber's charge state is unclear.
+7. **Comparison with Arber 2025** (Chem. Mater. 37, 4416), now read and the anchor paper. It gives one barrier per type of path: 0.34 eV (8d–8d), 0.35 eV (8d–4c), about 0.77 eV (4c–4c), and 4c 0.03 eV above 8d; the charge state is not stated. Our +1 result (both relaxations done, 16 Oct): E(8d) − E(4c) = −1.06 meV, same sign as Arber (8d lower) but about 30× smaller. q0 (provisional, apical not converged): E(8d) − E(4c) ≥ +36 meV, apical lower, opposite in sign to Arber. Compare both against the +0.03 eV once q0 apical converges, since Arber's charge state is unclear. Caveat (16 Oct): Arber's relaxed cell is nearly square in-plane (8.68 / 8.71 Å, 0.3% apart), unlike experiment (8.58 / 8.86) and every other 0 K relaxation (LDA, PBEsol, SCAN, PBE: 4–13% apart; ours 7.2%, matching Seidu's PBEsol). Less tilt can change the 4c/8d difference, so their +0.03 eV may not be a clean benchmark. Table in `Literatures/literature_review.md`. Possible test: our +1 pair on their lattice.
 
 ## Commands that work
 

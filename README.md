@@ -1,6 +1,12 @@
-# gamma-CsPbI3-defects
+# Iodine Vacancy Sites and Migration Paths in Bulk γ-CsPbI₃
 
 First-principles study of iodine defect migration in orthorhombic γ-CsPbI₃, using Quantum ESPRESSO.
+
+## Abstract (work so far, October 2026)
+
+Iodine vacancies are the main mobile defect in γ-CsPbI₃, a promising inorganic perovskite for solar cells, and their migration causes current–voltage hysteresis and degradation. Tilted octahedra in the γ phase create two inequivalent iodine sites, apical (4c) and equatorial (8d), yet published studies report only three migration path types and do not state the vacancy charge state. Using density functional theory (PBEsol) in 159-atom supercells, we compared both sites for the neutral and +1 vacancy and identified the symmetry-distinct hops. The +1 vacancy showed almost no site preference (8d lower by 1 meV), whereas the neutral vacancy favoured the apical site by at least 36 meV, opposite to the published result. The neutral vacancy behaved as a shallow donor, with its extra electron delocalized over the crystal. Symmetry analysis revealed ten distinct hops, six short and four long, rather than three. A literature comparison suggests the published benchmark used an unusually weakly tilted lattice. These results show that iodine vacancy energetics in γ-CsPbI₃ depend on both charge state and octahedral tilt, and they set the reference for the barrier calculations that follow.
+
+The neutral value is provisional: the neutral apical relaxation is still running.
 
 This repository holds the inputs, scripts and text outputs. Scratch data (wavefunctions, charge densities) is not tracked.
 
@@ -11,7 +17,7 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 | Convergence test, soft and tight relaxation of the unit cell | Done |
 | Cluster setup; `neb.x` and `pp.x` compiled (Quantum ESPRESSO 6.5) | Done |
 | Perfect 2×2×2 supercell relaxation | Done |
-| Vacancy relaxations (4 jobs) | +1 pair done; q0 pair on the cluster |
+| Vacancy relaxations (4 jobs) | +1 pair and neutral equatorial done; neutral apical on the cluster |
 | Set of distinct bulk hops | Settled: 10 (6 short, 4 long) |
 | Hop end points and NEB inputs (`build_neb.py`) | To do |
 | Bulk barriers (NEB) | To do |
@@ -209,7 +215,7 @@ Lengths from the tight-relaxed cell. One vacancy per site type is enough in the 
 
 **Checks**
 
-- Neutral vacancy: total magnetisation about 1 μB per cell.
+- Neutral vacancy: total magnetisation expected about 1 μB per cell if the extra electron localizes. Found: 0 μB in both relaxations (shallow donor, electron delocalized).
 
 ## Results so far
 
@@ -279,7 +285,20 @@ The supercell built from the tightly relaxed unit cell needed no relaxation, so 
 | Apical (4c) | −64954.16973158 | Job 217407, 2 nodes | 47 SCF cycles, 46 BFGS steps, largest force 3.1×10⁻⁴ Ry/Bohr, highest occupied level 3.3779 eV |
 | Equatorial (8d) | −64954.16980915 | Job 217408, 2 nodes | 59 SCF cycles, 58 BFGS steps, largest force 3.7×10⁻⁴ Ry/Bohr |
 
-E(8d) − E(4c) = −1.06 meV: the two sites are nearly degenerate, equatorial very slightly lower. Same sign as Arber 2025's reported +0.03 eV (4c above 8d), but about 30 times smaller; Arber's charge state is not stated, so the comparison is not yet conclusive (see NOTES.md, open check 7). The q0 pair is still running.
+E(8d) − E(4c) = −1.06 meV: the two sites are nearly degenerate, equatorial very slightly lower. Same sign as Arber 2025's reported +0.03 eV (4c above 8d), but about 30 times smaller; Arber's charge state is not stated, so the comparison is not yet conclusive (see NOTES.md, open check 7).
+
+### Iodine vacancy, neutral (provisional)
+
+| Site | Total energy (Ry) | Run | Convergence |
+|---|---|---|---|
+| Apical (4c) | −64953.80080990 (step 56, still falling) | Job 217409, 3 nodes | Running; largest force 8.7×10⁻⁴ Ry/Bohr |
+| Equatorial (8d) | −64953.79815909 | Job 217410, 3 nodes | 54 SCF cycles, 53 BFGS steps, largest force 3.6×10⁻⁴ Ry/Bohr |
+
+E(8d) − E(4c) ≥ +36 meV so far: the neutral vacancy prefers the apical site, opposite in sign to Arber 2025. The gap can only grow while the apical energy keeps falling. Total magnetisation is 0 μB in both cells: the extra electron is delocalized (shallow donor). PBEsol tends to over-delocalize, so a hybrid-functional check would be needed to confirm this.
+
+### Comparison with the published benchmark
+
+Arber 2025's relaxed cell is nearly square in the ab plane (8.68 and 8.71 Å, 0.3% apart), unlike experiment (8.58 and 8.86 Å, 3.3%) and every other 0 K relaxation found: ours (7.2%), Seidu 2021 PBEsol (7.6%), and LDA, PBE and SCAN (4–13%). The 4c and 8d sites differ only through octahedral tilt, so a less-tilted cell may explain part of the difference in site energies. Details: `Literatures/literature_review.md`.
 
 ## File structure
 

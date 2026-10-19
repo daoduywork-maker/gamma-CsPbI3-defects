@@ -69,6 +69,30 @@ To settle it: compare our +1 and neutral results with their numbers, or ask the 
 
 From Fig. S1: the end of the 8d-to-4c path lies about 0.03 eV above its start. So **a vacancy on the apical (4c) site is about 0.03 eV higher than on the equatorial (8d) site.**
 
+### Relaxed cell: anomalously square **(our reading)**
+
+Their relaxed cell is nearly square in the ab plane, unlike experiment and every other 0 K relaxation we found (compared 16 October 2026). Even the experiment they compare against in their own Table 1 (Sutton 2018: 8.86 and 8.58 Å) is clearly rectangular.
+
+| Source | Functional | Long in-plane (Å) | Short in-plane (Å) | c (Å) | In-plane difference |
+|---|---|---|---|---|---|
+| Experiment, 293 K (Sutton 2018) | | 8.856 | 8.577 | 12.472 | 0.28 Å (3.3%) |
+| Kaczkowski 2021 | LDA | 8.939 | 7.947 | 12.217 | 0.99 Å (12.5%) |
+| Marronnier 2018 (via Kaczkowski) | LDA | 8.959 | 7.928 | 12.224 | 1.03 Å (13.0%) |
+| **Ours** | **PBEsol** | 8.961 | 8.362 | 12.350 | **0.60 Å (7.2%)** |
+| Seidu 2021 (2×2×2 cell in a rotated setting, converted by us) | PBEsol | 8.94 | 8.31 | 12.35 | 0.63 Å (7.6%) |
+| Kaczkowski 2021 | SCAN | 9.018 | 8.522 | 12.520 | 0.50 Å (5.8%) |
+| Huang 2018 (via Kaczkowski) | PBE | 9.13 | 8.66 | 12.64 | 0.47 Å (5.4%) |
+| Kaczkowski 2021 | PBE | 9.095 | 8.731 | 12.638 | 0.36 Å (4.2%) |
+| **Paper A** | **PBEsol** | 8.71 | 8.68 | 12.44 | **0.03 Å (0.3%)** |
+
+- Every 0 K relaxation gives a rectangular cell, ordered by how tightly the functional binds: LDA > PBEsol > SCAN > PBE. Smaller volume, stronger octahedral tilt, more rectangular cell.
+- Our cell matches Seidu's independent PBEsol cell to within 0.05 Å.
+- Paper A's cell fits no functional. Possible causes: a constrained cell shape, a start from a less-tilted structure, or a relaxation stopped in a shallow minimum (the cell is very soft against exchanging a and b). The paper does not say.
+- One single-crystal measurement at 295 K (listed by Kaczkowski) reports a nearly square cell (8.858 and 8.864 Å), but that is a thermally averaged, possibly twinned structure, not a 0 K minimum.
+- Consequence: the 4c/8d difference comes from the octahedral tilt, so a less-tilted cell can give a different site energy. Paper A's +0.03 eV may not be a clean benchmark for our site energies.
+
+Sources: Kaczkowski and Płowaś-Korus, J. Phys. Chem. Lett. 12, 6613 (2021), `Lattice_functionals-Kaczkowski2021.pdf`; Seidu et al., J. Chem. Phys. 154, 074712 (2021), arXiv 2011.04269.
+
 ### Overlap with us
 
 | Question | Answer |
