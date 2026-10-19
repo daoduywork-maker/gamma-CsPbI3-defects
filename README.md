@@ -392,7 +392,7 @@ Listed in `.gitignore`:
 - `tmp/` and `*.save/`: Quantum ESPRESSO scratch data
 - `*.wfc*`, `*.xml`: wavefunctions and data files
 - `backup/`, `*:Zone.Identifier`, `__pycache__/`
-- `Literatures/*.pdf`: the papers themselves (copyrighted), kept locally only
+- `Literatures/*.pdf`, `Literatures/*.docx`: the papers and supporting information (copyrighted), kept locally only
 
 ## Next steps
 

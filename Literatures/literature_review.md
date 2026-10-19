@@ -76,22 +76,27 @@ Their relaxed cell is nearly square in the ab plane, unlike experiment and every
 | Source | Functional | Long in-plane (Å) | Short in-plane (Å) | c (Å) | In-plane difference |
 |---|---|---|---|---|---|
 | Experiment, 293 K (Sutton 2018) | | 8.856 | 8.577 | 12.472 | 0.28 Å (3.3%) |
+| Experiment, thin film (Zhao 2018, via Zhang 2025) | | 8.82 | 8.65 | 12.52 | 0.17 Å (2.0%) |
 | Kaczkowski 2021 | LDA | 8.939 | 7.947 | 12.217 | 0.99 Å (12.5%) |
 | Marronnier 2018 (via Kaczkowski) | LDA | 8.959 | 7.928 | 12.224 | 1.03 Å (13.0%) |
 | **Ours** | **PBEsol** | 8.961 | 8.362 | 12.350 | **0.60 Å (7.2%)** |
 | Seidu 2021 (2×2×2 cell in a rotated setting, converted by us) | PBEsol | 8.94 | 8.31 | 12.35 | 0.63 Å (7.6%) |
+| Zhang 2025 | PBEsol | 8.96 | 8.39 | 12.37 | 0.57 Å (6.8%) |
+| Zhang 2025 | **HSE06** | 9.03 | 8.40 | 12.59 | 0.63 Å (7.5%) |
 | Kaczkowski 2021 | SCAN | 9.018 | 8.522 | 12.520 | 0.50 Å (5.8%) |
 | Huang 2018 (via Kaczkowski) | PBE | 9.13 | 8.66 | 12.64 | 0.47 Å (5.4%) |
 | Kaczkowski 2021 | PBE | 9.095 | 8.731 | 12.638 | 0.36 Å (4.2%) |
+| Zhang 2025 | PBE | 9.11 | 8.73 | 12.68 | 0.38 Å (4.4%) |
 | **Paper A** | **PBEsol** | 8.71 | 8.68 | 12.44 | **0.03 Å (0.3%)** |
 
 - Every 0 K relaxation gives a rectangular cell, ordered by how tightly the functional binds: LDA > PBEsol > SCAN > PBE. Smaller volume, stronger octahedral tilt, more rectangular cell.
-- Our cell matches Seidu's independent PBEsol cell to within 0.05 Å.
+- Our cell matches two independent PBEsol cells, Seidu's and Zhang's, to within 0.05 Å.
+- A hybrid functional (HSE06, Zhang 2025) is just as rectangular (7.5%), so the rectangular cell is not an artefact of semilocal DFT.
 - Paper A's cell fits no functional. Possible causes: a constrained cell shape, a start from a less-tilted structure, or a relaxation stopped in a shallow minimum (the cell is very soft against exchanging a and b). The paper does not say.
 - One single-crystal measurement at 295 K (listed by Kaczkowski) reports a nearly square cell (8.858 and 8.864 Å), but that is a thermally averaged, possibly twinned structure, not a 0 K minimum.
 - Consequence: the 4c/8d difference comes from the octahedral tilt, so a less-tilted cell can give a different site energy. Paper A's +0.03 eV may not be a clean benchmark for our site energies.
 
-Sources: Kaczkowski and Płowaś-Korus, J. Phys. Chem. Lett. 12, 6613 (2021), `Lattice_functionals-Kaczkowski2021.pdf`; Seidu et al., J. Chem. Phys. 154, 074712 (2021), arXiv 2011.04269.
+Sources: Kaczkowski and Płowaś-Korus, J. Phys. Chem. Lett. 12, 6613 (2021), `Lattice_functionals-Kaczkowski2021.pdf`; Seidu et al., J. Chem. Phys. 154, 074712 (2021), arXiv 2011.04269; Zhang et al., Appl. Surf. Sci. 679, 161235 (2025), Table S1 of `Strain_defects-Zhang2025_SI.docx`.
 
 ### Overlap with us
 
@@ -283,6 +288,7 @@ Papers outside A, B and C that the project uses. Notes are short; entries marked
 | N. Xu et al., *Point defects in metal halide perovskites*, Nat. Rev. Mater. (2025) | Review of point defects, their electronic tolerance and their role in instability | Citation for "Why defects matter" **(title and abstract only)** |
 | Z. Wylie et al., *Surface iodide defects control the kinetics of the CsPbI₃ perovskite phase transformation*, ACS Energy Lett. 9, 4378 (2024), doi:10.1021/acsenergylett.4c01465 | Experiment: CsI or CdI₂ treatment slows the change to δ-CsPbI₃ about fivefold; X-ray photoelectron spectroscopy ties this to surface iodide; surface iodide vacancies are proposed as nucleation sites for the δ phase | Motivation for the surface focus **(abstract only)** |
 | M. Pols, T. Hilpert, I. A. W. Filot, A. C. T. van Duin, S. Calero, S. Tao, *What happens at surfaces and grain boundaries of halide perovskites: insights from reactive molecular dynamics simulations of CsPbI₃*, ACS Appl. Mater. Interfaces (2022), arXiv:2205.10545 | Reactive MD (ReaxFF) of orthorhombic CsPbI₃ slabs, 300–700 K: a cubic-like surface shell about 2 nm thick; iodine vacancies seen moving into and out of the surface, without barriers or rates | Closest earlier work for G2; the 2 nm shell is a guide for how deep the surface effect may reach (H3) |
+| J. Zhang, L. Guan, Z. Chen, T. Luo, T. Yin, X. Ren, W. Shi, C. Liu, X. Chen, X. Li, *Strain effects on the structural stability and defect properties of γ-CsPbI₃*, Appl. Surf. Sci. 679, 161235 (2025), `Strain_defects-Zhang2025.pdf` and `_SI.docx` | γ-CsPbI₃, VASP PBEsol (500 eV, 0.01 eV/Å, D3 for NEB; SOC for levels). Relaxed lattice 8.39 / 8.96 / 12.37 Å (PBEsol), also PBE and HSE06, all rectangular (Table S1). V_I is a shallow donor. Two V_I paths, "out-of-plane" (octahedron edge toward the apical site) and "in-plane": barriers about 0.51 and 0.54 eV (Fig. 6c), 7 NEB images. **(Our reading)** the out-of-plane profile ends about 15 meV below its start, i.e. the apical site slightly lower if the path runs 8d to 4c, as for our neutral vacancy; charge state of the NEB and defect supercell size not stated. Main topic: biaxial strain | Lattice comparison (third independent PBEsol cell, plus HSE); second γ-CsPbI₃ hint on the 4c/8d site energy; barrier context (0.5 eV vs paper A's 0.34 eV) |
 | T. J. A. M. Smolders, R. A. De Souza, A. B. Walker, M. J. Wolf, *Diffusivity tensors of Br and Cs vacancies in biaxially strained perovskite CsPbBr₃*, Chem. Mater. (2024) | Direction-resolved vacancy diffusivity in bulk CsPbBr₃ under strain | Method reference for the deferred diffusion-tensor (kinetic Monte Carlo) add-on **(title only)** |
 
 ## Novelty check (October 2026)
