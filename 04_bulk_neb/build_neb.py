@@ -18,7 +18,7 @@ One run builds one hop (S1-S6, L1-L4) in one charge state:
 
 Usage (from the project root):
     python3 04_bulk_neb/build_neb.py S1 --charge q+1
-    python3 04_bulk_neb/build_neb.py S2 --charge q+1 --images 5 --from 8d
+    python3 04_bulk_neb/build_neb.py S2 --charge q+1 --images 4 --from 8d
 
 Expected relaxed structures (copied from the cluster):
     03_vacancies/<charge>/vac_I_equatorial/relax.out
@@ -164,7 +164,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("hop", choices=list(HOPS))
     ap.add_argument("--charge", default="q+1", choices=["q+1", "q0"])
-    ap.add_argument("--images", type=int, default=5, help="intermediate images (default 5)")
+    ap.add_argument("--images", type=int, default=4, help="intermediate images (default 4: two per fat96 node with -ni 4)")
     ap.add_argument("--from", dest="start", choices=["4c", "8d"],
                     help="starting site type for a 4c-8d hop (default 8d)")
     ap.add_argument("--pristine", default="02_pristine/relax.in")

@@ -19,8 +19,8 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 | Perfect 2×2×2 supercell relaxation | Done |
 | Vacancy relaxations (4 jobs) | +1 pair and neutral equatorial done; neutral apical on the cluster |
 | Set of distinct bulk hops | Settled: 10 (6 short, 4 long) |
-| Hop end points and NEB inputs (`build_neb.py`) | To do |
-| Bulk barriers (NEB) | To do |
+| Hop end points and NEB inputs (`build_neb.py`, `hop_network.py`, `run_neb.pbs`) | Done |
+| Bulk barriers (NEB) | To do: staged; stage 1 = S1, S2, L3, S6, the hops comparable with published values (see Methods) |
 | CsI-terminated slab: vacancies and barriers against depth | To do |
 
 ## Introduction
@@ -85,6 +85,7 @@ Full notes, numbers and sources: [`Literatures/literature_review.md`](Literature
 | **Arber 2025** (anchor) | Bulk γ-CsPbI₃, PBEsol, 2×2×2 supercell: iodine vacancy barriers 0.34 eV (8d-8d), 0.35 eV (8d-4c), about 0.77 eV (4c-4c); MD activation energy 0.42 eV | Surfaces; more than one barrier per type of path; the charge state |
 | Biega 2021 | Cubic CsPbBr₃ slabs: the long axial-to-axial barrier is about half the bulk value at the surface | Edge hops; the tilted phase; a slab whose barriers return to the bulk value |
 | Ahmad 2024 | Orthorhombic CsPbI₃ 17-layer slabs: vacancy and interstitial formation energies against depth | Barriers; a slab interior that matches its own bulk (off by 0.05 to 0.66 eV) |
+| Zhang 2025 | Bulk γ-CsPbI₃ under strain, PBEsol: two V_I paths, about 0.51 eV (edge towards the apical site) and 0.54 eV (in-plane); rectangular relaxed cell with PBEsol, PBE and HSE06; V_I a shallow donor | Charge state and supercell size; site energies; only two paths |
 
 ### The gap
 
@@ -109,7 +110,7 @@ This appears as three specific gaps:
 | | Question | Gap | Hypothesis |
 |---|---|---|---|
 | **RQ1** | Which site does the vacancy prefer, and by how much, in each charge state? | G1 | **H1.** 8d by a few hundredths of an eV in both; one charge state reproduces paper A's +0.03 eV. |
-| **RQ2** | What are the barriers of the 10 distinct bulk hops? | G1 | **H2.** Variants of one type differ by up to about 0.1 eV, rising with hop length; long hops are clearly higher. |
+| **RQ2** | What are the bulk hop barriers, and how do the number and direction of hops shape transport in the ab plane and along c? | G1 | **H2.** Variants of one type differ by a few hundredths of an eV; long hops are clearly higher. Transport along c needs 4c–8d hops, so it is set by their barriers and by how often the vacancy sits on 4c: diffusion is anisotropic. |
 | **RQ3** | How do site energies and barriers change layer by layer below the CsI-terminated surface? | G2 | **H3.** Barriers drop and the vacancy is slightly more stable in the top layers; the effect fades within two to three layers (about 1 nm). |
 | **RQ4** | Once the surface splits each pair of equivalent hops, which direction is favoured? | G2 | **H4.** Hops towards the surface are easier, giving a net drift of vacancies to the surface. |
 | **RQ5** | Does the middle of the slab reproduce the bulk site energy and barrier? | G3 | **H5.** Yes, within about 0.02 eV, for a symmetric 11-layer slab with all atoms free. |
@@ -118,7 +119,7 @@ This appears as three specific gaps:
 
 | | Contribution | Gap |
 |---|---|---|
-| **N1** | All 10 symmetry-distinct bulk hops, with both charge states stated | G1 |
+| **N1** | The hop network of the vacancy (barriers, multiplicities, directions) with both charge states stated, and a bulk reference for every hop the slab will split | G1 |
 | **N2** | First depth-resolved vacancy barriers in γ-CsPbI₃, followed back to the bulk | G2 |
 | **N3** | The surface splitting of equivalent hops as a measure of directional drift | G2 |
 | **N4** | A slab checked against its own bulk reference | G3 |
@@ -191,12 +192,12 @@ One vacancy per supercell; the cell is fixed in all defect calculations.
 
 | Quantity | Paper A | Our check |
 |---|---|---|
-| Vacancy site energy, 4c minus 8d | about +0.03 eV | Step 3, both charge states |
+| Vacancy site energy, 4c minus 8d | about +0.03 eV (inferred from the end points of its Fig. S1, not stated in the text) | Step 3, both charge states |
 | Barrier 8d to 8d | 0.34 eV | Step 4 |
 | Barrier 8d to 4c (average of both directions) | 0.35 eV | Step 4 |
 | Barrier 4c to 4c (long jump) | about 0.77 eV | Step 4 |
 
-Paper A does not state its charge state; whichever of ours reproduces these numbers indicates which one they used.
+Paper A does not state its charge state; whichever of ours reproduces these numbers indicates which one they used. A second reference, Zhang 2025 (PBEsol, rectangular cell like ours), gives about 0.51 eV for an edge hop towards the apical site and 0.54 eV for an in-plane hop, read from its Fig. 6c; its edge-hop profile ends about 15 meV below its start.
 
 **Hop set.** All octahedra are equivalent (Pb on Wyckoff site 4b), and Pb is an inversion centre, so the 12 edges of one octahedron give **6 short hops** (S1–S6). Hops between corner-sharing octahedra give **4 long hops** (L1–L4).
 
@@ -212,6 +213,42 @@ Paper A does not state its charge state; whichever of ours reproduces these numb
 | S6 | 8d–8d | 4.60 | | | | |
 
 Lengths from the tight-relaxed cell. One vacancy per site type is enough in the bulk. Each 4c–8d NEB gives both directions.
+
+**Hop network** (`04_bulk_neb/hop_network.py`, from the perfect supercell). How many hops of each kind one vacancy has, and where they go:
+
+| Hop | Ends | From an 8d vacancy | From a 4c vacancy | Moves the vacancy |
+|---|---|---|---|---|
+| S1, S6 | 8d–8d | 2 each | 0 | within a PbI₂ layer |
+| S2, S3, S4, S5 | 4c–8d | 1 each | 2 each | between a PbI₂ and a CsI layer |
+| L1 | 8d–8d | 1 | 0 | within a PbI₂ layer |
+| L2 | 8d–8d | 1 | 0 | straight along c, across a CsI layer |
+| L3 | 4c–4c | 0 | 2 | within a CsI layer |
+| L4 | 4c–8d | 1 | 2 | between layers |
+| Total | | 11 | 12 | |
+
+Half of the short hops from an 8d site lead to a 4c site, and a 4c vacancy has no short hop to another 4c site. Transport in the ab plane can run on 8d–8d hops alone; along c it needs 4c–8d hops (8d → 4c → 8d) or the long L2. So the barriers of all three kinds, their numbers, and the 4c/8d site energies together decide the diffusion and its anisotropy, not the lowest barrier alone.
+
+**Which hops match published paths.** The papers name path types, not variants, so we matched them by geometry:
+
+| Published path | Value | Our hop | How identified |
+|---|---|---|---|
+| Arber: 4c–4c in the Cs–I plane | about 0.77 eV | **L3** | The only 4c–4c hop |
+| Arber: 8d–8d edge in the Pb–I plane | 0.34 eV | S1 or S6 | Not identifiable: Arber's Fig. 1 is a schematic |
+| Arber: 8d–4c edge | 0.35 eV (average of both directions) | one of S2–S5 | Not identifiable, as above |
+| Zhang: "in-plane" path | about 0.54 eV | **S1** (probable) | Arrow in its Fig. 6b rises about 1 Å along c: S1 (1.00 Å), not S6 (0 Å) |
+| Zhang: "out-of-plane" path | about 0.51 eV | **S2** (probable) | Arrow in its Fig. 6a rises about 2.7 Å along c with almost no sideways component in the [110] view: S2 (2.59 Å, 0.4 Å sideways), not S3/S5 (3.59 Å) or S4 (1.2 Å sideways) |
+
+The Zhang assignments are read from a raster figure (about ±0.3 Å) and assume a view along [110] with the same a < b labelling as ours (their PBEsol cell, 8.39 / 8.96 / 12.37 Å, has it).
+
+**NEB plan (staged).**
+
+| Stage | Hops | Purpose |
+|---|---|---|
+| 1: comparison with published values | **S1, S2, L3, S6** | S1 and S2 are like-for-like with Zhang and stand for Arber's 8d–8d and 8d–4c types; L3 is Arber's 4c–4c jump; S6 is the other 8d–8d edge (Arber's could be either) and gives a first measure of the spread within a type |
+| 2: spread of the 4c–8d hops | S3, S4, S5 | Completes the edge hops between layers, which control transport along c |
+| 3: long hops, only if needed | L1, L2, L4 | No published values; needed if the network or anisotropy analysis calls for them (L2 is the direct route along c) |
+
+If S1 and S6 (and S2–S5) differ by less than about 0.03 eV, one barrier per type is reported with the spread as its uncertainty. At 300 K a 0.05 eV difference changes a rate about sevenfold, so the threshold is kept small. Charge +1 first; neutral for stage 1. Each hop that the surface splits is later compared with its own bulk value, not a type average.
 
 **Checks**
 
@@ -294,11 +331,11 @@ E(8d) − E(4c) = −1.06 meV: the two sites are nearly degenerate, equatorial v
 | Apical (4c) | −64953.80080990 (step 56, still falling) | Job 217409, 3 nodes | Running; largest force 8.7×10⁻⁴ Ry/Bohr |
 | Equatorial (8d) | −64953.79815909 | Job 217410, 3 nodes | 54 SCF cycles, 53 BFGS steps, largest force 3.6×10⁻⁴ Ry/Bohr |
 
-E(8d) − E(4c) ≥ +36 meV so far: the neutral vacancy prefers the apical site, opposite in sign to Arber 2025. The gap can only grow while the apical energy keeps falling. Total magnetisation is 0 μB in both cells: the extra electron is delocalized (shallow donor). PBEsol tends to over-delocalize, so a hybrid-functional check would be needed to confirm this.
+E(8d) − E(4c) ≥ +36 meV so far: the neutral vacancy prefers the apical site, opposite in sign to Arber 2025. The gap can only grow while the apical energy keeps falling. Total magnetisation is 0 μB in both cells: the extra electron is delocalized (shallow donor). Zhang 2025 also finds V_I a shallow donor (PBEsol, with spin–orbit coupling for the levels). PBEsol tends to over-delocalize, so a hybrid-functional check would be needed to confirm this.
 
 ### Comparison with the published benchmark
 
-Arber 2025's relaxed cell is nearly square in the ab plane (8.68 and 8.71 Å, 0.3% apart), unlike experiment (8.58 and 8.86 Å, 3.3%) and every other 0 K relaxation found: ours (7.2%), Seidu 2021 PBEsol (7.6%), and LDA, PBE and SCAN (4–13%). The 4c and 8d sites differ only through octahedral tilt, so a less-tilted cell may explain part of the difference in site energies. Details: `Literatures/literature_review.md`.
+Arber 2025's relaxed cell is nearly square in the ab plane (8.68 and 8.71 Å, 0.3% apart), unlike experiment (8.58 and 8.86 Å, 3.3%) and every other 0 K relaxation found: ours (7.2%), Seidu 2021 PBEsol (7.6%), Zhang 2025 PBEsol (6.8%) and HSE06 (7.5%), and LDA, PBE and SCAN (4–13%). The hybrid-functional cell shows that the rectangular shape is not an artefact of semilocal DFT. Zhang 2025's edge hop towards the apical site ends about 15 meV below its start (read from its Fig. 6c), the same direction as our neutral result, but its charge state is not stated. The 4c and 8d sites differ only through octahedral tilt, so a less-tilted cell may explain part of the difference in site energies. Details: `Literatures/literature_review.md`.
 
 ## File structure
 
@@ -308,7 +345,7 @@ One folder per step of the Methods. The steps that have not started yet hold onl
 .
 ├── README.md                    this file
 ├── NOTES.md                     working notes: cluster, jobs, decisions, commands
-├── Literatures/                 literature_review.md (papers A, B and C in detail) and the papers as PDF (not tracked)
+├── Literatures/                 literature_review.md (papers A, B and C in detail, plus related work) and the papers (not tracked)
 ├── LICENSE
 ├── run_qe.pbs                   PBS job script for pw.x, shared by all cluster jobs
 ├── assets/                      figures used in this README
@@ -316,7 +353,9 @@ One folder per step of the Methods. The steps that have not started yet hold onl
 ├── 01_unitcell/                 step 1: convergence test, soft and tight relaxation of the 20-atom cell
 ├── 02_pristine/                 step 2: perfect 2×2×2 supercell (160 atoms)
 ├── 03_vacancies/                step 3: 4c and 8d vacancies, charge +1 and neutral
-├── 04_bulk_neb/                 step 4: NEB for the 10 bulk hops (to do)
+├── 04_bulk_neb/                 step 4: build_neb.py (NEB inputs), hop_network.py and hop_network.txt (hop counts and directions)
+├── run_neb.pbs                  PBS job script for neb.x (fat96 nodes, swap guard)
+├── presentation/                progress report for the supervisor (Beamer source and PDF)
 ├── 05_slab/                     step 5: CsI-terminated (001) slab, build and convergence (to do)
 ├── 06_slab_vacancies/           step 6: vacancies at increasing depth (to do)
 └── 07_slab_neb/                 step 7: NEB at increasing depth (to do)
@@ -362,7 +401,7 @@ The base input holds the experimental room-temperature structure (Sutton et al.,
     └── vac_I_equatorial/
 ```
 
-`build_defects.py` builds vacancies only; the NEB end points will come from a separate script, `build_neb.py`, in `04_bulk_neb/`.
+`build_defects.py` builds vacancies only. The NEB inputs come from `04_bulk_neb/build_neb.py` (end points by symmetry from the relaxed vacancies, IDPP path, `neb.in`), for example `python3 04_bulk_neb/build_neb.py S1 --charge q+1`. `04_bulk_neb/hop_network.py` writes the hop counts and directions to `hop_network.txt`.
 
 `run_qe.pbs` loads the modules and runs `pw.x` in the folder it is submitted from, with as many processes as nodes × 40. Give the node count, input name and k-point pools on the `qsub` line, for example `qsub -N pristine -l nodes=2:ppn=40 -v INPUT=relax.in,NK=2 <path>/run_qe.pbs`. Check memory first: see `NOTES.md`.
 
@@ -396,7 +435,7 @@ Listed in `.gitignore`:
 
 ## Next steps
 
-1. Finish the five supercell relaxations; check the k-mesh, energies and the neutral magnetisation.
-2. Compare the 4c and 8d vacancy energies with paper A (about +0.03 eV) for both charge states.
-3. Write `build_neb.py` (end points for S1–S6 and L1–L4); trial NEB for one 8d-8d hop against 0.34 eV, then the rest.
+1. Finish the neutral apical relaxation; final neutral site energy.
+2. NEB stage 1 at +1: S1 and S2 (against Zhang 2025 and paper A), L3 (against paper A's 0.77 eV), S6. Then stage 2 (S3, S4, S5) and decide on the long hops.
+3. Neutral NEB for the stage-1 hops.
 4. Build the CsI-terminated slab and run the convergence tests before any defect in it.

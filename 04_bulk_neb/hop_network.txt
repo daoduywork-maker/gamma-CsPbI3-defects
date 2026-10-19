@@ -1,0 +1,26 @@
+Perfect supercell: 02_pristine/relax.in, 96 iodine sites (64 8d, 32 4c)
+Hops available to ONE vacancy, by its site type, and the hop displacement (A)
+
+hop  ends    length  from 8d from 4c   |da|  |db|  |dc|  direction
+S1   8d-8d     4.41        2       0   4.18  0.98  1.00  within one layer
+S2   4c-8d     4.43        1       2   2.26  2.79  2.59  PbI2 layer <-> CsI layer
+S3   4c-8d     4.45        1       2   1.92  1.81  3.59  PbI2 layer <-> CsI layer
+S4   4c-8d     4.53        1       2   3.31  1.69  2.59  PbI2 layer <-> CsI layer
+S5   4c-8d     4.56        1       2   0.87  2.68  3.59  PbI2 layer <-> CsI layer
+S6   8d-8d     4.60        2       0   1.04  4.48  0.00  within one layer
+L1   8d-8d     4.80        1       0   3.14  3.50  1.00  within one layer
+L2   8d-8d     5.18        1       0   0.00  0.00  5.18  across a layer, along c
+L3   4c-4c     5.28        0       2   2.79  4.48  0.00  within one layer
+L4   4c-8d     5.93        1       2   5.05  1.69  2.59  PbI2 layer <-> CsI layer
+total                     11      12
+
+8d sites lie in the PbI2 layers, 4c sites in the CsI layers. Moving the vacancy
+along c needs 4c-8d hops (8d -> 4c -> 8d) or the long L2; within the ab plane,
+8d-8d hops (S1, S6, L1) and L3 between 4c sites are enough.
+
+Checks: every 4c-8d hop must appear twice as often from 4c as from 8d (there are 2x more 8d sites).
+  S2: 1 x 64 = 2 x 32  ok
+  S3: 1 x 64 = 2 x 32  ok
+  S4: 1 x 64 = 2 x 32  ok
+  S5: 1 x 64 = 2 x 32  ok
+  L4: 1 x 64 = 2 x 32  ok

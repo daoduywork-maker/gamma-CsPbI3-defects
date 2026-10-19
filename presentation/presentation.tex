@@ -116,8 +116,8 @@
 % =====================================================================
 \section{Literature and gap}
 
-\begin{frame}{Three papers define the starting point}
-  \footnotesize
+\begin{frame}{Key papers}
+  \scriptsize
   \begin{tabular}{p{0.19\textwidth}p{0.37\textwidth}p{0.34\textwidth}}
     \toprule
     Paper & What it did & What it leaves open \\
@@ -127,12 +127,14 @@
     \textbf{B} Biega 2021\cit{2} \newline \footnotesize J.\ Phys.\ Energy & Cubic CsPbBr$_3$ slabs: long axial jump about half the bulk barrier at the surface & Long jump only; no tilt; thin, partly frozen slab never returns to bulk \\
     \addlinespace
     \textbf{C} Ahmad 2024\cit{3} \newline \footnotesize Phys.\ Rev.\ Mater. & CsPbI$_3$, 17-layer slab: vacancy formation energies vs depth & No barriers; equatorial sites only; slab interior off from own bulk by 0.05--0.66 eV \\
+    \addlinespace
+    \textbf{D} Zhang 2025\cit{20} \newline \footnotesize Appl.\ Surf.\ Sci. & Bulk \cpi\ under strain, PBEsol: two paths, 0.51 eV (edge, towards apical) and 0.54 eV (in-plane); rectangular cell (PBEsol, PBE, HSE06) & Charge state; site energies; only two paths \\
     \bottomrule
   \end{tabular}
 
-  \vspace{0.4em}
-  \textbf{Gap:} no iodine-vacancy barriers in \cpi\ resolved by hop and by depth, in a slab whose interior reproduces the bulk.
-  \refs{\RA\quad \RB\quad \RC}
+  \vspace{0.2em}
+  \footnotesize\textbf{Gap:} no iodine-vacancy barriers in \cpi\ resolved by hop and by depth, in a slab whose interior reproduces the bulk.
+  \refs{\RA\quad \RB\quad \RC\quad \RT}
 \end{frame}
 
 \begin{frame}{Gaps and research questions}
@@ -141,7 +143,7 @@
     \toprule
     & Gap & Research question \\
     \midrule
-    \textbf{G1} & Bulk barriers known per path type only; charge state unstated\cit{1} & \textbf{RQ1} Which site does the vacancy prefer, in each charge state? \newline \textbf{RQ2} Barriers of all distinct bulk hops? \\
+    \textbf{G1} & Bulk barriers known per path type only; charge state unstated\cit{1} & \textbf{RQ1} Which site does the vacancy prefer, in each charge state? \newline \textbf{RQ2} Bulk barriers, and how the number and direction of hops shape transport (ab plane vs $c$)? \\
     \addlinespace
     \textbf{G2} & Surface effect known for one jump in cubic CsPbBr$_3$ only\cit{2} & \textbf{RQ3--4} Barriers and drift direction layer by layer below the surface \\
     \addlinespace
@@ -149,11 +151,11 @@
     \bottomrule
   \end{tabular}
 
-  \vspace{0.4em}
+  \vspace{0.2em}
   \textbf{Scope:} iodine vacancy only; charge $+1$ and neutral; CsI termination. \\
   Interstitials, PbI$_2$ termination, formation energies vs $\mu_\mathrm{I}$ and $E_F$, ML potentials: \emph{out of scope for now}.
 
-  \vspace{0.4em}
+  \vspace{0.2em}
   \alert{This talk: G1 (RQ1 done for $+1$, nearly done for neutral; RQ2 set up).}
   \refs{\RA\quad \RB\quad \RC}
 \end{frame}
@@ -309,19 +311,20 @@
     $V_\mathrm{I}^{0}$ & $-64953.80080990^{*}$ & $-64953.79815909$ & $\mathbf{\geq +36}$ \textbf{meV}$^{*}$ \\
     \midrule
     Paper A\cit{1}$^{\dagger}$ & & & $\approx -30$ meV \\
+    Zhang 2025\cit{20}$^{\ddagger}$ & & & $\approx +15$ meV \\
     \bottomrule
   \end{tabular}
 
-  {\footnotesize $^{*}$ 4c neutral still relaxing (energy still falling), so the gap can only grow.\quad $^{\dagger}$ Inferred from Fig.~S1; charge state not stated.}
+  {\footnotesize $^{*}$ 4c neutral still relaxing (energy still falling), so the gap can only grow.\quad $^{\dagger}$ Inferred from Fig.~S1; $^{\ddagger}$ from Fig.~6c (edge path towards apical, if it runs 8d$\rightarrow$4c); charge states not stated.}
 
-  \vspace{1em}
-  \raggedright
+  \vspace{0.3em}
+  \raggedright\footnotesize
   \begin{itemize}
     \item $+1$: the two sites are \textbf{degenerate} (1 meV, below our accuracy).
     \item Neutral: clear preference for the \textbf{apical} site, \alert{opposite in sign} to paper A.
-    \item Neither charge state reproduces paper A's 0.03 eV.
+    \item Neither charge state reproduces paper A's 0.03 eV; the other PBEsol study (rectangular cell) leans the same way as our neutral result.
   \end{itemize}
-  \refs{\RA\ Not reported as a site energy. Inferred from its Fig.~S1: the 8d$\rightarrow$4c profile ends $\approx$0.03 eV above its start, and the caption gives forward and reverse barriers differing by $\approx$0.03 eV; read off a plot, $\pm$0.01 eV.\quad Our energies: this work.}
+  \refs{\RA\ Not reported as a site energy. Inferred from its Fig.~S1: the 8d$\rightarrow$4c profile ends $\approx$0.03 eV above its start, and the caption gives forward and reverse barriers differing by $\approx$0.03 eV; read off a plot, $\pm$0.01 eV.\quad \quad \RT\quad Our energies: this work.}
 \end{frame}
 
 \begin{frame}{The neutral vacancy is a shallow donor (in PBEsol)}
@@ -381,33 +384,61 @@
   \refs{S1--S6: along octahedron edges; L1--L4: between corner-sharing octahedra. Figure, hop set and lengths: this work (tight-relaxed cell).}
 \end{frame}
 
-\begin{frame}{The ten hops}
-  \begin{columns}[c]
-    \column{0.45\textwidth}
-    \centering\small
-    \begin{tabular}{llc@{\hspace{1.2em}}llc}
-      \toprule
-      Hop & Ends & \AA & Hop & Ends & \AA \\
-      \midrule
-      S1 & 8d--8d & 4.41 & L1 & 8d--8d & 4.80 \\
-      S2 & 4c--8d & 4.43 & L2 & 8d--8d & 5.18 \\
-      S3 & 4c--8d & 4.45 & L3 & 4c--4c & 5.28 \\
-      S4 & 4c--8d & 4.53 & L4 & 4c--8d & 5.93 \\
-      S5 & 4c--8d & 4.56 & & & \\
-      S6 & 8d--8d & 4.60 & & & \\
-      \bottomrule
-    \end{tabular}
-    \column{0.52\textwidth}
-    \small
-    \begin{itemize}
-      \item 12 edges per octahedron; Pb is an inversion centre $\rightarrow$ \textbf{6 short hops}
-      \item Hops between corner-sharing octahedra $\rightarrow$ \textbf{4 long hops}
-      \item Checked by symmetry and by a neighbour-graph fingerprint (544 I--I pairs $\rightarrow$ 10 classes)
-      \item Paper A: one barrier per type (8d--8d, 8d--4c, 4c--4c)\cit{1}
-      \item Each 4c--8d NEB gives both directions
-    \end{itemize}
-  \end{columns}
-  \refs{\RA\quad Hop set and lengths: this work.}
+\begin{frame}{The ten hops: how many, and where they go}
+  \centering\footnotesize
+  \begin{tabular}{llcccl}
+    \toprule
+    Hop & Ends & Length (\AA) & From 8d & From 4c & Moves the vacancy \\
+    \midrule
+    S1, S6 & 8d--8d & 4.41, 4.60 & 2 each & 0 & within a PbI$_2$ layer \\
+    S2--S5 & 4c--8d & 4.43--4.56 & 1 each & 2 each & PbI$_2$ $\leftrightarrow$ CsI layer \\
+    L1 & 8d--8d & 4.80 & 1 & 0 & within a PbI$_2$ layer \\
+    L2 & 8d--8d & 5.18 & 1 & 0 & straight along $c$ \\
+    L3 & 4c--4c & 5.28 & 0 & 2 & within a CsI layer \\
+    L4 & 4c--8d & 5.93 & 1 & 2 & between layers \\
+    \midrule
+    Total & & & 11 & 12 & \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.3em}
+  \raggedright\footnotesize
+  \begin{itemize}
+    \item Half of the short hops from 8d lead to 4c; a 4c vacancy has \textbf{no short hop to another 4c}
+    \item ab plane: 8d--8d hops are enough. Along $c$: needs \textbf{4c--8d hops} (8d$\rightarrow$4c$\rightarrow$8d) or the long L2
+    \item $\Rightarrow$ transport depends on barriers \emph{and} hop numbers \emph{and} 4c/8d site energies: anisotropic diffusion
+  \end{itemize}
+  \refs{Hop set, counts and directions: this work (\texttt{hop\_network.py}, perfect supercell). Paper A treats one barrier per type\cit{1}.\quad \RA}
+\end{frame}
+
+\begin{frame}{NEB scope: start with hops that have published values}
+  \footnotesize
+  \begin{tabular}{llll}
+    \toprule
+    Published path & Value & Our hop & How identified \\
+    \midrule
+    Paper A: 4c--4c\cit{1} & 0.77 eV & \textbf{L3} & only 4c--4c hop \\
+    Paper A: 8d--8d edge\cit{1} & 0.34 eV & S1 or S6 & schematic figure only \\
+    Paper A: 8d--4c edge\cit{1} & 0.35 eV & one of S2--S5 & schematic figure only \\
+    Zhang: in-plane\cit{20} & 0.54 eV & \textbf{S1} (probable) & rises $\approx$1 \AA\ along $c$ (S6: 0) \\
+    Zhang: out-of-plane\cit{20} & 0.51 eV & \textbf{S2} (probable) & rises $\approx$2.7 \AA, no sideways shift \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.1em}
+  \begin{tabular}{clp{0.52\textwidth}}
+    \toprule
+    Stage & Hops & Purpose \\
+    \midrule
+    1 & S1, S2, L3, S6 & Compare with published values; S1 vs S6 = first spread within a type \\
+    2 & S3, S4, S5 & Spread of the 4c--8d hops (control transport along $c$) \\
+    3 & L1, L2, L4 & Only if the network analysis needs them \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.1em}
+  Spread $<$ 0.03 eV $\Rightarrow$ one barrier per type. Small threshold: at 300 K, 0.05 eV changes a rate $\approx 7\times$.
+  \refs{\RA\quad \RT\ (paths assigned from its Fig.~6a,b; raster figure, $\pm$0.3 \AA).}
 \end{frame}
 
 % =====================================================================
@@ -439,8 +470,9 @@
 \begin{frame}{Plan}
   \begin{enumerate}
     \item Finish the neutral 4c relaxation $\rightarrow$ final neutral site energy
-    \item NEB S1 ($+1$) as the trial; then the other 9 hops
-    \item Neutral NEB for the key hops
+    \item NEB stage 1 ($+1$): S1, S2, L3, S6 (published comparisons); stage 2: S3, S4, S5
+    \item Long hops L1, L2, L4 only if the network analysis needs them
+    \item Neutral NEB for the stage-1 hops
     \item Build the CsI-terminated (001) slab: symmetric, all atoms free; 11 layers, 15-layer test
     \item Vacancy energies and barriers layer by layer, until they return to the bulk values
   \end{enumerate}
@@ -451,7 +483,7 @@
     \item \textbf{Paper A's lattice\cit{1}:} rerun our $+1$ pair on their cell (8.68/8.71/12.44 \AA) to test the tilt explanation? Cost: two relaxations, about one week.
     \item \textbf{Neutral vacancy:} is a hybrid-functional check of the delocalised electron worth the cost?
     \item \textbf{Spin--orbit coupling:} single-point check on the site energies now, or after the barriers?
-    \item \textbf{Charge states for NEB:} all 10 hops for both, or neutral only for the key hops?
+    \item \textbf{NEB scope:} start with the 4 hops comparable to published values, then decide; neutral only for stage 1?
     \item Contact paper A's authors about their charge state and 4c/8d end-point energies?
   \end{enumerate}
   \refs{\RA}
@@ -463,7 +495,7 @@
     \item \textbf{Site preference depends on charge:} $+1$ degenerate ($-1$ meV); neutral favours 4c by $\geq 36$ meV, opposite to paper A.
     \item \textbf{Neutral vacancy is a shallow donor} in PBEsol (moment $0\,\mu_B$).
     \item \textbf{Benchmark mismatch} likely from paper A's nearly square, less-tilted cell.
-    \item \textbf{Ten distinct hops} instead of three; NEB inputs and job script ready.
+    \item \textbf{Ten distinct hops}; transport along $c$ needs 4c--8d hops $\Rightarrow$ staged NEB plan, inputs ready.
   \end{itemize}
 
   \vspace{1em}
