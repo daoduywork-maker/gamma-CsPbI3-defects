@@ -1,0 +1,14 @@
+Hop S2 (4c-8d, nominal 4.43 A), charge q+1
+Space group of the perfect supercell: Pnma, 64 operations
+Start: vacancy on site 18 (8d), from 03_vacancies/q+1/vac_I_equatorial/relax.out (largest offset from a site 0.36 A)
+End:   vacancy on site 90 (4c), from 03_vacancies/q+1/vac_I_apical/relax.out carried by a point operation (t = [0.25, 0.75, -0.0])
+Hopping iodine: perfect-cell site 90, atom 90 of 159 in neb.in; site distance 4.429 A, moves 4.113 A
+Other atoms: largest end-to-end shift 0.352 A, mean 0.065 A
+Images: 6 in total (4 intermediate, IDPP)
+Closest approach of two atoms per image (A): 2.99 2.77 2.55 2.55 2.78 2.99
+
+Memory: about 137 GB per image -> at least 2 nodes per image (75 GB usable per node)
+The end points are computed once; 4 moving images per NEB step.
+Run examples (images run side by side with -ni):
+  4 nodes: mpirun neb.x -ni 2 -nk 2 -inp neb.in
+  8 nodes: mpirun neb.x -ni 4 -nk 2 -inp neb.in
