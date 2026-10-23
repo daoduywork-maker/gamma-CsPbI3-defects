@@ -96,6 +96,8 @@ The job runs in the folder `qsub` was typed in. Options on the `qsub` line overr
 | Relaxations and NEB stay PBEsol without SOC; SOC (and HSE if affordable) as single points | Consistent with all runs so far and with paper A. Group's SI: barriers within 0.02 eV across PBE+SOC, HSE+SOC, HSE. But their compounds have no lead, so SOC is checked on our own cells |
 | Potential alignment by core levels; image-charge term estimated separately | The group's method; image term for V_I⁺ about 0.06 eV (ε ≈ 18, L ≈ 19.5 Å) |
 | Folders renumbered: 05 reference phases, 06 defect formation, 07 diffusion, 08–10 slab | Steps in the order they will be run; the old 05–07 slab folders were empty |
+| Step 5 set: Cs, Pb, solid I₂, CsI, PbI₂ (vc-relax), plus an isolated I₂ molecule as a cross-check of μ_I | Elements and binaries bound the region in every published CsPbX₃ diagram. Same PBEsol settings as CsPbI₃; metals with MV smearing and a denser k-mesh. Cs₄PbI₆ and CsPb₂I₅ wait for a CIF (no structure database reachable from here) |
+| CsPbI₃ energy for ΔH_f: perfect 160-atom supercell ÷ 32 | Same cell and k-mesh as the defect cells, so errors cancel |
 
 ## Open checks
 

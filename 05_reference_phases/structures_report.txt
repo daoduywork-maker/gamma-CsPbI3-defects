@@ -1,0 +1,16 @@
+Reference phases for step 5 (start structures, before relaxation)
+
+phase        atoms    space group    k-mesh  start structure
+Cs               1    Im-3m (229)  14x14x14  bcc, a = 6.05 A (experiment, about 80 K)
+Pb               1    Fm-3m (225)  20x20x20  fcc, a = 4.95 A (experiment)
+I2               4      Cmce (64)     9x9x4  Cmca, a = 7.136, b = 4.686, c = 9.784 A, I at 8f (0, 0.1543, 0.1174) (experiment, 110 K); 2 formula units
+CsI              2    Pm-3m (221)     8x8x8  CsCl type, a = 4.567 A (experiment)
+PbI2             3    P-3m1 (164)     8x8x6  2H (CdI2 type), a = 4.557, c = 6.979 A, I at 2d z = 0.265 (experiment)
+I2_molecule      2              -     gamma  I-I 2.67 A (gas), 15 A cubic box, Martyna-Tuckerman
+
+Settings: PBEsol, SSSP 1.3.0, 60/480 Ry, no SOC, no dispersion, non-spin-polarised.
+k-mesh: n_i = ceil(L / |a_i|), L = 36 A (insulators) or 70 A (metals, MV smearing 0.01 Ry).
+Energies to use: total energy per atom (Cs, Pb, I) or per formula unit (CsI, PbI2) of the relaxed cell.
+Check after the run: I2 and PbI2 are held by van der Waals forces, which PBEsol lacks;
+compare the relaxed b/c (I2) and c (PbI2) with experiment. If c expands by more than about 5%,
+rerun with the experimental cell (calculation = 'relax') and note the energy change.

@@ -1,0 +1,52 @@
+&CONTROL
+  calculation   = 'vc-relax'
+  prefix        = 'ref_CsI'
+  outdir        = './tmp'
+  pseudo_dir    = '/public/home/daomduy/cspbi3/pseudo_pbesol'
+  etot_conv_thr = 1.0e-06
+  forc_conv_thr = 4.0e-04
+  nstep         = 200
+  tprnfor       = .true.
+  tstress       = .true.
+/
+
+&SYSTEM
+  ibrav       = 0
+  nat         = 2
+  ntyp        = 2
+  ecutwfc     = 60.0
+  ecutrho     = 480.0
+  occupations = 'fixed'
+/
+
+&ELECTRONS
+  conv_thr    = 1.0e-10
+  mixing_beta = 0.3
+  electron_maxstep = 300
+/
+
+&IONS
+  ion_dynamics = 'bfgs'
+/
+
+&CELL
+  cell_dynamics = 'bfgs'
+  cell_dofree   = 'all'
+  press_conv_thr = 0.2
+/
+
+ATOMIC_SPECIES
+Cs   132.905  cs_pbesol_v1.uspp.F.UPF
+I    126.904  I.pbesol-n-kjpaw_psl.0.2.UPF
+
+CELL_PARAMETERS angstrom
+      4.5670000000     0.0000000000     0.0000000000
+      0.0000000000     4.5670000000     0.0000000000
+      0.0000000000     0.0000000000     4.5670000000
+
+ATOMIC_POSITIONS crystal
+Cs   0.0000000000   0.0000000000   0.0000000000
+I    0.5000000000   0.5000000000   0.5000000000
+
+K_POINTS automatic
+  8 8 8 0 0 0
