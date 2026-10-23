@@ -1,0 +1,58 @@
+#!/bin/bash
+# PBS job script: all six step-5 reference-phase calculations in ONE job on 4 std40 nodes.
+#
+# Submit from the folder 05_reference_phases (the one holding Cs/, Pb/, I2/, ...):
+#     cd ~/cspbi3/05_reference_phases && qsub run_refs.pbs
+#
+# Layout (the six runs start together and run side by side):
+#     node 1: Cs           40 cores, 8 pools
+#     node 2: Pb           40 cores, 8 pools
+#     node 3: I2 + CsI     20 cores each, 4 pools each
+#     node 4: PbI2 + I2_molecule   20 cores each (molecule: Gamma point, 1 pool)
+# Memory: a few GB per run (1-4 atoms per cell); far below the 92 GB of a node.
+# Each output is <folder>/vcrelax.out (I2_molecule/relax.out); a summary is printed at the end.
+
+#PBS -N ref_phases
+#PBS -q std40
+#PBS -l nodes=4:ppn=40
+#PBS -l walltime=24:00:00
+#PBS -j oe
+
+cd "$PBS_O_WORKDIR" || exit 1
+source /etc/profile 2>/dev/null
+module purge
+module load intel/intel2020
+module load qe/qe-6.5
+
+NODES=($(sort -u "$PBS_NODEFILE"))
+if [ "${#NODES[@]}" -ne 4 ]; then echo "expected 4 nodes, got ${#NODES[@]}"; exit 1; fi
+echo "job id : $PBS_JOBID"
+echo "nodes  : ${NODES[*]}"
+echo "pw.x   : $(which pw.x)"
+echo "started: $(date)"
+
+# run <folder> <input> <node> <cores> <first core> <pools>
+run() {
+  local dir=$1 inp=$2 node=$3 np=$4 c0=$5 nk=$6
+  local hosts="$dir/hosts.txt"
+  for ((i = 0; i < np; i++)); do echo "$node"; done > "$hosts"
+  echo "$dir: $np cores on $node (cores $c0-$((c0 + np - 1))), $nk pools"
+  ( cd "$dir" && mpirun -np "$np" -machinefile hosts.txt \
+        -genv I_MPI_PIN_PROCESSOR_LIST "$c0-$((c0 + np - 1))" \
+        pw.x -nk "$nk" -in "$inp" > "${inp%.in}.out" 2>&1 ) &
+}
+
+run Cs          vcrelax.in "${NODES[0]}" 40  0 8
+run Pb          vcrelax.in "${NODES[1]}" 40  0 8
+run I2          vcrelax.in "${NODES[2]}" 20  0 4
+run CsI         vcrelax.in "${NODES[2]}" 20 20 4
+run PbI2        vcrelax.in "${NODES[3]}" 20  0 4
+run I2_molecule relax.in   "${NODES[3]}" 20 20 1
+wait
+
+echo "finished: $(date)"
+for f in Cs/vcrelax.out Pb/vcrelax.out I2/vcrelax.out CsI/vcrelax.out PbI2/vcrelax.out I2_molecule/relax.out; do
+  e=$(grep "^!" "$f" | tail -1 | awk '{print $5}')
+  ok=$(grep -cE "bfgs converged|End final coordinates" "$f")
+  printf "%-24s E = %s Ry   converged: %s   %s\n" "$f" "$e" "$([ "$ok" -gt 0 ] && echo yes || echo NO)" "$(grep -c 'JOB DONE' "$f" | sed 's/1/JOB DONE/;s/^0$/not done/')"
+done
