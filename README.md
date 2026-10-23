@@ -1,12 +1,12 @@
-# Iodine Vacancy Sites and Migration Paths in Bulk γ-CsPbI₃
+# Formation and Migration of Iodine Vacancies in γ-CsPbI₃
 
-First-principles study of iodine defect migration in orthorhombic γ-CsPbI₃, using Quantum ESPRESSO.
+First-principles study of iodine vacancies in orthorhombic γ-CsPbI₃, using Quantum ESPRESSO: bulk defect thermodynamics, hop-resolved diffusion, and the CsI-terminated (001) surface.
 
 ## Abstract (work so far, October 2026)
 
-Iodine vacancies are the main mobile defect in γ-CsPbI₃, a promising inorganic perovskite for solar cells, and their migration causes current–voltage hysteresis and degradation. Tilted octahedra in the γ phase create two inequivalent iodine sites, apical (4c) and equatorial (8d), yet published studies report only three migration path types and do not state the vacancy charge state. Using density functional theory (PBEsol) in 159-atom supercells, we compared both sites for the neutral and +1 vacancy and identified the symmetry-distinct hops. The +1 vacancy showed almost no site preference (8d lower by 1 meV), whereas the neutral vacancy favoured the apical site by at least 36 meV, opposite to the published result. The neutral vacancy behaved as a shallow donor, with its extra electron delocalized over the crystal. Symmetry analysis revealed ten distinct hops, six short and four long, rather than three. A literature comparison suggests the published benchmark used an unusually weakly tilted lattice. These results show that iodine vacancy energetics in γ-CsPbI₃ depend on both charge state and octahedral tilt, and they set the reference for the barrier calculations that follow.
+Iodine vacancies are the main mobile defect in γ-CsPbI₃, a promising inorganic perovskite for solar cells, and their migration causes current–voltage hysteresis and degradation. Tilted octahedra in the γ phase create two inequivalent iodine sites, apical (4c) and equatorial (8d), yet published studies report only three migration path types and do not state the vacancy charge state. Using density functional theory (PBEsol) in 159-atom supercells, we compared both sites for the neutral and +1 vacancy and identified the symmetry-distinct hops. The +1 vacancy showed almost no site preference (8d lower by 1 meV), whereas the neutral vacancy favoured the apical site by about 40 meV, opposite to the published result. The neutral vacancy behaved as a shallow donor, with its extra electron delocalized over the crystal. Symmetry analysis revealed ten distinct hops, six short and four long, rather than three. A literature comparison suggests the published benchmark used an unusually weakly tilted lattice. These results show that iodine vacancy energetics in γ-CsPbI₃ depend on both charge state and octahedral tilt, and they set the reference for the barrier calculations that follow.
 
-The neutral value is provisional: the neutral apical relaxation is still running.
+The neutral value is provisional: the neutral apical relaxation has converged forces but its energy is still settling (about 0.3 meV per step). The abstract covers the bulk work done so far; the scope was extended on 23 October 2026 (see Scope).
 
 This repository holds the inputs, scripts and text outputs. Scratch data (wavefunctions, charge densities) is not tracked.
 
@@ -17,11 +17,14 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 | Convergence test, soft and tight relaxation of the unit cell | Done |
 | Cluster setup; `neb.x` and `pp.x` compiled (Quantum ESPRESSO 6.5) | Done |
 | Perfect 2×2×2 supercell relaxation | Done |
-| Vacancy relaxations (4 jobs) | +1 pair and neutral equatorial done; neutral apical on the cluster |
+| Vacancy relaxations (4 jobs) | +1 pair and neutral equatorial done; neutral apical finishing (forces converged) |
 | Set of distinct bulk hops | Settled: 10 (6 short, 4 long) |
 | Hop end points and NEB inputs (`build_neb.py`, `hop_network.py`, `run_neb.pbs`) | Done |
 | Bulk barriers (NEB) | To do: staged; stage 1 = S1, S2, L3, S6, the hops comparable with published values (see Methods) |
-| CsI-terminated slab: vacancies and barriers against depth | To do |
+| Part A: reference phases and chemical-potential region (step 5) | To do |
+| Part A: formation energies, transition levels, defect concentrations (step 6) | To do |
+| Part B: diffusion coefficients and anisotropy (step 7) | To do |
+| Part C: CsI-terminated slab, vacancies and barriers against depth (steps 8–10) | To do |
 
 ## Introduction
 
@@ -87,6 +90,16 @@ Full notes, numbers and sources: [`Literatures/literature_review.md`](Literature
 | Ahmad 2024 | Orthorhombic CsPbI₃ 17-layer slabs: vacancy and interstitial formation energies against depth | Barriers; a slab interior that matches its own bulk (off by 0.05 to 0.66 eV) |
 | Zhang 2025 | Bulk γ-CsPbI₃ under strain, PBEsol: two V_I paths, about 0.51 eV (edge towards the apical site) and 0.54 eV (in-plane); rectangular relaxed cell with PBEsol, PBE and HSE06; V_I a shallow donor | Charge state and supercell size; site energies; only two paths |
 
+**Methods we adopt from the group's earlier work** (J.-B. Liu, Tsinghua; same approach for other halide perovskites):
+
+| Paper | What it did | What we take |
+|---|---|---|
+| Xu 2017 (J. Phys. Chem. Lett. 8, 4391) | Cs₂AgInBr₆: chemical-potential stability region, formation energies of all intrinsic defects against E_F, transition levels, self-consistent Fermi level and defect and carrier concentrations | Part A, steps 5–6 |
+| Xu 2019 (J. Power Sources 412, 689) | Cs₂AgInX₆: CI-NEB for the dominant defects only (vacancy and concerted interstitial mechanisms), diffusion coefficients, strain effect. SI: barriers change by ≤ 0.02 eV between PBE+SOC, HSE+SOC and HSE; halogen-vacancy levels stay at the band edge in all three | Part B, step 7; barriers kept at the GGA level |
+| Zhou 2021 (J. Mater. Chem. A 9, 6955) | CsGe₁₋ₓSnₓI₃: deep or shallow defect levels from aligned Kohn–Sham levels (Cs 1s core level), partial charge densities, COHP | Defect-state analysis of the neutral vacancy |
+
+Their workflow: relax with PBE+SOC, single points with HSE06+SOC, core-level potential alignment, no image-charge term. Their compounds contain no lead, so their small SOC effects do not transfer automatically to CsPbI₃ (SOC moves the Pb-6p conduction band by about 1 eV); we check SOC on our own cells.
+
 ### The gap
 
 One point per paper:
@@ -101,6 +114,7 @@ This appears as three specific gaps:
 
 | Gap | Statement |
 |---|---|
+| **G0 — Defect picture** | No consistent picture of which intrinsic defects dominate γ-CsPbI₃, in which charge state, computed with the same settings as the barriers. Paper C covers equatorial sites only, with PBE+D3 on the experimental cell; most other defect studies use the cubic phase. |
 | **G1 — Hop resolution** | Bulk barriers are known only per type of path. The tilted structure has 10 symmetry-distinct hops (6 short, 4 long), and which charge state the published values belong to is not stated. |
 | **G2 — Depth** | The surface effect on vacancy migration is known for one long jump in cubic CsPbBr₃ only. For γ-CsPbI₃ there are no barriers against depth, and how deep the surface reaches is unknown. |
 | **G3 — Slab–bulk consistency** | Neither surface study recovers its own bulk inside the slab, so surface and bulk values cannot be compared cleanly. |
@@ -109,8 +123,9 @@ This appears as three specific gaps:
 
 | | Question | Gap | Hypothesis |
 |---|---|---|---|
+| **RQ0** | Which intrinsic defects dominate γ-CsPbI₃, in which charge state, under which growth conditions? | G0 | **H0.** V_I is a shallow donor, in the +1 state for any Fermi level in the gap, and one of the dominant defects; V_Pb or V_Cs is the main acceptor. |
 | **RQ1** | Which site does the vacancy prefer, and by how much, in each charge state? | G1 | **H1.** 8d by a few hundredths of an eV in both; one charge state reproduces paper A's +0.03 eV. |
-| **RQ2** | What are the bulk hop barriers, and how do the number and direction of hops shape transport in the ab plane and along c? | G1 | **H2.** Variants of one type differ by a few hundredths of an eV; long hops are clearly higher. Transport along c needs 4c–8d hops, so it is set by their barriers and by how often the vacancy sits on 4c: diffusion is anisotropic. |
+| **RQ2** | What are the bulk hop barriers, and how do the number and direction of hops shape transport in the ab plane and along c? What diffusion coefficients and ionic conductivity follow? | G1 | **H2.** Variants of one type differ by a few hundredths of an eV; long hops are clearly higher. Transport along c needs 4c–8d hops, so it is set by their barriers and by how often the vacancy sits on 4c: diffusion is anisotropic. |
 | **RQ3** | How do site energies and barriers change layer by layer below the CsI-terminated surface? | G2 | **H3.** Barriers drop and the vacancy is slightly more stable in the top layers; the effect fades within two to three layers (about 1 nm). |
 | **RQ4** | Once the surface splits each pair of equivalent hops, which direction is favoured? | G2 | **H4.** Hops towards the surface are easier, giving a net drift of vacancies to the surface. |
 | **RQ5** | Does the middle of the slab reproduce the bulk site energy and barrier? | G3 | **H5.** Yes, within about 0.02 eV, for a symmetric 11-layer slab with all atoms free. |
@@ -123,6 +138,7 @@ This appears as three specific gaps:
 | **N2** | First depth-resolved vacancy barriers in γ-CsPbI₃, followed back to the bulk | G2 |
 | **N3** | The surface splitting of equivalent hops as a measure of directional drift | G2 |
 | **N4** | A slab checked against its own bulk reference | G3 |
+| **N5** | One consistent set of settings from defect thermodynamics to diffusion: charge state, site preference, hop network and diffusion coefficients together | G0, G1 |
 
 Limits on the novelty claim: a web search and a cited-by check of papers A, B and C (October 2026, Google Scholar and the publishers' "cited by" lists) found no depth-resolved vacancy barriers in γ-CsPbI₃. The closest work: Pols 2022 (reactive MD of CsPbI₃ slabs; iodine vacancies seen moving in and out of the surface, no barriers), surface studies of CsPbI₃ with formation energies only (Li et al., arXiv 2411.01599; arXiv 2309.04870), and bulk-only migration studies (Tyagi et al., arXiv 2409.16051; Miskin 2025). Paper C's group (Ahmad) works on defect mobility near interfaces in other materials and is the most likely to extend C to barriers.
 
@@ -130,25 +146,24 @@ Limits on the novelty claim: a web search and a cited-by check of papers A, B an
 
 ### Scope
 
-The scope is exactly what G1–G3 require.
+Extended on 23 October 2026 after feedback from the supervisor: the bulk work now covers which defects form and in which charge state (Part A) and how fast the vacancy diffuses (Part B), in the style of the group's earlier work. The surface (Part C) remains the novelty.
 
-| In scope | Needed for |
-|---|---|
-| Bulk 4c and 8d vacancy, charge +1 and neutral: site energies | G1 |
-| NEB for the 10 distinct bulk hops | G1 |
-| CsI-terminated (001) slab: site energies and hops layer by layer, down to the bulk-like middle | G2 |
-| Middle-layer site energy and barrier against the bulk; 15-layer thickness test | G3 |
+| Part | Content | Steps | Needed for |
+|---|---|---|---|
+| **A. Bulk defect thermodynamics** | Chemical-potential region of γ-CsPbI₃ against CsI, PbI₂ (and Cs₄PbI₆, CsPb₂I₅), Cs, Pb, I₂; formation energies against E_F for V_I (+1, 0) and the main competing defects V_Pb²⁻, V_Cs⁻, I_i (−, 0, +); transition levels with core-level alignment; self-consistent Fermi level and defect concentrations at 300 K | 5, 6 | G0 |
+| **B. Bulk migration** | 4c and 8d site energies (done); NEB in stages, starting with the hops that have published values; iodine interstitial NEB if Part A shows it dominant; diffusion coefficients, anisotropy and ionic conductivity | 3, 4, 7 | G1 |
+| **C. Surface** | CsI-terminated (001) slab whose middle reproduces the bulk; V_I formation energy and barriers layer by layer, using the chemical potentials of Part A | 8–10 | G2, G3 |
 
-**Settings.** PBEsol, no spin-orbit coupling, no dispersion correction.
+**Settings.** PBEsol without spin–orbit coupling or dispersion for all relaxations and NEBs (consistent with everything done, and with paper A). Spin–orbit coupling and, if time allows, HSE06 enter as single points on the relaxed defect cells, where they matter (transition levels). The supervisor's group found barriers within 0.02 eV across functionals.
 
 **Not in the current scope**
 
-- Interstitials and other defects
+- The full set of about 20 intrinsic defects (to be confirmed with the supervisor; the four defects above set the Fermi level)
+- δ-CsPbI₃ in the stability region: γ is metastable against δ, so the region is drawn without δ, as is usual
 - PbI₂ termination and other facets
-- Absolute formation energies against μ_I and E_F
 - Machine-learned potentials and long-time dynamics
 
-**Deferred:** diffusion coefficients from the 10 barriers by kinetic Monte Carlo (cheap, would add the anisotropy); a spin-orbit check on the site energies.
+**Optional, later:** strain effect on the lowest barrier (as in the group's 2019 paper and Zhang 2025); cubic α-CsPbI₃ as a no-tilt reference barrier; partial charge density of the neutral vacancy state.
 
 ## Methods
 
@@ -158,7 +173,7 @@ The scope is exactly what G1–G3 require.
 |---|---|
 | Code | Quantum ESPRESSO `pw.x`: version 7.6 on the laptop (convergence test, soft relaxation), version 6.5 on the cluster (tight relaxation and all defect calculations) |
 | Functional | PBEsol |
-| Spin-orbit coupling | Not included (scalar-relativistic pseudopotentials) |
+| Spin-orbit coupling | Not included in relaxations and NEB (scalar-relativistic pseudopotentials); single-point check on the defect cells in step 6 |
 | Dispersion correction | None |
 | Pseudopotentials | SSSP 1.3.0 PBEsol efficiency |
 | Plane-wave cutoff | 60 Ry (density 480 Ry) |
@@ -180,9 +195,12 @@ Pseudopotential files:
 | 2 | Perfect 2×2×2 supercell (160 atoms) | Energy reference |
 | 3 | 4c and 8d vacancy, charge +1 and neutral | Site energy difference; charge state compared with paper A |
 | 4 | NEB for the 10 distinct bulk hops | Bulk barriers; validation against paper A |
-| 5 | CsI-terminated (001) slab: build and convergence | Slab whose middle reproduces the bulk |
-| 6 | Vacancies at increasing depth | Site energy against depth |
-| 7 | NEB at increasing depth | Barriers against depth, converging to step 4 |
+| 5 | Reference phases: Cs, Pb, I₂, CsI, PbI₂ (Cs₄PbI₆, CsPb₂I₅) | Chemical-potential region of γ-CsPbI₃ |
+| 6 | Defect cells V_Pb, V_Cs, I_i (with V_I from step 3); core-level alignment; SOC single points | Formation energies against E_F, transition levels, self-consistent Fermi level and concentrations |
+| 7 | Barriers + hop network + site energies (+ step 6 concentrations) | Diffusion coefficients, anisotropy, ionic conductivity |
+| 8 | CsI-terminated (001) slab: build and convergence | Slab whose middle reproduces the bulk |
+| 9 | Vacancies at increasing depth | Site and formation energy against depth |
+| 10 | NEB at increasing depth | Barriers against depth, converging to step 4 |
 
 One vacancy per supercell; the cell is fixed in all defect calculations.
 
@@ -253,6 +271,22 @@ If S1 and S6 (and S2–S5) differ by less than about 0.03 eV, one barrier per ty
 **Checks**
 
 - Neutral vacancy: total magnetisation expected about 1 μB per cell if the extra electron localizes. Found: 0 μB in both relaxations (shallow donor, electron delocalized).
+
+### Defect thermodynamics (steps 5 and 6)
+
+Formation energy of defect X in charge state q:
+
+E_f[X^q] = E[X^q] − E[perfect] + Σ nᵢ μᵢ + q (E_VBM + E_F) + qΔV
+
+- μᵢ: chemical potentials, limited by the stability of γ-CsPbI₃: Δμ_Cs + Δμ_Pb + 3Δμ_I = ΔH_f(CsPbI₃); every Δμᵢ ≤ 0; no competing phase forms (e.g. Δμ_Cs + Δμ_I < ΔH_f(CsI), Δμ_Pb + 2Δμ_I < ΔH_f(PbI₂)). With three elements the region is a polygon in the (Δμ_Pb, Δμ_I) plane.
+- E_F: a free variable from the VBM to the CBM; transition levels ε(q/q′) are the kinks.
+- qΔV: potential alignment from core levels far from the defect (the group's method). The image-charge term is estimated separately; for V_I⁺ it is about 0.06 eV (static dielectric constant about 18).
+- Concentrations: c = N_sites g exp(−E_f/k_BT), with the Fermi level solved self-consistently from charge neutrality including electrons and holes (Ma & Wei 2011).
+- Not needed for site differences or barriers: both ends have the same charge in the same cell.
+
+### Diffusion (step 7)
+
+D = f a² ν exp(−E_a/k_BT) per hop, ν = 10¹² Hz, combined over the hop network (counts, directions, 4c/8d occupation) analytically or by kinetic Monte Carlo, giving D along a, b and c. With the vacancy concentration from step 6, the ionic conductivity follows from the Nernst–Einstein relation and can be compared with measured activation energies.
 
 ## Results so far
 
@@ -328,10 +362,10 @@ E(8d) − E(4c) = −1.06 meV: the two sites are nearly degenerate, equatorial v
 
 | Site | Total energy (Ry) | Run | Convergence |
 |---|---|---|---|
-| Apical (4c) | −64953.80080990 (step 56, still falling) | Job 217409, 3 nodes | Running; largest force 8.7×10⁻⁴ Ry/Bohr |
+| Apical (4c) | −64953.80112233 (step 68, still settling) | Job 217409, 3 nodes | Running; largest force near 4×10⁻⁴ Ry/Bohr, energy changing about 0.3 meV per step |
 | Equatorial (8d) | −64953.79815909 | Job 217410, 3 nodes | 54 SCF cycles, 53 BFGS steps, largest force 3.6×10⁻⁴ Ry/Bohr |
 
-E(8d) − E(4c) ≥ +36 meV so far: the neutral vacancy prefers the apical site, opposite in sign to Arber 2025. The gap can only grow while the apical energy keeps falling. Total magnetisation is 0 μB in both cells: the extra electron is delocalized (shallow donor). Zhang 2025 also finds V_I a shallow donor (PBEsol, with spin–orbit coupling for the levels). PBEsol tends to over-delocalize, so a hybrid-functional check would be needed to confirm this.
+E(8d) − E(4c) ≈ +40 meV (40.3 meV at step 68): the neutral vacancy prefers the apical site, opposite in sign to Arber 2025. The remaining drift is about 0.3 meV per step. Total magnetisation is 0 μB in both cells: the extra electron is delocalized (shallow donor). Zhang 2025 also finds V_I a shallow donor (PBEsol, with spin–orbit coupling for the levels). Two further checks agree: the Fermi level of the neutral cells lies 1.56 eV (4c) and 1.68 eV (8d) above the pristine VBM, and the rough transition level E(0) − E(+1) − E_VBM is 1.61 eV (4c) and 1.65 eV (8d), both at the band edge (gap about 1.6 eV without SOC). These are uncorrected; step 6 gives the proper transition level. PBEsol tends to over-delocalize, so an HSE check would settle it.
 
 ### Comparison with the published benchmark
 
@@ -356,9 +390,12 @@ One folder per step of the Methods. The steps that have not started yet hold onl
 ├── 04_bulk_neb/                 step 4: build_neb.py (NEB inputs), hop_network.py and hop_network.txt (hop counts and directions)
 ├── run_neb.pbs                  PBS job script for neb.x (fat96 nodes, swap guard)
 ├── presentation/                progress report for the supervisor (Beamer source and PDF)
-├── 05_slab/                     step 5: CsI-terminated (001) slab, build and convergence (to do)
-├── 06_slab_vacancies/           step 6: vacancies at increasing depth (to do)
-└── 07_slab_neb/                 step 7: NEB at increasing depth (to do)
+├── 05_reference_phases/         step 5: Cs, Pb, I₂, CsI, PbI₂ (to do)
+├── 06_defect_formation/         step 6: V_Pb, V_Cs, I_i cells, alignment, formation energies, concentrations (to do)
+├── 07_diffusion/                step 7: diffusion coefficients and anisotropy (to do)
+├── 08_slab/                     step 8: CsI-terminated (001) slab, build and convergence (to do)
+├── 09_slab_vacancies/           step 9: vacancies at increasing depth (to do)
+└── 10_slab_neb/                 step 10: NEB at increasing depth (to do)
 ```
 
 ### `01_unitcell/`
@@ -436,6 +473,8 @@ Listed in `.gitignore`:
 ## Next steps
 
 1. Finish the neutral apical relaxation; final neutral site energy.
-2. NEB stage 1 at +1: S1 and S2 (against Zhang 2025 and paper A), L3 (against paper A's 0.77 eV), S6. Then stage 2 (S3, S4, S5) and decide on the long hops.
-3. Neutral NEB for the stage-1 hops.
-4. Build the CsI-terminated slab and run the convergence tests before any defect in it.
+2. In parallel: NEB stage 1 at +1 (S1, S2, L3, S6) on fat96, and the step-5 reference phases (small jobs).
+3. Step 6: V_Pb, V_Cs and I_i cells (memory check first), core-level alignment, SOC single points; formation-energy diagram and concentrations.
+4. NEB stage 2 (S3–S5); interstitial NEB if step 6 shows it dominant; step 7 diffusion coefficients.
+5. Part C: build the CsI-terminated slab and run the convergence tests before any defect in it.
+6. To confirm with the supervisor: the defect set for step 6 (four defects or all intrinsic ones), and whether SOC should enter the relaxations.

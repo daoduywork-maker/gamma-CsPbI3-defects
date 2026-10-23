@@ -279,6 +279,33 @@ Earlier we quoted 0.07 to 0.27 eV as the surface preference and up to 30,000-fol
 
 **Anything that surprised me or that I did not understand:**
 
+## Supervisor's group (J.-B. Liu, Tsinghua)
+
+Read 23 October 2026, with Supporting Information. Methods from these papers shape Parts A and B of the scope.
+
+| Paper | System and method | What it did |
+|---|---|---|
+| J. Xu, J.-B. Liu, B.-X. Liu, B. Huang, J. Phys. Chem. Lett. 8, 4391 (2017), `Defect_thermodynamics-Xu2017.pdf` | Cs₂AgInBr₆, VASP; relax PBE+SOC, single points HSE06+SOC (Γ-only for defect cells); 160-atom cells; forces 0.02 eV/Å; core-level potential alignment | Stability region against six competing phases (slices at fixed Δμ_Ag); formation energies of all 20 intrinsic defects at six growth points; transition levels; pinned Fermi level; equilibrium defect and carrier concentrations from charge neutrality (Ma & Wei 2011; SI: c = N g exp(−E_f/k_BT), band densities from effective masses) |
+| J. Xu, J.-B. Liu, B.-X. Liu, B. Huang, J. Power Sources 412, 689 (2019), `Ion_diffusion-Xu2019.pdf` | Cs₂AgInX₆ (X = Cl, Br), same workflow | CI-NEB for the dominant defects (V_Ag⁻, Ag_i⁺, V_X⁺) plus two minor ones; the lowest of the possible paths reported; vacancy and concerted interstitial mechanisms (two Ag ions move at once, much lower barrier); D = f a² ν exp(−E_a/k_BT), ν = 10¹² Hz; compressive biaxial strain raises the Ag_i barrier (0.15 → 0.24 eV at 0.5%) |
+| Y.-Q. Zhou, J. Xu, J.-B. Liu, B.-X. Liu, J. Mater. Chem. A 9, 6955 (2021), `Alloy_defects-Zhou2021.pdf` | CsGe₁₋ₓSnₓI₃, 320-atom cells, HSE06 (mixing tested 0.25–0.45), SOC tested | Antisite defects Ge_I, Sn_I: Kohn–Sham levels aligned on the Cs 1s core level; partial charge densities and COHP explain deep against shallow; band alignment, absorption, effective masses |
+
+**SI numbers (read from the figures)**
+
+| Quantity | PBE+SOC | HSE+SOC | HSE, no SOC |
+|---|---|---|---|
+| Barrier Ag_i⁺ in Cs₂AgInCl₆ | about 0.145 eV | about 0.165 eV | about 0.165 eV |
+| Barrier V_Ag⁻ | about 0.555 eV | about 0.56 eV | about 0.56 eV |
+| Barrier V_Cl⁺ | about 0.40 eV | about 0.415 eV | about 0.41 eV |
+| Band gap Cs₂AgInCl₆ | 1.06 eV | 2.43 eV | 2.44 eV |
+| V_Cl (+/0) relative to the CBM | about 0.03 eV below | about 0.07 eV above | about 0.09 eV above |
+| Band gap Cs₂AgInBr₆ | | 1.33 eV | 1.38 eV |
+| V_Br (+/0) relative to the CBM | | about 0.01 eV below | about 0.01 eV below |
+
+- Barriers change by at most about 0.02 eV between functionals; SOC on top of HSE changes them by about zero.
+- The halogen vacancy stays at the conduction-band edge with every method (shallow donor).
+- Zhou 2021 SI: deep or shallow character unchanged by SOC; level positions unchanged when the HSE mixing is raised from 0.25 to 0.32–0.45 to match experimental gaps.
+- **(Our reading)** these compounds contain no lead; their gaps change by only 0.01–0.05 eV with SOC. In CsPbI₃, SOC lowers the Pb-6p conduction band by about 1 eV, so SOC must be checked on our own cells before claiming it is negligible.
+
 ## Related work
 
 Papers outside A, B and C that the project uses. Notes are short; entries marked **(title and abstract only)** have not been read in full.
