@@ -21,7 +21,7 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 | Set of distinct bulk hops | Settled: 10 (6 short, 4 long) |
 | Hop end points and NEB inputs (`build_neb.py`, `hop_network.py`, `run_neb.pbs`) | Done |
 | Bulk barriers (NEB) | To do: staged; stage 1 = S1, S2, L3, S6, the hops comparable with published values (see Methods) |
-| Part A: reference phases and chemical-potential region (step 5) | To do |
+| Part A: reference phases and chemical-potential region (step 5) | **Done** for elements and binaries; Cs₄PbI₆, CsPb₂I₅ to add |
 | Part A: formation energies, transition levels, defect concentrations (step 6) | To do |
 | Part B: diffusion coefficients and anisotropy (step 7) | To do |
 | Part C: CsI-terminated slab, vacancies and barriers against depth (steps 8–10) | To do |
@@ -367,6 +367,20 @@ E(8d) − E(4c) = −1.06 meV: the two sites are nearly degenerate, equatorial v
 
 E(8d) − E(4c) ≈ +40 meV (40.3 meV at step 68): the neutral vacancy prefers the apical site, opposite in sign to Arber 2025. The remaining drift is about 0.3 meV per step. Total magnetisation is 0 μB in both cells: the extra electron is delocalized (shallow donor). Zhang 2025 also finds V_I a shallow donor (PBEsol, with spin–orbit coupling for the levels). Two further checks agree: the Fermi level of the neutral cells lies 1.56 eV (4c) and 1.68 eV (8d) above the pristine VBM, and the rough transition level E(0) − E(+1) − E_VBM is 1.61 eV (4c) and 1.65 eV (8d), both at the band edge (gap about 1.6 eV without SOC). These are uncorrected; step 6 gives the proper transition level. PBEsol tends to over-delocalize, so an HSE check would settle it.
 
+### Stability region (step 5)
+
+Elements as bcc Cs, fcc Pb and solid I₂; all cells relaxed (vc-relax) with the CsPbI₃ settings. CsPbI₃ energy: perfect supercell ÷ 32.
+
+| Compound | ΔH_f (eV per formula unit) | Experiment (approx.) | Relaxed lattice vs experiment |
+|---|---|---|---|
+| CsI | −3.09 | −3.59 | a −1.4% |
+| PbI₂ | −1.84 | −1.82 | a −0.5%, c +0.6% |
+| γ-CsPbI₃ | −4.99 | — | (unit cell, see above) |
+
+γ-CsPbI₃ is stable against CsI + PbI₂ by only **63 meV per formula unit**, so the region is a thin strip in the (Δμ_Pb, Δμ_I) plane: from the iodine-rich end (A, B: Δμ_I = 0, Δμ_Pb ≈ −1.9 eV) to the lead-rich, iodine-poor end (C, D: Δμ_Pb = 0, Δμ_I ≈ −0.93 eV). CsI is about 0.5 eV less bound than measured, a known GGA tendency for alkali compounds, which shifts the CsI edge. Solid I₂ lies 0.34 eV per atom below the I₂ molecule (measured sublimation about 0.32 eV), so PBEsol describes the iodine reference well without dispersion; the I₂ cell changes shape (a +5%, b −7%) but its volume only by −4%. δ-CsPbI₃ is left out (same composition; it would empty the region). Cs₄PbI₆ and CsPb₂I₅ can only shrink the strip further. Corner values: `05_reference_phases/stability_region.txt`.
+
+![Stability region](assets/stability_region.png)
+
 ### Comparison with the published benchmark
 
 Arber 2025's relaxed cell is nearly square in the ab plane (8.68 and 8.71 Å, 0.3% apart), unlike experiment (8.58 and 8.86 Å, 3.3%) and every other 0 K relaxation found: ours (7.2%), Seidu 2021 PBEsol (7.6%), Zhang 2025 PBEsol (6.8%) and HSE06 (7.5%), and LDA, PBE and SCAN (4–13%). The hybrid-functional cell shows that the rectangular shape is not an artefact of semilocal DFT. Zhang 2025's edge hop towards the apical site ends about 15 meV below its start (read from its Fig. 6c), the same direction as our neutral result, but its charge state is not stated. The 4c and 8d sites differ only through octahedral tilt, so a less-tilted cell may explain part of the difference in site energies. Details: `Literatures/literature_review.md`.
@@ -390,7 +404,7 @@ One folder per step of the Methods. The steps that have not started yet hold onl
 ├── 04_bulk_neb/                 step 4: build_neb.py (NEB inputs), hop_network.py and hop_network.txt (hop counts and directions)
 ├── run_neb.pbs                  PBS job script for neb.x (fat96 nodes, swap guard)
 ├── presentation/                progress report for the supervisor (Beamer source and PDF)
-├── 05_reference_phases/         step 5: Cs, Pb, I₂, CsI, PbI₂ (to do)
+├── 05_reference_phases/         step 5: Cs, Pb, I₂, CsI, PbI₂ inputs, job script, stability region
 ├── 06_defect_formation/         step 6: V_Pb, V_Cs, I_i cells, alignment, formation energies, concentrations (to do)
 ├── 07_diffusion/                step 7: diffusion coefficients and anisotropy (to do)
 ├── 08_slab/                     step 8: CsI-terminated (001) slab, build and convergence (to do)
@@ -473,7 +487,7 @@ Listed in `.gitignore`:
 ## Next steps
 
 1. Finish the neutral apical relaxation; final neutral site energy.
-2. In parallel: NEB stage 1 at +1 (S1, S2, L3, S6) on fat96, and the step-5 reference phases (small jobs).
+2. NEB stage 1 at +1 (S1, S2, L3, S6) on 4 std40 nodes, one image at a time (first try ran out of memory; see NOTES). Step 5: add Cs₄PbI₆ and CsPb₂I₅ once their CIFs are in.
 3. Step 6: V_Pb, V_Cs and I_i cells (memory check first), core-level alignment, SOC single points; formation-energy diagram and concentrations.
 4. NEB stage 2 (S3–S5); interstitial NEB if step 6 shows it dominant; step 7 diffusion coefficients.
 5. Part C: build the CsI-terminated slab and run the convergence tests before any defect in it.

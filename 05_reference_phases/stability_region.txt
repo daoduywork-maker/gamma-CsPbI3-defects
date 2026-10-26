@@ -1,0 +1,17 @@
+Stability region of gamma-CsPbI3 (PBEsol, elements: bcc Cs, fcc Pb, solid I2)
+
+Formation enthalpies (eV per formula unit):
+  CsI       -3.092
+  PbI2      -1.837
+  CsPbI3    -4.991
+
+Decomposition CsPbI3 -> CsI + PbI2: -0.063 eV per formula unit (negative = CsPbI3 stable)
+
+Corners (eV):   dmu_Cs    dmu_Pb    dmu_I
+  D            -2.142     0.000    -0.950
+  C            -2.236     0.000    -0.918
+  B            -3.155    -1.837     0.000
+  A            -3.092    -1.900     0.000
+
+A, B: iodine-rich (dmu_I = 0). C, D: lead-rich, iodine-poor (dmu_Pb = 0).
+Cs4PbI6 and CsPb2I5 not yet included; they can only shrink the region.

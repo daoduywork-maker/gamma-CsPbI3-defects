@@ -52,6 +52,9 @@ make -j 4 pw neb pp
 | 217409 `q0_apical` | 3 nodes, `NK=2` | Running (started 11 Oct 12:37, walltime ends about 26 Oct 12:37). At step 68 (21 Oct): E = −64953.80112233 Ry, largest force 4.7×10⁻⁴ Ry/Bohr (3.4×10⁻⁴ at step 66); energy still settling about 0.3 meV per step, magnetisation 0. Gap to 8d: +40.3 meV |
 | 217410 `q0_equatorial` | 3 nodes, `NK=2` | **Done 18 Oct.** 54 SCF cycles, 53 BFGS steps. E = −64953.79815909 Ry, largest force 3.6×10⁻⁴ Ry/Bohr, magnetisation 0. Final coordinates printed; then aborted while writing `tmp/` (`seqopn` error 90, could not open `restart89`, `/public` 94% full but 4.1 TB free). Result valid, `tmp/` likely incomplete |
 | `kmesh221` | SCF of the relaxed +1 apical structure with a 2×2×1 mesh (4 k-points), 2 nodes | **Done 14 Oct.** 1.50 GB per process. E = −64954.14911857 Ry: +0.28 eV per cell (1.8 meV/atom) above 2×2×2; largest force 1.2×10⁻³ Ry/Bohr (0.031 eV/Å) against 3.1×10⁻⁴ at 2×2×2. Fails; see Decisions |
+| 217708 `ref_phases` | Step 5: Cs, Pb, solid I₂, CsI, PbI₂, I₂ molecule side by side, 4 std40 nodes (`05_reference_phases/run_refs.pbs`) | **Done 23 Oct 21:15**, under 1 h. All six converged. E (Ry): Cs −62.89427877, Pb −859.43397176, I₂ (4 atoms) −1491.69347976, CsI −436.04489173, PbI₂ −1605.41570805, I₂ molecule −745.79685350. Cells: PbI₂ a 4.535, c 7.018 Å (−0.5%, +0.6%); CsI 4.502 Å (−1.4%); I₂ a 7.504, b 4.365, c 9.612 Å (+5.2%, −6.8%, −1.8%; volume −4%). Results in the README |
+| `S1_qp1` (NEB, first try) | 4 std40 nodes, `NI=2, NK=2` | **Stopped 23 Oct 22:05 by the swap guard** in the first NEB step: node28 88 GB used + 4 GB swap. neb.x needs about 1.4× the memory of a plain relaxation (62 GB per node expected) |
+| `S2_qp1` (NEB, first try) | 4 std40 nodes, `NI=2, NK=2` | **Crashed at start** (`PMPI_Init`, rank 80): started on node28 while S1 was still shutting down. Input fine; resubmit |
 
 **Incident, 9 Oct: jobs submitted without a memory check.** A std40 node has 92 GB. QE's estimate (printed in the first minute, `Estimated total dynamical RAM`) was 137 GB for the pristine and +1 supercells and 193 GB for the spin-polarised neutral ones. On one node the jobs ran out of memory: node32 showed 92 GB used plus 45 GB of swap, 92% of CPU time waiting on the disk, pw.x in state `D`. The +1 jobs were killed, the pristine one never finished its first SCF iteration. Fix: resubmit on 2 or 3 nodes; the job script takes the process count from the node list, so only `-l nodes=N:ppn=40` changes.
 
@@ -98,6 +101,8 @@ The job runs in the folder `qsub` was typed in. Options on the `qsub` line overr
 | Folders renumbered: 05 reference phases, 06 defect formation, 07 diffusion, 08–10 slab | Steps in the order they will be run; the old 05–07 slab folders were empty |
 | Step 5 set: Cs, Pb, solid I₂, CsI, PbI₂ (vc-relax), plus an isolated I₂ molecule as a cross-check of μ_I | Elements and binaries bound the region in every published CsPbX₃ diagram. Same PBEsol settings as CsPbI₃; metals with MV smearing and a denser k-mesh. Cs₄PbI₆ and CsPb₂I₅ wait for a CIF (no structure database reachable from here) |
 | CsPbI₃ energy for ΔH_f: perfect 160-atom supercell ÷ 32 | Same cell and k-mesh as the defect cells, so errors cancel |
+| NEB on 4 std40 nodes: one image at a time (`-v NI=1,NK=2`) | Two images at once overflowed 92 GB nodes (88 GB + swap, 23 Oct). One image on 160 cores: about 40–50 GB per node, each step about 15% slower than two at once |
+| Solid I₂ as the iodine reference; the molecule only as a check | Standard choice. Solid lies 0.34 eV per atom below the molecule (measured sublimation about 0.32 eV): PBEsol binds the solid correctly without dispersion |
 
 ## Open checks
 
