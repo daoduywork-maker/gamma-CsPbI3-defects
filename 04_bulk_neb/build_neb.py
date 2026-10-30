@@ -25,6 +25,11 @@ Expected relaxed structures (copied from the cluster):
     03_vacancies/<charge>/vac_I_apical/relax.out
 Override with --eq and --ap (a relax.in also works, for testing).
 
+VASP (same geometry code, VTST inputs; from the project root):
+    python3 04_bulk_neb/build_neb.py S1 --charge q+1 --code vasp
+reads vasp/02_pristine/POSCAR and vasp/03_vacancies/<charge>/vac_I_*/CONTCAR and
+writes vasp/04_bulk_neb/<charge>/<hop>/00 ... NN/POSCAR, INCAR, KPOINTS.
+
 Needs: python3 with numpy, scipy, ase and spglib.
 """
 
@@ -170,12 +175,20 @@ def main():
     ap.add_argument("--pristine", default="02_pristine/relax.in")
     ap.add_argument("--eq", help="relaxed equatorial (8d) vacancy, relax.out or relax.in")
     ap.add_argument("--ap", help="relaxed apical (4c) vacancy, relax.out or relax.in")
-    ap.add_argument("--out", default="04_bulk_neb")
+    ap.add_argument("--out", default=None, help="default 04_bulk_neb (QE) or vasp/04_bulk_neb (VASP)")
+    ap.add_argument("--code", choices=["qe", "vasp"], default="qe")
     a = ap.parse_args()
 
-    vdir = os.path.join("03_vacancies", a.charge)
-    paths = {"8d": a.eq or os.path.join(vdir, "vac_I_equatorial", "relax.out"),
-             "4c": a.ap or os.path.join(vdir, "vac_I_apical", "relax.out")}
+    vasp = a.code == "vasp"
+    base = "vasp" if vasp else "."
+    if a.out is None:
+        a.out = os.path.join(base, "04_bulk_neb")
+    if vasp and a.pristine == "02_pristine/relax.in":
+        a.pristine = os.path.join("vasp", "02_pristine", "POSCAR")
+    vdir = os.path.join(base, "03_vacancies", a.charge)
+    final = "CONTCAR" if vasp else "relax.out"
+    paths = {"8d": a.eq or os.path.join(vdir, "vac_I_equatorial", final),
+             "4c": a.ap or os.path.join(vdir, "vac_I_apical", final)}
     t1, t2, L = HOPS[a.hop]
     start = a.start or ("8d" if "8d" in (t1, t2) else "4c")
     if start not in (t1, t2):
@@ -187,9 +200,13 @@ def main():
             sys.exit(f"missing relaxed {t} vacancy: {paths[t]}")
 
     def load(p):
-        return read(p, format="espresso-out", index=-1) if p.endswith(".out") else read(p, format="espresso-in")
+        if p.endswith(".out"):
+            return read(p, format="espresso-out", index=-1)
+        if p.endswith(".in"):
+            return read(p, format="espresso-in")
+        return read(p, format="vasp")          # POSCAR / CONTCAR
 
-    perfect = read(a.pristine, format="espresso-in")
+    perfect = load(a.pristine)
     relaxed = {t: load(paths[t]) for t in needed}
     types = site_types(perfect)
     sg, ops = symmetry_ops(perfect)
@@ -247,6 +264,11 @@ def main():
     hopdir = os.path.join(a.out, a.charge, a.hop)
     os.makedirs(hopdir, exist_ok=True)
     write(os.path.join(hopdir, "path.xyz"), images, format="extxyz")
+
+    if vasp:
+        write_vasp_neb(hopdir, images, vdir, start, a, mins, others, moved, k_move, order, d_hop, j, r,
+                       types, sg, ops, t1, t2, L, paths, end, R, t, worst_init)
+        return
 
     tmpl = open(os.path.join(vdir, f"vac_I_{'equatorial' if start == '8d' else 'apical'}", "relax.in")).read().splitlines()
     eng, skip, block = [], False, None
@@ -316,6 +338,62 @@ def main():
     open(os.path.join(hopdir, "report.txt"), "w").write("\n".join(rep) + "\n")
     print("\n".join(rep))
     print(f"\nWritten: {hopdir}/neb.in, path.xyz, report.txt")
+
+
+NEB_TAGS = """
+# NEB (VTST): climbing image, FIRE optimiser
+IMAGES   = {nimg}
+SPRING   = -5
+LCLIMB   = .TRUE.
+ICHAIN   = 0
+IBRION   = 3
+POTIM    = 0
+IOPT     = 3              ! FIRE
+EDIFFG   = -0.03          ! eV/A on the path (QE path_thr 0.05 eV/A)
+NSW      = 300
+ISIF     = 2
+"""
+
+
+def write_vasp_neb(hopdir, images, vdir, start, a, mins, others, moved, k_move, order, d_hop, j, r,
+                   types, sg, ops, t1, t2, L, paths, end, R, t, worst_init):
+    """VTST inputs: 00 ... NN/POSCAR, INCAR (from the vacancy INCAR), KPOINTS."""
+    nimg = len(images) - 2
+    for n, im in enumerate(images):
+        d = os.path.join(hopdir, "%02d" % n)
+        os.makedirs(d, exist_ok=True)
+        write(os.path.join(d, "POSCAR"), im, format="vasp", direct=True, sort=False)
+    src = os.path.join(vdir, "vac_I_%s" % ("equatorial" if start == "8d" else "apical"))
+    drop = ("SYSTEM", "IBRION", "ISIF", "NSW", "EDIFFG", "POTIM", "NCORE", "KPAR")
+    keep = [l for l in open(os.path.join(src, "INCAR")).read().splitlines()
+            if l.split("=")[0].strip() not in drop and not l.startswith("# Relaxation")
+            and not l.startswith("# Parallelisation")]
+    with open(os.path.join(hopdir, "INCAR"), "w") as f:
+        f.write("SYSTEM = NEB %s, %s\n" % (a.hop, a.charge))
+        f.write("\n".join(keep).rstrip() + "\n")
+        f.write(NEB_TAGS.format(nimg=nimg))
+        f.write("\n# Parallelisation: cores are split over the images (cores per image = total / IMAGES)\nNCORE    = 10\n")
+    import shutil
+    shutil.copy(os.path.join(src, "KPOINTS"), os.path.join(hopdir, "KPOINTS"))
+    rep = [
+        "Hop %s (%s-%s, nominal %.2f A), charge %s, VASP/VTST" % (a.hop, t1, t2, L, a.charge),
+        "Space group of the perfect supercell: %s, %d operations" % (sg, len(ops)),
+        "Start: vacancy on site %d (%s), from %s (largest offset from a site %.2f A)" % (r, start, paths[start], worst_init),
+        "End:   vacancy on site %d (%s), from %s by %s" % (j, types[j], paths[end],
+              "a pure translation" if np.allclose(R, np.eye(3)) else "a point operation"),
+        "Hopping iodine: atom %d of %d (POSCAR order); site distance %.3f A, moves %.3f A" % (k_move + 1, len(order), d_hop, moved),
+        "Other atoms: largest end-to-end shift %.3f A, mean %.3f A" % (others.max(), others.mean()),
+        "Images: 00 ... %02d (%d moving, IDPP)" % (nimg + 1, nimg),
+        "Closest approach of two atoms per image (A): " + " ".join("%.2f" % m for m in mins),
+    ]
+    if min(mins) < MIN_DIST_WARN:
+        rep.append("WARNING: an image has two atoms closer than %.1f A; check path.xyz" % MIN_DIST_WARN)
+    rep += ["", "Before running: POTCAR next to INCAR (make_potcar.sh), and copy the relaxed",
+            "vacancy OUTCARs into 00/ and %02d/ for nebresults.pl (the run does not need them)." % (nimg + 1),
+            "Cores must divide by IMAGES; check memory in mem.log in the first minutes."]
+    open(os.path.join(hopdir, "report.txt"), "w").write("\n".join(rep) + "\n")
+    print("\n".join(rep))
+    print("\nWritten: %s/00..%02d/POSCAR, INCAR, KPOINTS, path.xyz, report.txt" % (hopdir, nimg + 1))
 
 
 if __name__ == "__main__":

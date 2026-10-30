@@ -403,6 +403,7 @@ One folder per step of the Methods. The steps that have not started yet hold onl
 ├── 03_vacancies/                step 3: 4c and 8d vacancies, charge +1 and neutral
 ├── 04_bulk_neb/                 step 4: build_neb.py (NEB inputs), hop_network.py and hop_network.txt (hop counts and directions)
 ├── run_neb.pbs                  PBS job script for neb.x (fat96 nodes, swap guard)
+├── vasp/                        VASP counterpart of steps 1–5 (same physics; see vasp/README.md)
 ├── presentation/                progress report for the supervisor (Beamer source and PDF)
 ├── 05_reference_phases/         step 5: Cs, Pb, I₂, CsI, PbI₂ inputs, job script, stability region
 ├── 06_defect_formation/         step 6: V_Pb, V_Cs, I_i cells, alignment, formation energies, concentrations (to do)
@@ -491,4 +492,5 @@ Listed in `.gitignore`:
 3. Step 6: V_Pb, V_Cs and I_i cells (memory check first), core-level alignment, SOC single points; formation-energy diagram and concentrations.
 4. NEB stage 2 (S3–S5); interstitial NEB if step 6 shows it dominant; step 7 diffusion coefficients.
 5. Part C: build the CsI-terminated slab and run the convergence tests before any defect in it.
-6. To confirm with the supervisor: the defect set for step 6 (four defects or all intrinsic ones), and whether SOC should enter the relaxations.
+6. VASP cross-check (supervisor's request, 31 Oct): repeat steps 1–5 in VASP (PBEsol, PAW, 500 eV, VTST NEB) in `vasp/`. Unit cell and reference phases are ready to run; supercells and NEB follow from the relaxed VASP cell.
+7. To confirm with the supervisor: the defect set for step 6 (four defects or all intrinsic ones), and whether SOC should enter the relaxations.

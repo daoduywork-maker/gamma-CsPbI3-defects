@@ -102,6 +102,7 @@ The job runs in the folder `qsub` was typed in. Options on the `qsub` line overr
 | Step 5 set: Cs, Pb, solid I₂, CsI, PbI₂ (vc-relax), plus an isolated I₂ molecule as a cross-check of μ_I | Elements and binaries bound the region in every published CsPbX₃ diagram. Same PBEsol settings as CsPbI₃; metals with MV smearing and a denser k-mesh. Cs₄PbI₆ and CsPb₂I₅ wait for a CIF (no structure database reachable from here) |
 | CsPbI₃ energy for ΔH_f: perfect 160-atom supercell ÷ 32 | Same cell and k-mesh as the defect cells, so errors cancel |
 | NEB on 4 std40 nodes: one image at a time (`-v NI=1,NK=2`) | Two images at once overflowed 92 GB nodes (88 GB + swap, 23 Oct). One image on 160 cores: about 40–50 GB per node, each step about 15% slower than two at once |
+| VASP counterpart of steps 1–5 in `vasp/` (supervisor's request) | Same physics as QE (PBEsol, no SOC, same k-meshes, cells, sites and force limit); PAW Cs_sv, Pb_d, I at 500 eV as in Arber 2025, so barriers compare one-to-one. One build (vasp632vtst) for all steps because NEB needs VTST. LREAL = Auto only in the 159/160-atom cells. Memory measured on the first job of each kind |
 | Solid I₂ as the iodine reference; the molecule only as a check | Standard choice. Solid lies 0.34 eV per atom below the molecule (measured sublimation about 0.32 eV): PBEsol binds the solid correctly without dispersion |
 
 ## Open checks

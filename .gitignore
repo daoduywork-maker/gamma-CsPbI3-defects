@@ -12,3 +12,9 @@ __pycache__/
 # Papers (copyrighted; kept locally only)
 Literatures/*.pdf
 Literatures/*.docx
+
+# VASP: licensed potentials and large outputs
+POTCAR
+WAVECAR
+CHG
+CHGCAR

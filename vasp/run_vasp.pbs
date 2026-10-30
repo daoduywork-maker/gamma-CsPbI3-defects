@@ -1,0 +1,84 @@
+#!/bin/bash
+# PBS job script for VASP on WUZHOU-HPC (same memory guard as run_neb.pbs).
+#
+# Submit from the folder that holds INCAR, POSCAR, KPOINTS and POTCAR:
+#     qsub -N name ~/cspbi3/vasp/run_vasp.pbs
+# Several folders one after the other in one job (e.g. the convergence tests):
+#     qsub -N conv -l nodes=1:ppn=40 -v DIRS="encut_400 encut_500 k443" ~/cspbi3/vasp/run_vasp.pbs
+# Variable-cell relaxation, restarted once from CONTCAR (removes the Pulay-stress error):
+#     qsub -N unit -l nodes=1:ppn=40 -v STAGES=2 ~/cspbi3/vasp/run_vasp.pbs
+# NEB (VTST build, needed for IMAGES/LCLIMB): run from the hop folder holding 00 ... 05
+#     qsub -N S1_qp1 ~/cspbi3/vasp/run_vasp.pbs
+#
+# Before the first run: `module avail vasp` and `module show vasp/vasp632vtst` on the
+# login node; adjust VASP_MODULE / VASP_EXE below if the names differ.
+#
+# Memory: every 5 min each node's memory and swap go to mem.log. If a node swaps more
+# than SWAP_LIMIT_GB, the run is stopped, so a job that does not fit fails in minutes.
+
+#PBS -N vasp
+#PBS -q std40
+#PBS -l nodes=4:ppn=40
+#PBS -l walltime=360:00:00
+#PBS -j oe
+
+# ---- settings (can be overridden with qsub -v) ----
+VASP_MODULE="${VASP_MODULE:-vasp/vasp632vtst}"   # one build for every step (NEB needs VTST)
+VASP_EXE="${VASP_EXE:-vasp_std}"
+DIRS="${DIRS:-.}"                 # folders to run, in order
+STAGES="${STAGES:-1}"             # >1: rerun from CONTCAR (variable-cell relaxations)
+SWAP_LIMIT_GB="${SWAP_LIMIT_GB:-2}"
+# ---------------------------------------------------
+
+cd "$PBS_O_WORKDIR" || exit 1
+source /etc/profile 2>/dev/null
+module purge
+module load "$VASP_MODULE"
+
+NP=$(wc -l < "$PBS_NODEFILE")
+NODES=$(sort -u "$PBS_NODEFILE" | tr '\n' ' ')
+EXE=$(which "$VASP_EXE" 2>/dev/null)
+echo "job id    : $PBS_JOBID"
+echo "node(s)   : $NODES"
+echo "processes : $NP"
+echo "vasp      : ${EXE:-NOT FOUND ($VASP_EXE in $VASP_MODULE)}"
+echo "folders   : $DIRS   stages: $STAGES"
+echo "started   : $(date)"
+[ -z "$EXE" ] && exit 1
+
+# ---- memory watch (whole job) ----
+(
+  while true; do
+    for n in $NODES; do
+      line=$(ssh -o BatchMode=yes "$n" "free -g | awk '/Mem/{m=\$3} /Swap/{s=\$3} END{print m, s}'" 2>/dev/null)
+      echo "$(date '+%m-%d %H:%M') $n used=${line% *}G swap=${line#* }G" >> "$PBS_O_WORKDIR/mem.log"
+      swap=${line#* }
+      if [ -n "$swap" ] && [ "$swap" -gt "$SWAP_LIMIT_GB" ] 2>/dev/null; then
+        echo "$(date) swap ${swap} GB on $n > ${SWAP_LIMIT_GB} GB: stopping the run" | tee -a "$PBS_O_WORKDIR/mem.log"
+        pkill -u "$USER" -f "$VASP_EXE"; touch "$PBS_O_WORKDIR/STOPPED_SWAP"
+        exit 0
+      fi
+    done
+    sleep 300
+  done
+) &
+WATCH=$!
+
+for d in $DIRS; do
+  cd "$PBS_O_WORKDIR/$d" || { echo "no folder $d"; continue; }
+  [ -f POTCAR ] || { echo "$d: POTCAR missing (run make_potcar.sh)"; continue; }
+  for s in $(seq 1 "$STAGES"); do
+    [ -f "$PBS_O_WORKDIR/STOPPED_SWAP" ] && break 2
+    echo "---- $d, stage $s: $(date)"
+    mpirun -np "$NP" -machinefile "$PBS_NODEFILE" "$EXE" > vasp.out 2>&1
+    if [ "$STAGES" -gt 1 ]; then
+      cp OUTCAR "OUTCAR.$s"; cp vasp.out "vasp.out.$s"; cp OSZICAR "OSZICAR.$s"
+      [ -s CONTCAR ] && cp CONTCAR POSCAR
+    fi
+    grep -E "reached required accuracy|free  energy   TOTEN" OUTCAR | tail -2
+    grep "Maximum memory used" OUTCAR
+  done
+done
+
+kill "$WATCH" 2>/dev/null
+echo "finished  : $(date)"

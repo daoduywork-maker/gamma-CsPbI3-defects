@@ -1,0 +1,25 @@
+SYSTEM = cutoff test 450 eV
+
+# Electronic structure (same physics as the QE runs)
+GGA      = PS              ! PBEsol
+PREC     = Accurate      
+ENCUT    = 450             ! cutoff test
+LASPH    = .TRUE.          ! non-spherical terms inside the PAW spheres
+LREAL    = .FALSE.         ! Auto for the 159/160-atom cells, .FALSE. for small cells
+ALGO     = Normal        
+NELM     = 200           
+EDIFF    = 1E-6            ! eV
+ISMEAR   = 0               ! Gaussian
+SIGMA    = 0.01            ! eV; insulator (QE: fixed occupations)
+
+# Output
+LWAVE    = .FALSE.       
+LCHARG   = .FALSE.       
+
+# Static run
+NSW      = 0             
+ISIF     = 2               ! prints the stress
+
+# Parallelisation (40 cores per std40 node)
+NCORE    = 10            
+KPAR     = 4               ! k-point groups; more KPAR = faster but more memory
