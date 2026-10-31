@@ -20,6 +20,10 @@ Last updated: 2026-10-31
 
 Change flow: edit in the Desktop copy, review with `git diff`, commit there, then in WSL `cd ~/Project-1 && git pull desktop main && git push origin main`. To refresh the Desktop copy after work in WSL: `git pull` inside it.
 
+## Cluster folder layout (since 31 Oct)
+
+`~/cspbi3/` mirrors the repository: `01_unitcell/tight` (was `unitcell_tight`), `02_pristine` (was `pristine_222`), `03_vacancies/q+1`, `03_vacancies/q0`, `03_vacancies/kmesh221_test` (was `kmesh_test`), `04_bulk_neb`, `05_reference_phases`, `vasp/`, `pseudo_pbesol/` (keep this path: QE inputs point to it), `run_qe.pbs`, `run_neb.pbs`. Older job logs and notes use the old names.
+
 ## The cluster
 
 - Login node is called `master`. Never run calculations there; compiling with `make -j 4` and one-second tests are acceptable.
@@ -96,7 +100,7 @@ make -j 4 pw neb pp
 4. After the start: `ssh <node> free -g`; swap use must stay near 0.
 5. NEB: memory per image × images run at once (`-ni`). With about 136 GB per +1 image, running 7 images at once would need about 14 nodes; run fewer at a time, use fewer images, or test a lighter k-mesh first.
 
-Submit command for the five (run from `~/cspbi3`, which holds `pristine_222`, `q+1`, `q0`):
+Submit command used for the five (9 Oct, old cluster layout; since 31 Oct the folders are `02_pristine` and `03_vacancies/q+1`, `03_vacancies/q0`):
 
 ```bash
 PBS=~/cspbi3/run_qe.pbs

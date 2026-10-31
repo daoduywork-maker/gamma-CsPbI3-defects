@@ -457,7 +457,7 @@ The base input holds the experimental room-temperature structure (Sutton et al.,
 
 `run_qe.pbs` loads the modules and runs `pw.x` in the folder it is submitted from, with as many processes as nodes × 40. Give the node count, input name and k-point pools on the `qsub` line, for example `qsub -N pristine -l nodes=2:ppn=40 -v INPUT=relax.in,NK=2 <path>/run_qe.pbs`. Check memory first: see `NOTES.md`.
 
-The cluster copy lives in `~/cspbi3/` with its own layout (`pristine_222/`, `q+1/`, `q0/`).
+The cluster copy lives in `~/cspbi3/` with the same step folders (reorganised 31 Oct): `01_unitcell/tight`, `02_pristine`, `03_vacancies/{q+1,q0,kmesh221_test}`, `04_bulk_neb`, `05_reference_phases`, `vasp/`, plus `pseudo_pbesol/` and the job scripts.
 
 ## How to reproduce
 
