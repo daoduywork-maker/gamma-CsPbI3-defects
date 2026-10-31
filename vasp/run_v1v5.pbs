@@ -1,0 +1,64 @@
+#!/bin/bash
+# V1 + V5 in ONE job on 4 std40 nodes (one group of four, as the cluster rule asks).
+# Each node runs its own list of small VASP calculations, one after the other:
+#     node 1: 01_unitcell/relax              (variable-cell relaxation, 2 stages)
+#     node 2: 05_reference_phases/*           (Cs Pb I2 CsI PbI2 I2_molecule)
+#     node 3: 01_unitcell/conv/encut_*        (7 cutoff tests)
+#     node 4: 01_unitcell/conv/k*             (5 k-mesh tests)
+# Memory: a few GB per run (20 atoms or fewer), far below 92 GB per node.
+# Expected time: about 2-6 h in total (the relaxation is the longest list).
+#
+# Submit from ~/cspbi3/vasp after make_potcar.sh:
+#     cd ~/cspbi3/vasp && qsub run_v1v5.pbs
+
+#PBS -N v1v5
+#PBS -q std40
+#PBS -l nodes=4:ppn=40
+#PBS -l walltime=48:00:00
+#PBS -j oe
+
+cd "$PBS_O_WORKDIR" || exit 1
+source /etc/profile 2>/dev/null
+module purge
+module load intel/intel2020
+module load vasp/vasp632vtst
+EXE=$(which vasp_std) || { echo "vasp_std not found"; exit 1; }
+if ldd "$EXE" | grep -q "not found"; then echo "missing libraries"; exit 1; fi
+
+NODES=($(sort -u "$PBS_NODEFILE"))
+[ "${#NODES[@]}" -eq 4 ] || { echo "expected 4 nodes, got ${#NODES[@]}"; exit 1; }
+echo "job $PBS_JOBID on ${NODES[*]}, started $(date)"
+
+# run_list <node> <stages> <dir> [<dir> ...]: runs each folder on 40 cores of one node
+run_list() {
+  local node=$1 stages=$2; shift 2
+  local hosts="$PBS_O_WORKDIR/hosts_$node"
+  for i in $(seq 40); do echo "$node"; done > "$hosts"
+  for d in "$@"; do
+    ( cd "$PBS_O_WORKDIR/$d" || exit
+      [ -f POTCAR ] || { echo "$d: POTCAR missing"; exit; }
+      for s in $(seq "$stages"); do
+        echo "$(date '+%m-%d %H:%M') $node: $d stage $s"
+        mpirun -np 40 -machinefile "$hosts" "$EXE" > vasp.out 2>&1
+        if [ "$stages" -gt 1 ]; then cp OUTCAR "OUTCAR.$s"; cp OSZICAR "OSZICAR.$s"; [ -s CONTCAR ] && cp CONTCAR POSCAR; fi
+      done
+      echo "$(date '+%m-%d %H:%M') $node: $d done: $(grep -c 'reached required accuracy' OUTCAR) converged, $(grep 'free  energy   TOTEN' OUTCAR | tail -1)"
+    )
+  done
+}
+
+# memory watch: free -g on every node every 5 min
+( while true; do for n in "${NODES[@]}"; do
+    echo "$(date '+%m-%d %H:%M') $n $(ssh -o BatchMode=yes "$n" "free -g | awk '/Mem/{m=\$3} /Swap/{s=\$3} END{print \"used=\"m\"G swap=\"s\"G\"}'" 2>/dev/null)" >> mem.log
+  done; sleep 300; done ) &
+WATCH=$!
+
+run_list "${NODES[0]}" 2 01_unitcell/relax &
+run_list "${NODES[1]}" 1 05_reference_phases/Cs 05_reference_phases/Pb 05_reference_phases/I2 \
+                         05_reference_phases/CsI 05_reference_phases/PbI2 05_reference_phases/I2_molecule &
+run_list "${NODES[2]}" 1 $(ls -d 01_unitcell/conv/encut_*) &
+run_list "${NODES[3]}" 1 $(ls -d 01_unitcell/conv/k*) &
+wait %2 %3 %4 %5 2>/dev/null; wait
+
+kill "$WATCH" 2>/dev/null
+echo "finished $(date)"
