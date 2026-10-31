@@ -23,6 +23,7 @@
 #PBS -j oe
 
 # ---- settings (can be overridden with qsub -v) ----
+MPI_MODULE="${MPI_MODULE:-intel/intel2020}"     # Intel MPI + MKL (vasp_std links to MKL; the vasp module loads nothing itself)
 VASP_MODULE="${VASP_MODULE:-vasp/vasp632vtst}"   # one build for every step (NEB needs VTST)
 VASP_EXE="${VASP_EXE:-vasp_std}"
 DIRS="${DIRS:-.}"                 # folders to run, in order
@@ -33,6 +34,7 @@ SWAP_LIMIT_GB="${SWAP_LIMIT_GB:-2}"
 cd "$PBS_O_WORKDIR" || exit 1
 source /etc/profile 2>/dev/null
 module purge
+module load "$MPI_MODULE"
 module load "$VASP_MODULE"
 
 NP=$(wc -l < "$PBS_NODEFILE")
@@ -45,6 +47,7 @@ echo "vasp      : ${EXE:-NOT FOUND ($VASP_EXE in $VASP_MODULE)}"
 echo "folders   : $DIRS   stages: $STAGES"
 echo "started   : $(date)"
 [ -z "$EXE" ] && exit 1
+if ldd "$EXE" | grep -q "not found"; then echo "missing libraries:"; ldd "$EXE" | grep "not found"; exit 1; fi
 
 # ---- memory watch (whole job) ----
 (
