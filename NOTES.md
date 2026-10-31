@@ -2,7 +2,9 @@
 
 Practical details that are not in the README: where things live, how jobs were run, decisions and their reasons, open checks, and commands that work. The README holds the science, the plan and the results.
 
-Last updated: 2026-10-23
+Last updated: 2026-10-31
+
+**For Claude:** read this file again after every context reset or chat compaction, before giving cluster commands. The cluster facts below are the reference; do not rely on memory of earlier turns.
 
 ## Where things are
 
@@ -28,6 +30,31 @@ Change flow: edit in the Desktop copy, review with `git diff`, commit there, the
 - Modules for Quantum ESPRESSO: `module load intel/intel2020` then `module load qe/qe-6.5`. The cluster's module has only `pw.x`. `neb.x` and `pp.x` come from the build in the home folder.
 - Do not use `disk_io = 'nowf'` with QE 6.5.
 - Jobs start with a clean environment, so the job script must load the modules itself.
+- Login node has **no Python**: build all inputs on the laptop (WSL or the Desktop copy) and copy them over.
+- File transfer: **drag and drop** in the GUI file-transfer window (scp from the terminal does not work for Duy).
+- Bash history expansion breaks `grep "^!"` in an interactive shell ("event not found"): run `set +H` first, or use single quotes.
+
+**Node types and memory (check before every submission)**
+
+| Queue | Cores per node | Memory per node | Plan for | Notes |
+|---|---|---|---|---|
+| `std40` | 40 | 92 GB | at most about 75 GB | Nodes come in groups of four: long jobs take 4 or 8 nodes (senior's advice) |
+| `fat96` | 96 | about 251–263 GB | at most about 210 GB | Shared and in demand: do not hold it for long; split work into smaller batches |
+
+Measured memory (use these to size jobs):
+
+| Calculation | Setup | Memory |
+|---|---|---|
+| QE 160-atom supercell, closed shell (pristine, +1) | 2 std40 nodes, `NK=2` | 62 GB per node (QE estimate 137 GB in total) |
+| QE 159-atom neutral (spin-polarised) | 3 std40 nodes, `NK=2` | QE estimate 193 GB in total |
+| QE NEB +1, 2 images at once | 4 std40 nodes, `NI=2, NK=2` | 88 GB + swap on one node: **does not fit** |
+| QE NEB +1, 1 image at a time | 4 std40 nodes, `NI=1, NK=2` | **33 GB per node, no swap** (job 217856) |
+
+**VASP on the cluster**
+
+- Modules: `vasp/vasp541scala`, `vasp544elpa`, `vasp544mod`, `vasp544scala`, `vasp632`, `vasp632vaspsol`, `vasp632vaspsol.vtst`, `vasp632vtst`, `vasp632wannier90`, `vasp643`. This project uses **`vasp/vasp632vtst`** for every step (VTST is needed for NEB).
+- The VASP module only adds `/public/apps/vasp632vtst` to `PATH` (programs `vasp_std`, `vasp_gam`, `vasp_ncl`). It loads no MPI or MKL: **load `intel/intel2020` first**, otherwise `vasp_std` misses the MKL libraries. Checked 31 Oct: `module load intel/intel2020 vasp/vasp632vtst` gives 0 missing libraries. `vasp/run_vasp.pbs` does this.
+- POTCARs: `/public/shared-data/pot/vasp/544/PAW_PBE/` (hyphen in `shared-data`). `Cs_sv`, `Pb_d` and `I` are present (checked 31 Oct). PBEsol comes from `GGA = PS` in INCAR with these PBE potentials; there is no separate PBEsol POTCAR set. `vasp/make_potcar.sh` builds POTCAR from the POSCAR species line and checks ZVAL (9, 14, 7).
 
 How the home build was made:
 
@@ -49,12 +76,13 @@ make -j 4 pw neb pp
 | 217406 `pristine` | 2 nodes (80 cores), `NK=2` | **Done 11 Oct 01:28.** Started 10 Oct 22:21 after about 32 h in the queue. Converged on the first SCF (17 iterations), 0 BFGS steps, 3 h 6 min. E = −65326.88713687 Ry, total force 0.0022 Ry/Bohr, highest occupied level 3.4105 eV. Memory 62 GB used per node, no swap. Keep `tmp/` for the potential alignment |
 | 217407 `qp1_apical` | 2 nodes, `NK=2` | **Done 14 Oct 09:26.** 47 SCF cycles, 46 BFGS steps, 3 d 11 h wall (about 1.8 h per step). E = −64954.16973158 Ry, largest force 3.1×10⁻⁴ Ry/Bohr, highest occupied level 3.3779 eV. Memory 1.71 GB per process, no swap |
 | 217408 `qp1_equatorial` | 2 nodes, `NK=2` | **Done 16 Oct.** 59 SCF cycles, 58 BFGS steps. E = −64954.16980915 Ry, largest force 3.7×10⁻⁴ Ry/Bohr |
-| 217409 `q0_apical` | 3 nodes, `NK=2` | Running (started 11 Oct 12:37, walltime ends about 26 Oct 12:37). At step 68 (21 Oct): E = −64953.80112233 Ry, largest force 4.7×10⁻⁴ Ry/Bohr (3.4×10⁻⁴ at step 66); energy still settling about 0.3 meV per step, magnetisation 0. Gap to 8d: +40.3 meV |
+| 217409 `q0_apical` | 3 nodes, `NK=2` | Walltime ended about 26 Oct 12:37; **final output not yet checked**. At step 68 (21 Oct): E = −64953.80112233 Ry, largest force 4.7×10⁻⁴ Ry/Bohr (3.4×10⁻⁴ at step 66); energy still settling about 0.3 meV per step, magnetisation 0. Gap to 8d: +40.3 meV |
 | 217410 `q0_equatorial` | 3 nodes, `NK=2` | **Done 18 Oct.** 54 SCF cycles, 53 BFGS steps. E = −64953.79815909 Ry, largest force 3.6×10⁻⁴ Ry/Bohr, magnetisation 0. Final coordinates printed; then aborted while writing `tmp/` (`seqopn` error 90, could not open `restart89`, `/public` 94% full but 4.1 TB free). Result valid, `tmp/` likely incomplete |
 | `kmesh221` | SCF of the relaxed +1 apical structure with a 2×2×1 mesh (4 k-points), 2 nodes | **Done 14 Oct.** 1.50 GB per process. E = −64954.14911857 Ry: +0.28 eV per cell (1.8 meV/atom) above 2×2×2; largest force 1.2×10⁻³ Ry/Bohr (0.031 eV/Å) against 3.1×10⁻⁴ at 2×2×2. Fails; see Decisions |
 | 217708 `ref_phases` | Step 5: Cs, Pb, solid I₂, CsI, PbI₂, I₂ molecule side by side, 4 std40 nodes (`05_reference_phases/run_refs.pbs`) | **Done 23 Oct 21:15**, under 1 h. All six converged. E (Ry): Cs −62.89427877, Pb −859.43397176, I₂ (4 atoms) −1491.69347976, CsI −436.04489173, PbI₂ −1605.41570805, I₂ molecule −745.79685350. Cells: PbI₂ a 4.535, c 7.018 Å (−0.5%, +0.6%); CsI 4.502 Å (−1.4%); I₂ a 7.504, b 4.365, c 9.612 Å (+5.2%, −6.8%, −1.8%; volume −4%). Results in the README |
 | `S1_qp1` (NEB, first try) | 4 std40 nodes, `NI=2, NK=2` | **Stopped 23 Oct 22:05 by the swap guard** in the first NEB step: node28 88 GB used + 4 GB swap. neb.x needs about 1.4× the memory of a plain relaxation (62 GB per node expected) |
 | `S2_qp1` (NEB, first try) | 4 std40 nodes, `NI=2, NK=2` | **Crashed at start** (`PMPI_Init`, rank 80): started on node28 while S1 was still shutting down. Input fine; resubmit |
+| 217856 `S1_qp1` (NEB, second try) | 4 std40 nodes, `NI=1, NK=2`, 360 h | **Running** since 30 Oct 12:09. 33 GB per node, no swap. About 1 h per image SCF, about 4 h per NEB step. On 31 Oct after about 5 steps: barrier estimate 0.503 eV (same both ways, as symmetry requires); image errors 0.42–0.57 eV/Å (converged below 0.05) |
 
 **Incident, 9 Oct: jobs submitted without a memory check.** A std40 node has 92 GB. QE's estimate (printed in the first minute, `Estimated total dynamical RAM`) was 137 GB for the pristine and +1 supercells and 193 GB for the spin-polarised neutral ones. On one node the jobs ran out of memory: node32 showed 92 GB used plus 45 GB of swap, 92% of CPU time waiting on the disk, pw.x in state `D`. The +1 jobs were killed, the pristine one never finished its first SCF iteration. Fix: resubmit on 2 or 3 nodes; the job script takes the process count from the node list, so only `-l nodes=N:ppn=40` changes.
 
