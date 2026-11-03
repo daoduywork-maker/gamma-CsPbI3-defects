@@ -1,0 +1,10 @@
+Unit cell: vasp/01_unitcell/relax/CONTCAR
+Supercell: 2x2x2, 160 atoms, cell 16.7410 17.8994 24.8040 A, k-mesh 2 2 2 (Gamma)
+Electrons (Cs_sv 9, Pb_d 14, I 7): perfect 1408
+
+vac_I_apical: removed atom 101 (POSCAR order) at (4.836, 9.011, 15.503) A
+  electrons: q+1 1400 (NELECT set), q0 1401 (default)
+vac_I_equatorial: removed atom 75 (POSCAR order) at (6.804, 7.211, 11.931) A
+  electrons: q+1 1400 (NELECT set), q0 1401 (default)
+
+Same choice as the QE cells: the 4c or 8d iodine closest to the cell centre.
