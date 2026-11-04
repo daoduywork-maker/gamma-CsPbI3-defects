@@ -62,7 +62,7 @@ Small cells (V1, V5): a few GB. Supercells: estimated 30–60 GB in total for +1
 |---|---|
 | Relaxed unit cell a, b, c | 8.362, 8.961, 12.350 Å |
 | E(8d) − E(4c), charge +1 | −1.06 meV (8d lower) |
-| E(8d) − E(4c), neutral | ≈ +40 meV (4c lower; QE value provisional) |
+| E(8d) − E(4c), neutral | +40.4 meV (4c lower) |
 | Neutral cells | 0 μB, shallow donor |
 | ΔH_f CsI, PbI₂, CsPbI₃ | −3.09, −1.84, −4.99 eV/f.u.; CsPbI₃ stable vs CsI + PbI₂ by 63 meV |
 | Barriers S1, S2, L3, S6 (+1) | pending in QE |

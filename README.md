@@ -6,7 +6,7 @@ First-principles study of iodine vacancies in orthorhombic γ-CsPbI₃, using Qu
 
 Iodine vacancies are the main mobile defect in γ-CsPbI₃, a promising inorganic perovskite for solar cells, and their migration causes current–voltage hysteresis and degradation. Tilted octahedra in the γ phase create two inequivalent iodine sites, apical (4c) and equatorial (8d), yet published studies report only three migration path types and do not state the vacancy charge state. Using density functional theory (PBEsol) in 159-atom supercells, we compared both sites for the neutral and +1 vacancy and identified the symmetry-distinct hops. The +1 vacancy showed almost no site preference (8d lower by 1 meV), whereas the neutral vacancy favoured the apical site by about 40 meV, opposite to the published result. The neutral vacancy behaved as a shallow donor, with its extra electron delocalized over the crystal. Symmetry analysis revealed ten distinct hops, six short and four long, rather than three. A literature comparison suggests the published benchmark used an unusually weakly tilted lattice. These results show that iodine vacancy energetics in γ-CsPbI₃ depend on both charge state and octahedral tilt, and they set the reference for the barrier calculations that follow.
 
-The neutral value is provisional: the neutral apical relaxation has converged forces but its energy is still settling (about 0.3 meV per step). The abstract covers the bulk work done so far; the scope was extended on 23 October 2026 (see Scope).
+The abstract covers the bulk work done so far; the scope was extended on 23 October 2026 (see Scope).
 
 This repository holds the inputs, scripts and text outputs. Scratch data (wavefunctions, charge densities) is not tracked.
 
@@ -359,14 +359,14 @@ The supercell built from the tightly relaxed unit cell needed no relaxation, so 
 
 E(8d) − E(4c) = −1.06 meV: the two sites are nearly degenerate, equatorial very slightly lower. Same sign as Arber 2025's reported +0.03 eV (4c above 8d), but about 30 times smaller; Arber's charge state is not stated, so the comparison is not yet conclusive (see NOTES.md, open check 7).
 
-### Iodine vacancy, neutral (provisional)
+### Iodine vacancy, neutral
 
 | Site | Total energy (Ry) | Run | Convergence |
 |---|---|---|---|
-| Apical (4c) | −64953.80112233 (step 68, still settling) | Job 217409, 3 nodes | Running; largest force near 4×10⁻⁴ Ry/Bohr, energy changing about 0.3 meV per step |
+| Apical (4c) | −64953.80113061 | Job 217409, 3 nodes | 69 SCF cycles, 68 BFGS steps, largest force 3.3×10⁻⁴ Ry/Bohr |
 | Equatorial (8d) | −64953.79815909 | Job 217410, 3 nodes | 54 SCF cycles, 53 BFGS steps, largest force 3.6×10⁻⁴ Ry/Bohr |
 
-E(8d) − E(4c) ≈ +40 meV (40.3 meV at step 68): the neutral vacancy prefers the apical site, opposite in sign to Arber 2025. The remaining drift is about 0.3 meV per step. Total magnetisation is 0 μB in both cells: the extra electron is delocalized (shallow donor). Zhang 2025 also finds V_I a shallow donor (PBEsol, with spin–orbit coupling for the levels). Two further checks agree: the Fermi level of the neutral cells lies 1.56 eV (4c) and 1.68 eV (8d) above the pristine VBM, and the rough transition level E(0) − E(+1) − E_VBM is 1.61 eV (4c) and 1.65 eV (8d), both at the band edge (gap about 1.6 eV without SOC). These are uncorrected; step 6 gives the proper transition level. PBEsol tends to over-delocalize, so an HSE check would settle it.
+E(8d) − E(4c) = +40.4 meV: the neutral vacancy prefers the apical site (70% on 4c at 300 K), opposite in sign to Arber 2025. Total magnetisation is 0 μB in both cells: the extra electron is delocalized (shallow donor). Zhang 2025 also finds V_I a shallow donor (PBEsol, with spin–orbit coupling for the levels). Two further checks agree: the Fermi level of the neutral cells lies 1.56 eV (4c) and 1.68 eV (8d) above the pristine VBM, and the rough transition level E(0) − E(+1) − E_VBM is 1.61 eV (4c) and 1.65 eV (8d), both at the band edge (gap about 1.6 eV without SOC). These are uncorrected; step 6 gives the proper transition level. PBEsol tends to over-delocalize, so an HSE check would settle it.
 
 ### Stability region (step 5)
 
