@@ -391,6 +391,8 @@ Climbing-image NEB, 4 moving images, converged after 27 iterations (every image 
 | Energy (eV) | 0 | 0.228 | **0.361** | 0.271 | 0.116 | 0.000 |
 | Force error (eV/Å) | 0.009 | 0.047 | 0.034 | 0.040 | 0.028 | 0.009 |
 
+![S1 energy profile](assets/neb_S1_qp1.png)
+
 **Barrier S1 = 0.361 eV**, the same in both directions as the symmetry of an 8d–8d hop requires (end points equal to 0.4 μeV). Arber 2025 gives 0.34 eV for an 8d–8d edge hop (S1 or S6, not identifiable from their figure); Zhang 2025 about 0.54 eV for the path matched to S1. The first run stopped at 0.364 eV after a swap-guard stop and was restarted from the saved path (see NOTES).
 
 ### Comparison with the published benchmark
