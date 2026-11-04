@@ -20,7 +20,8 @@ This repository holds the inputs, scripts and text outputs. Scratch data (wavefu
 | Vacancy relaxations (4 jobs) | +1 pair and neutral equatorial done; neutral apical finishing (forces converged) |
 | Set of distinct bulk hops | Settled: 10 (6 short, 4 long) |
 | Hop end points and NEB inputs (`build_neb.py`, `hop_network.py`, `run_neb.pbs`) | Done |
-| Bulk barriers (NEB) | To do: staged; stage 1 = S1, S2, L3, S6, the hops comparable with published values (see Methods) |
+| Bulk barriers (NEB) | Stage 1 (S1, S2, L3, S6): **S1 done in QE, 0.361 eV (+1)**; the rest follow in VASP |
+| VASP counterpart (`vasp/`) | Unit cell, convergence tests and reference phases done (agree with QE within 0.4% and 13 meV); supercell done; vacancy cells running |
 | Part A: reference phases and chemical-potential region (step 5) | **Done** for elements and binaries; Cs₄PbI₆, CsPb₂I₅ to add |
 | Part A: formation energies, transition levels, defect concentrations (step 6) | To do |
 | Part B: diffusion coefficients and anisotropy (step 7) | To do |
@@ -380,6 +381,17 @@ Elements as bcc Cs, fcc Pb and solid I₂; all cells relaxed (vc-relax) with the
 γ-CsPbI₃ is stable against CsI + PbI₂ by only **63 meV per formula unit**, so the region is a thin strip in the (Δμ_Pb, Δμ_I) plane: from the iodine-rich end (A, B: Δμ_I = 0, Δμ_Pb ≈ −1.9 eV) to the lead-rich, iodine-poor end (C, D: Δμ_Pb = 0, Δμ_I ≈ −0.93 eV). CsI is about 0.5 eV less bound than measured, a known GGA tendency for alkali compounds, which shifts the CsI edge. Solid I₂ lies 0.34 eV per atom below the I₂ molecule (measured sublimation about 0.32 eV), so PBEsol describes the iodine reference well without dispersion; the I₂ cell changes shape (a +5%, b −7%) but its volume only by −4%. δ-CsPbI₃ is left out (same composition; it would empty the region). Cs₄PbI₆ and CsPb₂I₅ can only shrink the strip further. Corner values: `05_reference_phases/stability_region.txt`.
 
 ![Stability region](assets/stability_region.png)
+
+### First barrier: hop S1 (+1, QE)
+
+Climbing-image NEB, 4 moving images, converged after 27 iterations (every image below 0.05 eV/Å; QE job 217923).
+
+| Image | 1 (8d) | 2 | 3 (climbing) | 4 | 5 | 6 (8d) |
+|---|---|---|---|---|---|---|
+| Energy (eV) | 0 | 0.228 | **0.361** | 0.271 | 0.116 | 0.000 |
+| Force error (eV/Å) | 0.009 | 0.047 | 0.034 | 0.040 | 0.028 | 0.009 |
+
+**Barrier S1 = 0.361 eV**, the same in both directions as the symmetry of an 8d–8d hop requires (end points equal to 0.4 μeV). Arber 2025 gives 0.34 eV for an 8d–8d edge hop (S1 or S6, not identifiable from their figure); Zhang 2025 about 0.54 eV for the path matched to S1. The first run stopped at 0.364 eV after a swap-guard stop and was restarted from the saved path (see NOTES).
 
 ### Comparison with the published benchmark
 
