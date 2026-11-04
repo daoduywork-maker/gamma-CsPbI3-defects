@@ -417,14 +417,11 @@ One folder per step of the Methods. The steps that have not started yet hold onl
 ├── 03_vacancies/                step 3: 4c and 8d vacancies, charge +1 and neutral
 ├── 04_bulk_neb/                 step 4: build_neb.py (NEB inputs), hop_network.py and hop_network.txt (hop counts and directions)
 ├── run_neb.pbs                  PBS job script for neb.x (fat96 nodes, swap guard)
-├── vasp/                        VASP counterpart of steps 1–5 (same physics; see vasp/README.md)
+├── vasp/                        VASP counterpart of steps 1–5, and the slab steps 8–10 (vasp/08_slab, …; see vasp/README.md)
 ├── presentation/                progress report for the supervisor (Beamer source and PDF)
 ├── 05_reference_phases/         step 5: Cs, Pb, I₂, CsI, PbI₂ inputs, job script, stability region
 ├── 06_defect_formation/         step 6: V_Pb, V_Cs, I_i cells, alignment, formation energies, concentrations (to do)
-├── 07_diffusion/                step 7: diffusion coefficients and anisotropy (to do)
-├── 08_slab/                     step 8: CsI-terminated (001) slab, build and convergence (to do)
-├── 09_slab_vacancies/           step 9: vacancies at increasing depth (to do)
-└── 10_slab_neb/                 step 10: NEB at increasing depth (to do)
+└── 07_diffusion/                step 7: diffusion coefficients and anisotropy (to do)
 ```
 
 ### `01_unitcell/`
