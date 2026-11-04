@@ -1,0 +1,9 @@
+CsI-terminated (001) slabs, 1x1 in-plane, built from vasp/01_unitcell/relax/CONTCAR
+in-plane cell fixed at the relaxed bulk a, b (8.3705 x 8.9497 A); vacuum 15.0 A
+
+L07: 7 layers (4 CsI + 3 PbI2),  34 atoms = 6 CsPbI3 + 2 CsI, thickness 18.60 A, c = 33.60 A, NELECT 296
+L09: 9 layers (5 CsI + 4 PbI2),  44 atoms = 8 CsPbI3 + 2 CsI, thickness 24.80 A, c = 39.80 A, NELECT 384
+L11: 11 layers (6 CsI + 5 PbI2),  54 atoms = 10 CsPbI3 + 2 CsI, thickness 31.01 A, c = 46.01 A, NELECT 472
+
+Check after the runs: E(L09) - E(L07) and E(L11) - E(L09) should both equal
+2 CsPbI3 of bulk (2 x E_unit / 4); the middle layer should match bulk Pb-I bonds and tilts.

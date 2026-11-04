@@ -16,6 +16,8 @@ Subcommands (run from the project root; the cluster has no Python):
              python3 vasp/build_vasp.py supercell --unit vasp/01_unitcell/relax/CONTCAR
   refs       step 5: Cs, Pb, solid I2, CsI, PbI2 and the I2 molecule
              python3 vasp/build_vasp.py refs
+  slab       step 8: CsI-terminated (001) slabs, 7, 9 and 11 layers, 1x1 in-plane
+             python3 vasp/build_vasp.py slab
 
 The NEB inputs (step 4) come from 04_bulk_neb/build_neb.py with --code vasp.
 POTCAR files are made on the cluster with vasp/make_potcar.sh.
@@ -260,6 +262,76 @@ def cmd_refs(a):
     print("\n".join(rows))
 
 
+# ---- step 8: CsI-terminated (001) slabs for the thickness test ----------------
+SLAB_LAYERS = (7, 9, 11)
+SLAB_VACUUM = 15.0               # A of vacuum between periodic copies
+K_SLAB = (4, 4, 1)               # same in-plane density as the unit cell (4x4x3)
+
+
+def build_slab(unit, nlayers, vacuum=SLAB_VACUUM):
+    """Symmetric CsI-terminated (001) slab, 1x1 in-plane, nlayers odd.
+
+    In the unit cell (c the long axis) the layers sit at z = 0 (PbI2), 1/4 (CsI),
+    1/2 (PbI2), 3/4 (CsI). Layer k of the stacked cell is at z = k/4 (in units of c);
+    CsI layers have odd k. The slab keeps layers 1 ... nlayers, so both faces are CsI.
+    Both faces are equivalent by symmetry (checked with spglib: 7 and 11 layers have a
+    PbI2 middle layer on Pb inversion centres, P2_1/c; 9 layers a CsI middle layer on the
+    mirror plane), so there is no net dipole along the normal.
+    """
+    assert nlayers % 2 == 1
+    reps = (nlayers + 1) // 4 + 1
+    big = unit.repeat((1, 1, reps))
+    c = unit.cell[2, 2]
+    z = big.positions[:, 2] / c
+    k = np.rint(z * 4).astype(int) % (4 * reps)
+    keep = [i for i in range(len(big)) if 1 <= k[i] <= nlayers]
+    slab = big[keep]
+    slab.positions[:, 2] -= slab.positions[:, 2].min()
+    thick = slab.positions[:, 2].max()
+    cell = slab.cell.copy()
+    cell[2] = [0, 0, thick + vacuum]
+    slab.set_cell(cell)
+    slab.positions[:, 2] += vacuum / 2
+    return sort_atoms(slab), thick
+
+
+def cmd_slab(a):
+    unit = read(a.unit, format="vasp")
+    out = os.path.join(HERE, "08_slab")
+    os.makedirs(out, exist_ok=True)
+    rows = ["CsI-terminated (001) slabs, 1x1 in-plane, built from %s" % a.unit,
+            "in-plane cell fixed at the relaxed bulk a, b (%.4f x %.4f A); vacuum %.1f A"
+            % (unit.cell[0, 0], unit.cell[1, 1], SLAB_VACUUM), ""]
+    for n in SLAB_LAYERS:
+        slab, thick = build_slab(unit, n)
+        d = os.path.join(out, "L%02d" % n)
+        os.makedirs(d, exist_ok=True)
+        sym = slab.get_chemical_symbols()
+        ncs, npb, ni = (sym.count(s) for s in ORDER)
+        fu = npb                      # CsPbI3 units; the rest is CsI
+        extra = ncs - npb
+        assert ni == 3 * npb + extra, "not CsPbI3 + CsI"
+        write_poscar(os.path.join(d, "POSCAR"), slab, "slab")
+        write_kpoints(os.path.join(d, "KPOINTS"), K_SLAB, "Gamma-centred, 4x4 in-plane, 1 along the normal")
+        incar(os.path.join(d, "INCAR"), "gamma-CsPbI3 (001) slab, CsI-terminated, %d layers" % n,
+              base_tags(".FALSE.") + [
+                  "Relaxation: atoms only, in-plane cell fixed at the bulk value",
+                  ("IBRION", 2, "conjugate gradient"),
+                  ("ISIF", 2, "fixed cell"),
+                  ("NSW", 200, ""),
+                  ("EDIFFG", EDIFFG, "eV/A, same force limit as QE"),
+                  "Symmetric slab: no dipole correction needed"] + para_tags(10, 2))
+        rows.append("L%02d: %d layers (%d CsI + %d PbI2), %3d atoms = %d CsPbI3 + %d CsI, "
+                    "thickness %.2f A, c = %.2f A, NELECT %d"
+                    % (n, n, (n + 1) // 2, (n - 1) // 2, len(slab), fu, extra, thick,
+                       slab.cell[2, 2], nelect(slab)))
+    rows += ["", "Check after the runs: E(L09) - E(L07) and E(L11) - E(L09) should both equal",
+             "2 CsPbI3 of bulk (2 x E_unit / 4); the middle layer should match bulk Pb-I bonds and tilts."]
+    with open(os.path.join(out, "slabs_report.txt"), "w") as f:
+        f.write("\n".join(rows) + "\n")
+    print("\n".join(rows))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -269,8 +341,10 @@ def main():
     p = sub.add_parser("supercell")
     p.add_argument("--unit", required=True, help="relaxed VASP unit cell (CONTCAR)")
     sub.add_parser("refs")
+    p = sub.add_parser("slab")
+    p.add_argument("--unit", default="vasp/01_unitcell/relax/CONTCAR", help="relaxed VASP unit cell (CONTCAR)")
     a = ap.parse_args()
-    {"unitcell": cmd_unitcell, "supercell": cmd_supercell, "refs": cmd_refs}[a.cmd](a)
+    {"unitcell": cmd_unitcell, "supercell": cmd_supercell, "refs": cmd_refs, "slab": cmd_slab}[a.cmd](a)
 
 
 if __name__ == "__main__":
