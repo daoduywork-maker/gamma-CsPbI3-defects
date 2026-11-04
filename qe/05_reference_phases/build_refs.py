@@ -3,7 +3,7 @@
 Build Quantum ESPRESSO inputs for the reference phases of step 5
 (chemical-potential region of gamma-CsPbI3).
 
-Writes, under 05_reference_phases/ (run from the project root):
+Writes, under qe/05_reference_phases/ (run from the project root):
 
   Cs/vcrelax.in         bcc Cs metal (Im-3m)          elemental reference mu_Cs
   Pb/vcrelax.in         fcc Pb metal (Fm-3m)          elemental reference mu_Pb
@@ -24,7 +24,7 @@ Starting structures are experimental (low-temperature where known); every
 cell is relaxed with vc-relax, keeping its space group.
 
 Usage (from the project root):
-    python3 05_reference_phases/build_refs.py --pseudo-dir /public/home/daomduy/cspbi3/pseudo_pbesol
+    python3 qe/05_reference_phases/build_refs.py --pseudo-dir /public/home/daomduy/cspbi3/pseudo_pbesol
 
 Needs: python3 with numpy, ase and spglib.
 """
@@ -139,7 +139,7 @@ def write_input(path, name, atoms, kind, metal, k, pseudo_dir):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--pseudo-dir", default="/public/home/daomduy/cspbi3/pseudo_pbesol")
-    ap.add_argument("--out", default="05_reference_phases")
+    ap.add_argument("--out", default="qe/05_reference_phases")
     a = ap.parse_args()
 
     rep = ["Reference phases for step 5 (start structures, before relaxation)", ""]

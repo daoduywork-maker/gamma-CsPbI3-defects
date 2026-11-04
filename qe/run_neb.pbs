@@ -1,9 +1,9 @@
 #!/bin/bash
 # PBS job script for Quantum ESPRESSO neb.x (NEB barriers) on the group cluster.
 #
-# Submit from the hop folder that holds neb.in (made by 04_bulk_neb/build_neb.py):
-#     qsub -N S1_qp1 ../../run_neb.pbs                      (defaults below: 2 fat96 nodes, 4 images at once)
-#     qsub -N S1_qp1 -v NI=2,NK=2 ../../run_neb.pbs        (fallback: 2 images at once, 2 pools each)
+# Submit from the hop folder that holds neb.in (made by tools/build_neb.py):
+#     qsub -N S1_qp1 ~/cspbi3/run_neb.pbs                       (defaults below: 2 fat96 nodes, 4 images at once)
+#     qsub -N S1_qp1 -v NI=2,NK=2 ~/cspbi3/run_neb.pbs         (fallback: 2 images at once, 2 pools each)
 #
 # Memory (QE estimates for one 159-atom image, 2x2x2 k-mesh):
 #     +1, -nk 1: 116 GB   +1, -nk 2: 137 GB   q0 (spin-polarised), -nk 2: 193 GB

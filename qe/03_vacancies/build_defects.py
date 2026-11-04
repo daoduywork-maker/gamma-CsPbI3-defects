@@ -19,8 +19,8 @@ This script builds vacancies only. The end points and NEB inputs for the
 
 Usage:
     (run from the project root)
-    python3 03_vacancies/build_defects.py 01_unitcell/tight/unit_tight_relaxed.in
-    python3 03_vacancies/build_defects.py 01_unitcell/tight/unit_tight_relaxed.in --pseudo-dir /path/on/cluster
+    python3 qe/03_vacancies/build_defects.py qe/01_unitcell/tight/unit_tight_relaxed.in --out qe
+    python3 qe/03_vacancies/build_defects.py qe/01_unitcell/tight/unit_tight_relaxed.in --out qe --pseudo-dir /path/on/cluster
 
 Needs: python3 with numpy and ase.
 """

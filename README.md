@@ -49,7 +49,7 @@ The cubic structure is not an energy minimum at zero temperature because the oct
 
 ![Top and side views of the relaxed γ-CsPbI₃ lattice](assets/gamma_CsPbI3_lattice_tilted_octahedra.png)
 
-The figure shows the soft-relaxed structure in `01_unitcell/final/`. The tight relaxation moved the atoms by less than 0.03 Å, which is not visible at this scale. The top view shows one layer of octahedra (each Pb with the four in-plane iodine atoms) and the Cs atoms above the layer. Neighbouring octahedra rotate about c in opposite senses. The side view shows one sheet of octahedra along the in-plane diagonal, with bent rather than straight Pb–I–Pb links along c.
+The figure shows the soft-relaxed structure in `qe/01_unitcell/final/`. The tight relaxation moved the atoms by less than 0.03 Å, which is not visible at this scale. The top view shows one layer of octahedra (each Pb with the four in-plane iodine atoms) and the Cs atoms above the layer. Neighbouring octahedra rotate about c in opposite senses. The side view shows one sheet of octahedra along the in-plane diagonal, with bent rather than straight Pb–I–Pb links along c.
 
 | Property | Value (this work, PBEsol) |
 |---|---|
@@ -230,7 +230,7 @@ Arber et al. did not state the charge state. The charge state in this study that
 
 The lengths come from the tight-relaxed cell. In the bulk, one vacancy per site type is enough, and each 4c–8d NEB gives both directions.
 
-**Hop network.** The script `04_bulk_neb/hop_network.py` counted the hops of each kind available to one vacancy in the perfect supercell and recorded where each hop leads.
+**Hop network.** The script `tools/hop_network.py` counted the hops of each kind available to one vacancy in the perfect supercell and recorded where each hop leads.
 
 | Hop | Ends | From an 8d vacancy | From a 4c vacancy | Moves the vacancy |
 |---|---|---|---|---|
@@ -373,7 +373,7 @@ The elemental references were bcc Cs, fcc Pb and solid I₂. All the cells were 
 | PbI₂ | −1.84 | −1.82 | a −0.5%, c +0.6% |
 | γ-CsPbI₃ | −4.99 | — | (unit cell, see above) |
 
-γ-CsPbI₃ is stable against CsI + PbI₂ by only **63 meV per formula unit**, so the region is a thin strip in the (Δμ_Pb, Δμ_I) plane. The strip runs from the iodine-rich end (A and B, with Δμ_I = 0 and Δμ_Pb ≈ −1.9 eV) to the lead-rich, iodine-poor end (C and D, with Δμ_Pb = 0 and Δμ_I ≈ −0.93 eV). CsI is about 0.5 eV less bound than measured, a known GGA tendency for alkali compounds, which shifts the CsI edge. Solid I₂ lies 0.34 eV per atom below the I₂ molecule (measured sublimation energy about 0.32 eV), so PBEsol describes the iodine reference well without dispersion. The I₂ cell changed shape (a +5%, b −7%), but the volume changed by only −4%. δ-CsPbI₃ has the same composition as γ-CsPbI₃ and would empty the region, so the analysis leaves δ-CsPbI₃ out. Cs₄PbI₆ and CsPb₂I₅ can only shrink the strip further. The file `05_reference_phases/stability_region.txt` lists the corner values.
+γ-CsPbI₃ is stable against CsI + PbI₂ by only **63 meV per formula unit**, so the region is a thin strip in the (Δμ_Pb, Δμ_I) plane. The strip runs from the iodine-rich end (A and B, with Δμ_I = 0 and Δμ_Pb ≈ −1.9 eV) to the lead-rich, iodine-poor end (C and D, with Δμ_Pb = 0 and Δμ_I ≈ −0.93 eV). CsI is about 0.5 eV less bound than measured, a known GGA tendency for alkali compounds, which shifts the CsI edge. Solid I₂ lies 0.34 eV per atom below the I₂ molecule (measured sublimation energy about 0.32 eV), so PBEsol describes the iodine reference well without dispersion. The I₂ cell changed shape (a +5%, b −7%), but the volume changed by only −4%. δ-CsPbI₃ has the same composition as γ-CsPbI₃ and would empty the region, so the analysis leaves δ-CsPbI₃ out. Cs₄PbI₆ and CsPb₂I₅ can only shrink the strip further. The file `qe/05_reference_phases/stability_region.txt` lists the corner values.
 
 ![Stability region](assets/stability_region.png)
 
@@ -396,7 +396,7 @@ The relaxed cell of Arber et al. (2025) was nearly square in the ab plane (8.68 
 
 ## File structure
 
-Each step of the Methods has one folder, and the steps that have not started hold only a `.gitkeep` file.
+The Quantum ESPRESSO work sits in `qe/`, the VASP work in `vasp/`, and the scripts used with both codes in `tools/`. Inside `qe/` and `vasp/`, each step of the Methods has one numbered folder. The analysis steps (6, 7 and 11) will add their scripts to `tools/`.
 
 ```
 .
@@ -404,25 +404,30 @@ Each step of the Methods has one folder, and the steps that have not started hol
 ├── NOTES.md                     working notes: cluster, jobs, decisions, commands
 ├── Literatures/                 literature_review.md (Arber, Biega and Ahmad papers in detail, plus related work) and the papers (not tracked)
 ├── LICENSE
-├── run_qe.pbs                   PBS job script for pw.x, shared by all cluster jobs
 ├── assets/                      figures used in this README
-│
-├── 01_unitcell/                 step 1: convergence test, soft and tight relaxation of the 20-atom cell
-├── 02_pristine/                 step 2: perfect 2×2×2 supercell (160 atoms)
-├── 03_vacancies/                step 3: 4c and 8d vacancies, charge +1 and neutral
-├── 04_bulk_neb/                 step 4: build_neb.py (NEB inputs), hop_network.py and hop_network.txt (hop counts and directions)
-├── run_neb.pbs                  PBS job script for neb.x (fat96 nodes, swap guard)
-├── vasp/                        VASP counterpart of steps 1–5, and the slab and strain steps 8–12 (vasp/08_slab, …; see vasp/README.md)
 ├── presentation/                progress report for the supervisor (Beamer source and PDF)
-├── 05_reference_phases/         step 5: Cs, Pb, I₂, CsI, PbI₂ inputs, job script, stability region
-├── 06_defect_formation/         step 6: V_I formation energy, alignment, charge correction, concentration (to do)
-└── 07_diffusion/                steps 7 and 11: diffusion coefficients, bulk and slab (to do)
+│
+├── qe/                          Quantum ESPRESSO, steps 1–5 (bulk)
+│   ├── 01_unitcell/             step 1: convergence test, soft and tight relaxation of the 20-atom cell
+│   ├── 02_pristine/             step 2: perfect 2×2×2 supercell (160 atoms)
+│   ├── 03_vacancies/            step 3: 4c and 8d vacancies, charge +1 and neutral
+│   ├── 04_bulk_neb/             step 4: NEB runs (q+1/S1 converged; S2, L3, S6 inputs)
+│   ├── 05_reference_phases/     step 5: Cs, Pb, I₂, CsI, PbI₂ inputs, job script, stability region
+│   ├── run_qe.pbs               PBS job script for pw.x, shared by all QE cluster jobs
+│   └── run_neb.pbs              PBS job script for neb.x (swap guard)
+│
+├── vasp/                        VASP: steps 1–5 (cross-check), the remaining bulk NEBs, and the slab and strain steps 8–12 (see vasp/README.md)
+│
+└── tools/                       scripts for both codes
+    ├── build_neb.py             NEB inputs from the relaxed vacancies (--code qe or vasp)
+    ├── hop_network.py           hop counts and directions → hop_network.txt
+    └── plot_neb.py              NEB energy profile in the project figure style
 ```
 
-### `01_unitcell/`
+### `qe/01_unitcell/`
 
 ```
-01_unitcell/
+qe/01_unitcell/
 ├── gamma_CsPbI3_vcrelax.in      base input: experimental γ-CsPbI₃ cell (20 atoms) and settings
 ├── kconv.sh                     convergence test (k-mesh and cutoff)
 ├── conv/                        its inputs and outputs: k221 … k664 at 50 Ry, e40 … e80 at 4×4×3
@@ -441,15 +446,15 @@ Each step of the Methods has one folder, and the steps that have not started hol
 
 The base input holds the experimental room-temperature structure (Sutton et al., ACS Energy Lett. 2018). Both shell scripts read the base input from their own folder, and neither script changes the base input.
 
-### `02_pristine/` and `03_vacancies/`
+### `qe/02_pristine/` and `qe/03_vacancies/`
 
 ```
-02_pristine/
+qe/02_pristine/
 ├── relax.in                     perfect supercell, atoms relaxed at fixed cell: the energy reference
 └── relax.cif
 
-03_vacancies/
-├── build_defects.py             writes 01_unitcell/tight/vcrelax.in, 02_pristine/ and 03_vacancies/
+qe/03_vacancies/
+├── build_defects.py             writes qe/01_unitcell/tight/vcrelax.in, qe/02_pristine/ and qe/03_vacancies/
 ├── sites_report.txt             which atoms were removed
 ├── q+1/                         charge +1
 │   ├── vac_I_apical/            vacancy on a 4c site: relax.in, relax.cif
@@ -459,11 +464,11 @@ The base input holds the experimental room-temperature structure (Sutton et al.,
     └── vac_I_equatorial/
 ```
 
-`build_defects.py` builds vacancies only. The NEB inputs come from `04_bulk_neb/build_neb.py` (end points by symmetry from the relaxed vacancies, IDPP path, `neb.in`), for example `python3 04_bulk_neb/build_neb.py S1 --charge q+1`. `04_bulk_neb/hop_network.py` writes the hop counts and directions to `hop_network.txt`.
+`build_defects.py` builds vacancies only. The NEB inputs come from `tools/build_neb.py` (end points by symmetry from the relaxed vacancies, IDPP path, `neb.in`), for example `python3 tools/build_neb.py S1 --charge q+1`. `tools/hop_network.py` writes the hop counts and directions to `tools/hop_network.txt`.
 
-`run_qe.pbs` loads the modules and runs `pw.x` in the folder from which the job is submitted, with nodes × 40 processes. The node count, input name and k-point pools go on the `qsub` line, for example `qsub -N pristine -l nodes=2:ppn=40 -v INPUT=relax.in,NK=2 <path>/run_qe.pbs`. Check the memory first (see `NOTES.md`).
+`run_qe.pbs` loads the modules and runs `pw.x` in the folder from which the job is submitted, with nodes × 40 processes. The node count, input name and k-point pools go on the `qsub` line, for example `qsub -N pristine -l nodes=2:ppn=40 -v INPUT=relax.in,NK=2 ~/cspbi3/run_qe.pbs`. Check the memory first (see `NOTES.md`).
 
-The cluster copy lives in `~/cspbi3/` with the same step folders (reorganised 31 Oct): `01_unitcell/tight`, `02_pristine`, `03_vacancies/{q+1,q0,kmesh221_test}`, `04_bulk_neb`, `05_reference_phases`, `vasp/`, plus `pseudo_pbesol/` and the job scripts.
+The cluster copy lives in `~/cspbi3/`. There, the QE step folders (`01_unitcell/tight`, `02_pristine`, `03_vacancies/{q+1,q0,kmesh221_test}`, `04_bulk_neb`, `05_reference_phases`) and the QE job scripts sit directly in `~/cspbi3/`, not in a `qe/` folder, next to `vasp/` and `pseudo_pbesol/`.
 
 ## How to reproduce
 
@@ -471,20 +476,20 @@ Python used for the scripts (WSL, system Python): Python 3.14.4, numpy 2.3.5, sc
 
 ```bash
 # 1. convergence test and soft relaxation
-cd 01_unitcell
+cd qe/01_unitcell
 bash kconv.sh | tee conv_summary.txt
 bash relax2stage.sh
-cd ..
+cd ../..
 
 # 2-3. supercell and vacancy inputs (from the project root, after the tight relaxation)
-python3 03_vacancies/build_defects.py 01_unitcell/tight/unit_tight_relaxed.in --pseudo-dir /path/to/pseudo
+python3 qe/03_vacancies/build_defects.py qe/01_unitcell/tight/unit_tight_relaxed.in --out qe --pseudo-dir /path/to/pseudo
 
 # VASP counterpart and slabs (see vasp/README.md)
 python3 vasp/build_vasp.py unitcell        # or: supercell --unit vasp/01_unitcell/relax/CONTCAR, refs, slab
-python3 04_bulk_neb/build_neb.py S1 --charge q+1 --code vasp
+python3 tools/build_neb.py S1 --charge q+1 --code vasp
 ```
 
-Set `PW` (path to `pw.x`) and `NP` (number of MPI processes) at the top of each shell script. Set `pseudo_dir` in `01_unitcell/gamma_CsPbI3_vcrelax.in`. `build_defects.py` needs Python 3 with NumPy and ASE.
+Set `PW` (path to `pw.x`) and `NP` (number of MPI processes) at the top of each shell script. Set `pseudo_dir` in `qe/01_unitcell/gamma_CsPbI3_vcrelax.in`. `build_defects.py` needs Python 3 with NumPy and ASE.
 
 ## Not tracked
 

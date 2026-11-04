@@ -12,7 +12,7 @@ directions they open, not only on the lowest barrier. This table is the
 input for a later kinetic Monte Carlo or analytic diffusion estimate.
 
 Usage (from the project root):
-    python3 04_bulk_neb/hop_network.py [--pristine 02_pristine/relax.in] [--out 04_bulk_neb/hop_network.txt]
+    python3 tools/hop_network.py [--pristine qe/02_pristine/relax.in] [--out tools/hop_network.txt]
 
 Needs: python3 with numpy, ase and spglib (via build_neb.py).
 """
@@ -33,8 +33,8 @@ SAME_LAYER_TOL = 1.5  # A; |dc| below this stays in one layer (tilt buckles a la
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--pristine", default="02_pristine/relax.in")
-    ap.add_argument("--out", default="04_bulk_neb/hop_network.txt")
+    ap.add_argument("--pristine", default="qe/02_pristine/relax.in")
+    ap.add_argument("--out", default="tools/hop_network.txt")
     a = ap.parse_args()
 
     perfect = read(a.pristine, format="espresso-in")

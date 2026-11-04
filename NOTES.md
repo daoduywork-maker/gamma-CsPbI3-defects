@@ -15,7 +15,7 @@ Last updated: 2026-10-31
 | GitHub | `daoduywork-maker/gamma-CsPbI3-defects` (public) | Backup and sharing |
 | Cluster work folder | `/public/home/daomduy/cspbi3` | Calculations |
 | Cluster pseudopotentials | `/public/home/daomduy/cspbi3/pseudo_pbesol` | The three SSSP PBEsol files |
-| Cluster job script | `/public/home/daomduy/cspbi3/run_qe.pbs` | Same file as `run_qe.pbs` in the repository root |
+| Cluster job script | `/public/home/daomduy/cspbi3/run_qe.pbs` | Same file as `qe/run_qe.pbs` in the repository |
 | Own Quantum ESPRESSO build | `/public/home/daomduy/apps/q-e-qe-6.5/bin/` | `pw.x`, `neb.x`, `pp.x`, version 6.5 |
 
 Change flow: edit in the Desktop copy, review with `git diff`, commit there, then in WSL `cd ~/Project-1 && git pull desktop main && git push origin main`. To refresh the Desktop copy after work in WSL: `git pull` inside it.
@@ -23,6 +23,8 @@ Change flow: edit in the Desktop copy, review with `git diff`, commit there, the
 ## Cluster folder layout (since 31 Oct)
 
 `~/cspbi3/` mirrors the repository: `01_unitcell/tight` (was `unitcell_tight`), `02_pristine` (was `pristine_222`), `03_vacancies/q+1`, `03_vacancies/q0`, `03_vacancies/kmesh221_test` (was `kmesh_test`), `04_bulk_neb`, `05_reference_phases`, `vasp/`, `pseudo_pbesol/` (keep this path: QE inputs point to it), `run_qe.pbs`, `run_neb.pbs`. Older job logs and notes use the old names.
+
+**Repository layout (since 4 Nov) differs from the cluster.** In the repository the QE step folders and job scripts are under `qe/` (`qe/01_unitcell` … `qe/05_reference_phases`, `qe/run_qe.pbs`, `qe/run_neb.pbs`), the scripts for both codes (`build_neb.py`, `hop_network.py`, `plot_neb.py`) are in `tools/`, and the empty step 6 and 7 folders were removed. On the cluster the QE folders stay directly in `~/cspbi3/`, so a QE file at `qe/<path>` in the repository is at `~/cspbi3/<path>` on the cluster; `vasp/` is the same in both. Scripts run from the repository root, e.g. `python3 tools/build_neb.py S2 --charge q+1 --code vasp`.
 
 ## The cluster
 
@@ -199,7 +201,7 @@ printf "\nK_POINTS automatic\n4 4 3  0 0 0\n" >> relaxed.in
 Rebuild the supercell and vacancy inputs (needs Python with NumPy and ASE; run in WSL):
 
 ```bash
-python3 03_vacancies/build_defects.py 01_unitcell/tight/unit_tight_relaxed.in --pseudo-dir /public/home/daomduy/cspbi3/pseudo_pbesol   # from the repository root
+python3 qe/03_vacancies/build_defects.py qe/01_unitcell/tight/unit_tight_relaxed.in --out qe --pseudo-dir /public/home/daomduy/cspbi3/pseudo_pbesol   # from the repository root
 ```
 
 NEB launch line, for later (images in parallel with `-ni`):

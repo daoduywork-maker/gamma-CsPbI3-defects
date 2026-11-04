@@ -17,16 +17,16 @@ One run builds one hop (S1-S6, L1-L4) in one charge state:
   6. Writes neb.in, path.xyz (all images, for viewing) and report.txt.
 
 Usage (from the project root):
-    python3 04_bulk_neb/build_neb.py S1 --charge q+1
-    python3 04_bulk_neb/build_neb.py S2 --charge q+1 --images 4 --from 8d
+    python3 tools/build_neb.py S1 --charge q+1
+    python3 tools/build_neb.py S2 --charge q+1 --images 4 --from 8d
 
 Expected relaxed structures (copied from the cluster):
-    03_vacancies/<charge>/vac_I_equatorial/relax.out
-    03_vacancies/<charge>/vac_I_apical/relax.out
+    qe/03_vacancies/<charge>/vac_I_equatorial/relax.out
+    qe/03_vacancies/<charge>/vac_I_apical/relax.out
 Override with --eq and --ap (a relax.in also works, for testing).
 
 VASP (same geometry code, VTST inputs; from the project root):
-    python3 04_bulk_neb/build_neb.py S1 --charge q+1 --code vasp
+    python3 tools/build_neb.py S1 --charge q+1 --code vasp
 reads vasp/02_pristine/POSCAR and vasp/03_vacancies/<charge>/vac_I_*/CONTCAR and
 writes vasp/04_bulk_neb/<charge>/<hop>/00 ... NN/POSCAR, INCAR, KPOINTS.
 
@@ -172,18 +172,18 @@ def main():
     ap.add_argument("--images", type=int, default=4, help="intermediate images (default 4: two per fat96 node with -ni 4)")
     ap.add_argument("--from", dest="start", choices=["4c", "8d"],
                     help="starting site type for a 4c-8d hop (default 8d)")
-    ap.add_argument("--pristine", default="02_pristine/relax.in")
+    ap.add_argument("--pristine", default="qe/02_pristine/relax.in")
     ap.add_argument("--eq", help="relaxed equatorial (8d) vacancy, relax.out or relax.in")
     ap.add_argument("--ap", help="relaxed apical (4c) vacancy, relax.out or relax.in")
-    ap.add_argument("--out", default=None, help="default 04_bulk_neb (QE) or vasp/04_bulk_neb (VASP)")
+    ap.add_argument("--out", default=None, help="default qe/04_bulk_neb (QE) or vasp/04_bulk_neb (VASP)")
     ap.add_argument("--code", choices=["qe", "vasp"], default="qe")
     a = ap.parse_args()
 
     vasp = a.code == "vasp"
-    base = "vasp" if vasp else "."
+    base = "vasp" if vasp else "qe"
     if a.out is None:
         a.out = os.path.join(base, "04_bulk_neb")
-    if vasp and a.pristine == "02_pristine/relax.in":
+    if vasp and a.pristine == "qe/02_pristine/relax.in":
         a.pristine = os.path.join("vasp", "02_pristine", "POSCAR")
     vdir = os.path.join(base, "03_vacancies", a.charge)
     final = "CONTCAR" if vasp else "relax.out"

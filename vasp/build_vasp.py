@@ -19,7 +19,7 @@ Subcommands (run from the project root; the cluster has no Python):
   slab       step 8: CsI-terminated (001) slabs, 7, 9 and 11 layers, 1x1 in-plane
              python3 vasp/build_vasp.py slab
 
-The NEB inputs (step 4) come from 04_bulk_neb/build_neb.py with --code vasp.
+The NEB inputs (step 4) come from tools/build_neb.py with --code vasp.
 POTCAR files are made on the cluster with vasp/make_potcar.sh.
 
 Needs: python3 with numpy, ase and spglib.
@@ -35,7 +35,7 @@ from ase.io import read, write
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-sys.path.insert(0, os.path.join(ROOT, "05_reference_phases"))
+sys.path.insert(0, os.path.join(ROOT, "qe", "05_reference_phases"))
 
 # ---- settings ----------------------------------------------------------------
 ENCUT = 500                      # eV, as in Arber 2025 (VASP, PBEsol)
@@ -151,7 +151,7 @@ def cmd_unitcell(a):
 
 # ----------------------------------------------------------- steps 2 and 3 ---
 def iodine_tags(unit):
-    """1 = apical (4c), 2 = equatorial (8d), as in 03_vacancies/build_defects.py."""
+    """1 = apical (4c), 2 = equatorial (8d), as in qe/03_vacancies/build_defects.py."""
     sym = np.array(unit.get_chemical_symbols())
     tags = np.zeros(len(unit), dtype=int)
     pb = np.where(sym == "Pb")[0]
@@ -336,7 +336,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("unitcell")
-    p.add_argument("--start", default="01_unitcell/gamma_CsPbI3_vcrelax.in",
+    p.add_argument("--start", default="qe/01_unitcell/gamma_CsPbI3_vcrelax.in",
                    help="start structure (default: the same experimental start as the QE runs)")
     p = sub.add_parser("supercell")
     p.add_argument("--unit", required=True, help="relaxed VASP unit cell (CONTCAR)")

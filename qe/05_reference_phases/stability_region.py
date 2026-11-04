@@ -2,7 +2,7 @@
 """
 Chemical-potential stability region of gamma-CsPbI3 (step 5).
 
-Reads the final total energies of the reference phases (05_reference_phases/*/vcrelax.out)
+Reads the final total energies of the reference phases (qe/05_reference_phases/*/vcrelax.out)
 when they are present; otherwise uses the values below (job 217708, 23 Oct 2026).
 The CsPbI3 energy is the perfect 160-atom supercell / 32 (job 217406).
 
@@ -14,8 +14,8 @@ Conditions (Delta mu_i = mu_i - mu_i(element), elements: bcc Cs, fcc Pb, solid I
 Eliminating Delta mu_Cs leaves a polygon in the (Delta mu_Pb, Delta mu_I) plane.
 delta-CsPbI3 is left out on purpose (same composition; it would empty the region).
 
-Writes assets/stability_region.png and 05_reference_phases/stability_region.txt.
-Run from the project root:  python3 05_reference_phases/stability_region.py
+Writes assets/stability_region.png and qe/05_reference_phases/stability_region.txt.
+Run from the project root:  python3 qe/05_reference_phases/stability_region.py
 """
 
 import itertools
@@ -55,7 +55,7 @@ def final_energy(path):
 
 def load():
     for k, n in (("Cs", "Cs"), ("Pb", "Pb"), ("I2", "I2"), ("CsI", "CsI"), ("PbI2", "PbI2")):
-        p = os.path.join("05_reference_phases", n, "vcrelax.out")
+        p = os.path.join("qe", "05_reference_phases", n, "vcrelax.out")
         if os.path.exists(p):
             E[k] = (final_energy(p), E[k][1])
     mu = {"Cs": E["Cs"][0] / E["Cs"][1], "Pb": E["Pb"][0] / E["Pb"][1], "I": E["I2"][0] / E["I2"][1]}
@@ -135,7 +135,7 @@ def main():
         rep.append("  %s           %7.3f   %7.3f   %7.3f" % (n, H - v[0] - 3 * v[1], v[0], v[1]))
     rep += ["", "A, B: iodine-rich (dmu_I = 0). C, D: lead-rich, iodine-poor (dmu_Pb = 0).",
             "Cs4PbI6 and CsPb2I5 not yet included; they can only shrink the region."]
-    open("05_reference_phases/stability_region.txt", "w").write("\n".join(rep) + "\n")
+    open("qe/05_reference_phases/stability_region.txt", "w").write("\n".join(rep) + "\n")
     print("\n".join(rep))
 
 

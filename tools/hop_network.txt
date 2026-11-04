@@ -1,4 +1,4 @@
-Perfect supercell: 02_pristine/relax.in, 96 iodine sites (64 8d, 32 4c)
+Perfect supercell: qe/02_pristine/relax.in, 96 iodine sites (64 8d, 32 4c)
 Hops available to ONE vacancy, by its site type, and the hop displacement (A)
 
 hop  ends    length  from 8d from 4c   |da|  |db|  |dc|  direction
