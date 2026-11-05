@@ -1,0 +1,12 @@
+Hop L3 (4c-4c, nominal 5.32 A), charge q+1, VASP/VTST
+Space group of the perfect supercell: Pnma, 64 operations
+Start: vacancy on site 100 (4c), from vasp/03_vacancies/q+1/vac_I_apical/CONTCAR (largest offset from a site 0.31 A)
+End:   vacancy on site 79 (4c), from vasp/03_vacancies/q+1/vac_I_apical/CONTCAR by a point operation
+Hopping iodine: atom 80 of 159 (POSCAR order); site distance 5.323 A, moves 5.255 A
+Other atoms: largest end-to-end shift 0.388 A, mean 0.063 A
+Images: 00 ... 05 (4 moving, IDPP)
+Closest approach of two atoms per image (A): 2.99 3.02 2.97 2.98 3.02 2.99
+
+Before running: POTCAR next to INCAR (make_potcar.sh), and copy the relaxed
+vacancy OUTCARs into 00/ and 05/ for nebresults.pl (the run does not need them).
+Cores must divide by IMAGES; check memory in mem.log in the first minutes.

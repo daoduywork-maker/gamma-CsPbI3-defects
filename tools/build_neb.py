@@ -57,6 +57,10 @@ HOPS = {
     "L1": ("8d", "8d", 4.80), "L2": ("8d", "8d", 5.18), "L3": ("4c", "4c", 5.28),
     "L4": ("4c", "8d", 5.93),
 }
+# Hop lengths in the VASP cell (a +0.1%, b -0.1%, c +0.4% against QE), matched to the QE hops
+# atom by atom (4 Nov); the long hops move by more than LEN_TOL, so --code vasp uses these.
+VASP_LEN = {"S1": 4.404, "S2": 4.434, "S3": 4.457, "S4": 4.519, "S5": 4.555, "S6": 4.597,
+            "L1": 4.776, "L2": 5.259, "L3": 5.323, "L4": 5.979}
 LEN_TOL = 0.015         # A, match to the nominal length (lengths are 0.02 A apart at least)
 PAIR_CUT = 6.1          # A, longest I-I pair considered
 PB_I_CUT = 3.6          # A, Pb-I bond
@@ -180,6 +184,9 @@ def main():
     a = ap.parse_args()
 
     vasp = a.code == "vasp"
+    if vasp:
+        for k, (t1_, t2_, _) in list(HOPS.items()):
+            HOPS[k] = (t1_, t2_, VASP_LEN[k])
     base = "vasp" if vasp else "qe"
     if a.out is None:
         a.out = os.path.join(base, "04_bulk_neb")
