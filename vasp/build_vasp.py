@@ -103,7 +103,7 @@ def base_tags(lreal):
 def para_tags(ncore=10, kpar=1):
     return ["Parallelisation (40 cores per std40 node)",
             ("NCORE", ncore, ""),
-            ("KPAR", kpar, "k-point groups; more KPAR = faster but more memory")]
+            ("KPAR", kpar, "k-point groups, more of them is faster but uses more memory")]
 
 
 # ---------------------------------------------------------------- step 1 -----
