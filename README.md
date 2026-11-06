@@ -17,11 +17,11 @@ This repository holds the inputs, scripts and text outputs, but not the scratch 
 | Convergence test, soft and tight relaxation of the unit cell | Done |
 | Cluster setup; `neb.x` and `pp.x` compiled (Quantum ESPRESSO 6.5) | Done |
 | Perfect 2×2×2 supercell relaxation | Done |
-| Vacancy relaxations (4 jobs) | All four done in QE |
+| Vacancy relaxations (4 jobs) | All four done in QE and in VASP |
 | Set of distinct bulk hops | Settled: 10 (6 short, 4 long) |
 | Hop end points and NEB inputs (`build_neb.py`, `hop_network.py`, `run_neb.pbs`) | Done |
-| Bulk barriers (NEB) | Stage 1 (S1, S2, L3, S6): **S1 done in QE, 0.361 eV (+1)**. The other three hops will run in VASP |
-| VASP counterpart (`vasp/`) | Unit cell, convergence tests, reference phases and perfect supercell done (agreement with QE within 0.4% and 13 meV). Vacancy cells running |
+| Bulk barriers (NEB) | Stage 1 (S1, S2, L3, S6): **S1 done in QE, 0.361 eV (+1)**. All four queued in VASP (jobs 217939–217942) |
+| VASP counterpart (`vasp/`) | Unit cell, convergence tests, reference phases, perfect supercell and the four vacancy cells done (agreement with QE within 0.4%, 13 meV and 7 meV) |
 | Part A: reference phases and chemical-potential region (step 5) | **Done** |
 | Part A: V_I formation energy (step 6) | To do |
 | Part A: bulk diffusion coefficients (step 7) | To do |
@@ -352,7 +352,7 @@ The supercell built from the tightly relaxed unit cell needed no relaxation, so 
 | Apical (4c) | −64954.16973158 | Job 217407, 2 nodes | 47 SCF cycles, 46 BFGS steps, largest force 3.1×10⁻⁴ Ry/Bohr, highest occupied level 3.3779 eV |
 | Equatorial (8d) | −64954.16980915 | Job 217408, 2 nodes | 59 SCF cycles, 58 BFGS steps, largest force 3.7×10⁻⁴ Ry/Bohr |
 
-The energy difference E(8d) − E(4c) = −1.06 meV makes the two sites nearly degenerate, with the equatorial site slightly lower. The sign agrees with the +0.03 eV (4c above 8d) of Arber et al. (2025), but the magnitude is about 30 times smaller. Arber et al. did not state the charge state, so the comparison is not conclusive (see NOTES.md, open check 7).
+The energy difference E(8d) − E(4c) = −1.06 meV makes the two sites nearly degenerate, with the equatorial site slightly lower. The sign agrees with the +0.03 eV (4c above 8d) of Arber et al. (2025), but the magnitude is about 30 times smaller. Arber et al. did not state the charge state, so the comparison is not conclusive (see NOTES.md, open check 7). VASP gave +0.9 meV (E = −485.98408 eV for 4c and −485.98322 eV for 8d), opposite in sign but equally small. The last ionic steps of both relaxations still changed the energy by 0.3–0.7 meV, so both codes show that the two sites are degenerate within ±1 meV for the +1 vacancy.
 
 ### Iodine vacancy, neutral
 
@@ -361,7 +361,7 @@ The energy difference E(8d) − E(4c) = −1.06 meV makes the two sites nearly d
 | Apical (4c) | −64953.80113061 | Job 217409, 3 nodes | 69 SCF cycles, 68 BFGS steps, largest force 3.3×10⁻⁴ Ry/Bohr |
 | Equatorial (8d) | −64953.79815909 | Job 217410, 3 nodes | 54 SCF cycles, 53 BFGS steps, largest force 3.6×10⁻⁴ Ry/Bohr |
 
-The energy difference E(8d) − E(4c) = +40.4 meV shows that the neutral vacancy prefers the apical site (70% on 4c at 300 K), opposite in sign to Arber et al. (2025). The total magnetisation was 0 μB in both cells, so the extra electron delocalized and the vacancy acted as a shallow donor. Zhang et al. (2025) also found V_I to be a shallow donor (PBEsol, with spin–orbit coupling for the levels). Two further checks agreed. The Fermi level of the neutral cells lay 1.56 eV (4c) and 1.68 eV (8d) above the pristine VBM, and the rough transition level E(0) − E(+1) − E_VBM was 1.61 eV (4c) and 1.65 eV (8d), both at the band edge (gap of about 1.6 eV without SOC). These values are uncorrected, and step 6 will give the proper transition level. PBEsol tends to over-delocalize electrons, so an HSE check would settle the question.
+The energy difference E(8d) − E(4c) = +40.4 meV shows that the neutral vacancy prefers the apical site (70% on 4c at 300 K), opposite in sign to Arber et al. (2025). VASP gave +33.5 meV (E = −482.55124 eV for 4c and −482.51776 eV for 8d, 65% on 4c), with the same sign and a difference of 7 meV between the codes. The total magnetisation was 0 μB in both cells in both codes, so the extra electron delocalized and the vacancy acted as a shallow donor. Zhang et al. (2025) also found V_I to be a shallow donor (PBEsol, with spin–orbit coupling for the levels). Two further checks agreed. The Fermi level of the neutral cells lay 1.56 eV (4c) and 1.68 eV (8d) above the pristine VBM, and the rough transition level E(0) − E(+1) − E_VBM was 1.61 eV (4c) and 1.65 eV (8d), both at the band edge (gap of about 1.6 eV without SOC). These values are uncorrected, and step 6 will give the proper transition level. PBEsol tends to over-delocalize electrons, so an HSE check would settle the question.
 
 ### Stability region (step 5)
 
