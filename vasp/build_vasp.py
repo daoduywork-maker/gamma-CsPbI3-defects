@@ -17,7 +17,7 @@ Subcommands (run from the project root; the cluster has no Python):
   refs       step 5: Cs, Pb, solid I2, CsI, PbI2 and the I2 molecule
              python3 vasp/build_vasp.py refs
   slab       step 8: CsI-terminated (001) slabs, 7, 9 and 11 layers, 1x1 in-plane
-             python3 vasp/build_vasp.py slab
+             python3 vasp/build_vasp.py slab [--layers 13 15 17]
 
 The NEB inputs (step 4) come from tools/build_neb.py with --code vasp.
 POTCAR files are made on the cluster with vasp/make_potcar.sh.
@@ -302,7 +302,7 @@ def cmd_slab(a):
     rows = ["CsI-terminated (001) slabs, 1x1 in-plane, built from %s" % a.unit,
             "in-plane cell fixed at the relaxed bulk a, b (%.4f x %.4f A); vacuum %.1f A"
             % (unit.cell[0, 0], unit.cell[1, 1], SLAB_VACUUM), ""]
-    for n in SLAB_LAYERS:
+    for n in (a.layers or SLAB_LAYERS):
         slab, thick = build_slab(unit, n)
         d = os.path.join(out, "L%02d" % n)
         os.makedirs(d, exist_ok=True)
@@ -327,7 +327,8 @@ def cmd_slab(a):
                        slab.cell[2, 2], nelect(slab)))
     rows += ["", "Check after the runs: E(L09) - E(L07) and E(L11) - E(L09) should both equal",
              "2 CsPbI3 of bulk (2 x E_unit / 4); the middle layer should match bulk Pb-I bonds and tilts."]
-    with open(os.path.join(out, "slabs_report.txt"), "w") as f:
+    name = "slabs_report.txt" if not a.layers else "slabs_report_L%s.txt" % "_".join("%02d" % n for n in a.layers)
+    with open(os.path.join(out, name), "w") as f:
         f.write("\n".join(rows) + "\n")
     print("\n".join(rows))
 
@@ -343,6 +344,7 @@ def main():
     sub.add_parser("refs")
     p = sub.add_parser("slab")
     p.add_argument("--unit", default="vasp/01_unitcell/relax/CONTCAR", help="relaxed VASP unit cell (CONTCAR)")
+    p.add_argument("--layers", type=int, nargs="+", help="odd layer counts (default 7 9 11)")
     a = ap.parse_args()
     {"unitcell": cmd_unitcell, "supercell": cmd_supercell, "refs": cmd_refs, "slab": cmd_slab}[a.cmd](a)
 
