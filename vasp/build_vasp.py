@@ -18,6 +18,8 @@ Subcommands (run from the project root; the cluster has no Python):
              python3 vasp/build_vasp.py refs
   slab       step 8: CsI-terminated (001) slabs, 7, 9 and 11 layers, 1x1 in-plane
              python3 vasp/build_vasp.py slab [--layers 13 15 17]
+  slabvac    step 9 test: 2x2 copy of a relaxed slab with +1 vacancies at its centre
+             python3 vasp/build_vasp.py slabvac --slab vasp/08_slab/L11/CONTCAR
 
 The NEB inputs (step 4) come from tools/build_neb.py with --code vasp.
 POTCAR files are made on the cluster with vasp/make_potcar.sh.
@@ -333,6 +335,67 @@ def cmd_slab(a):
     print("\n".join(rows))
 
 
+# ---- step 9 (first test): +1 vacancies at the centre of a 2x2 slab ---------------
+K_SLAB_2X2 = (2, 2, 1)
+
+
+def cmd_slabvac(a):
+    """2x2 in-plane copy of a relaxed 1x1 slab, plus +1 iodine vacancies at its centre.
+
+    The centre test of hypothesis H5: the 8d (equatorial) iodine of the PbI2 layer and the
+    4c (apical) iodine of the CsI layer closest to the slab centre, each nearest the cell
+    centre in the plane. Their energy difference (and later the barriers between them) is
+    compared with the bulk; no chemical potential or charge correction enters a difference
+    between two +1 cells of the same slab.
+    """
+    slab = sort_atoms(read(a.slab))
+    n = int(round(len(slab) / 1))
+    sc = sort_atoms(slab.repeat((2, 2, 1)))
+    sym = np.array(sc.get_chemical_symbols())
+    z = sc.positions[:, 2]
+
+    def layer_z(el):
+        zz = np.sort(z[sym == el])
+        g = [[zz[0]]]
+        for v in zz[1:]:
+            (g[-1].append(v) if v - g[-1][-1] < 1.0 else g.append([v]))
+        return [np.mean(x) for x in g]
+
+    zpb, zcs = layer_z("Pb"), layer_z("Cs")
+    zmid = (min(zpb + zcs) + max(zpb + zcs)) / 2
+    lpb = min(zpb, key=lambda v: abs(v - zmid))
+    lcs = min(zcs, key=lambda v: abs(v - zmid))
+    xy = sc.cell.array[:2].sum(axis=0)[:2] / 2
+    out = os.path.join(HERE, "09_slab_vacancies", a.name)
+    rep = ["Slab: %s repeated 2x2x1, %d atoms, cell %.4f %.4f %.4f A, k-mesh %d %d %d (Gamma)"
+           % (a.slab, len(sc), *sc.cell.lengths(), *K_SLAB_2X2),
+           "Slab centre z = %.3f A; middle PbI2 layer z = %.3f, nearest CsI layer z = %.3f" % (zmid, lpb, lcs), ""]
+    d = os.path.join(out, "pristine")
+    os.makedirs(d, exist_ok=True)
+    write_poscar(os.path.join(d, "POSCAR"), sc, "slab 2x2")
+    write_kpoints(os.path.join(d, "KPOINTS"), K_SLAB_2X2, "Gamma-centred, 2x2 in-plane, 1 along the normal")
+    defect_incar(os.path.join(d, "INCAR"), "%s pristine 2x2 slab" % a.name, "", None, 0)
+    for name, lz in (("vac_I_8d_centre", lpb), ("vac_I_4c_centre", lcs)):
+        cand = np.where((sym == "I") & (np.abs(z - lz) < 1.0))[0]
+        i = cand[np.argmin(np.linalg.norm(sc.positions[cand, :2] - xy, axis=1))]
+        vac = sc.copy()
+        del vac[i]
+        d = os.path.join(out, "q+1", name)
+        os.makedirs(d, exist_ok=True)
+        write_poscar(os.path.join(d, "POSCAR"), vac, "%s %s q+1" % (a.name, name))
+        write_kpoints(os.path.join(d, "KPOINTS"), K_SLAB_2X2, "Gamma-centred, 2x2 in-plane, 1 along the normal")
+        ne = nelect(vac, 1)
+        defect_incar(os.path.join(d, "INCAR"), "%s %s, charge +1" % (a.name, name), "+1, %d electrons" % ne, ne, 0)
+        rep.append("%s: removed atom %d (POSCAR order) at (%.3f, %.3f, %.3f) A, %.2f A from the slab centre; NELECT %d"
+                   % (name, i + 1, *sc.positions[i], abs(sc.positions[i, 2] - zmid), ne))
+    rep += ["", "Compare E(8d) - E(4c) with the bulk (VASP +0.9 meV, QE -1.06 meV); then the centre barriers.",
+            "Charged slab: VASP adds a compensating background; the vacancies sit at the centre, so the",
+            "background term is nearly the same for both and cancels in the difference."]
+    with open(os.path.join(out, "report.txt"), "w") as f:
+        f.write("\n".join(rep) + "\n")
+    print("\n".join(rep))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -345,7 +408,12 @@ def main():
     p = sub.add_parser("slab")
     p.add_argument("--unit", default="vasp/01_unitcell/relax/CONTCAR", help="relaxed VASP unit cell (CONTCAR)")
     p.add_argument("--layers", type=int, nargs="+", help="odd layer counts (default 7 9 11)")
+    p = sub.add_parser("slabvac")
+    p.add_argument("--slab", default="vasp/08_slab/L11/CONTCAR", help="relaxed 1x1 slab (CONTCAR)")
+    p.add_argument("--name", default="L11_2x2")
     a = ap.parse_args()
+    if a.cmd == "slabvac":
+        return cmd_slabvac(a)
     {"unitcell": cmd_unitcell, "supercell": cmd_supercell, "refs": cmd_refs, "slab": cmd_slab}[a.cmd](a)
 
 
