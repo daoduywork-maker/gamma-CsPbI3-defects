@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 """
-Plot a QE neb.x energy profile (the <prefix>.dat images and the <prefix>.int curve).
+Plot a NEB energy profile: QE neb.x (<prefix>.dat and <prefix>.int) or VASP/VTST (--vasp).
+
+VASP: python3 tools/plot_neb.py --vasp vasp/04_bulk_neb/q+1/S1 --label "S1, +1" --out assets/neb_S1_qp1_vasp.png
+reads <dir>/neb_data.txt (image, energy, force along the tangent) and the image structures
+(<dir>/NN/CONTCAR, falling back to POSCAR); reaction coordinate = cumulative distance between
+images (all atoms, minimum image), curve = cubic Hermite spline with slope -F_tangent at every
+image (as VTST nebbarrier.pl).
+
+QE:
 
     python3 tools/plot_neb.py qe/04_bulk_neb/q+1/S1/neb_S1_qp1 --label "S1, +1" --out assets/neb_S1_qp1.png
 
@@ -24,22 +32,58 @@ CM = 1 / 2.54
 TXT, MUT, OR, PU = "#0B0B0B", "#52514E", "#D85A30", "#7F77DD"
 
 
+def vasp_profile(folder):
+    import os
+    from ase.io import read
+    rows = [l.split() for l in open(os.path.join(folder, "neb_data.txt")) if l.strip() and not l.startswith("#")]
+    names = [r[0] for r in rows]
+    E = np.array([float(r[1]) for r in rows])
+    F = np.array([float(r[2]) for r in rows])
+    ims = []
+    for n in names:
+        c = os.path.join(folder, n, "CONTCAR")
+        p = c if os.path.exists(c) and os.path.getsize(c) > 0 else os.path.join(folder, n, "POSCAR")
+        if p.endswith("POSCAR") and n not in (names[0], names[-1]):
+            print("warning: %s has no CONTCAR, using the start path" % n)
+        ims.append(read(p, format="vasp"))
+    x = [0.0]
+    for a0, a1 in zip(ims[:-1], ims[1:]):
+        df = a1.get_scaled_positions() - a0.get_scaled_positions()
+        df -= np.round(df)
+        x.append(x[-1] + np.linalg.norm(df @ a0.cell.array))
+    x = np.array(x)
+    e = E - E[0]
+    xc, ec = [], []
+    for k in range(len(x) - 1):
+        h = x[k + 1] - x[k]
+        t = np.linspace(0, 1, 40)
+        h00, h10, h01, h11 = 2*t**3 - 3*t**2 + 1, t**3 - 2*t**2 + t, -2*t**3 + 3*t**2, t**3 - t**2
+        xc += list(x[k] + t * h)
+        ec += list(h00 * e[k] + h10 * h * (-F[k]) + h01 * e[k + 1] + h11 * h * (-F[k + 1]))
+    return x, e, np.array(xc), np.array(ec)
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("prefix", help="path to <prefix> (reads <prefix>.dat and <prefix>.int)")
+    ap.add_argument("prefix", nargs="?", help="QE: path to <prefix> (reads <prefix>.dat and <prefix>.int)")
+    ap.add_argument("--vasp", help="VASP NEB folder holding neb_data.txt and 00 ... NN")
     ap.add_argument("--label", default="")
     ap.add_argument("--out", required=True)
     ap.add_argument("--path-length", type=float, default=None,
                     help="total path length in A (x axis in A instead of 0-1)")
     a = ap.parse_args()
 
-    d = np.loadtxt(a.prefix + ".dat")
-    c = np.loadtxt(a.prefix + ".int")
-    xs, xc = d[:, 0], c[:, 0]
-    xlab = "Reaction coordinate (normalized)"
-    if a.path_length:
-        xs, xc, xlab = xs * a.path_length, xc * a.path_length, "Reaction coordinate (Å)"
-    e, ec = d[:, 1], c[:, 1]
+    if a.vasp:
+        xs, e, xc, ec = vasp_profile(a.vasp)
+        xlab = "Reaction coordinate (Å)"
+    else:
+        d = np.loadtxt(a.prefix + ".dat")
+        c = np.loadtxt(a.prefix + ".int")
+        xs, xc = d[:, 0], c[:, 0]
+        xlab = "Reaction coordinate (normalized)"
+        if a.path_length:
+            xs, xc, xlab = xs * a.path_length, xc * a.path_length, "Reaction coordinate (Å)"
+        e, ec = d[:, 1], c[:, 1]
     k = int(np.argmax(e))
 
     fig, ax = plt.subplots(figsize=(8.5 * CM, 6.0 * CM))
