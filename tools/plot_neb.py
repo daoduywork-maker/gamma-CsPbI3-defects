@@ -91,13 +91,22 @@ def main():
     ax.plot(xs, e, "o", ms=4.5, color=PU, zorder=3, label="NEB images")
     ax.plot(xs[k], e[k], "o", ms=6.5, mfc="none", mec=OR, mew=1.2, zorder=4, label="climbing image")
     ax.annotate("", xy=(xs[k], e[k]), xytext=(xs[k], 0), arrowprops=dict(arrowstyle="<->", color=MUT, lw=0.8))
-    ax.text(xs[k] + 0.02 * (xs[-1] - xs[0]), e[k] / 2, "%.3f eV" % e[k], va="center", color=TXT)
+    span = xs[-1] - xs[0]
+    ylab = 0.3 * e[k]                            # low under the peak, where the gap to the curve is widest
+    xc_arr, ec_arr = np.asarray(xc), np.asarray(ec)
+    above = ec_arr >= ylab
+    left_gap = xs[k] - (xc_arr[above & (xc_arr <= xs[k])].min() if np.any(above & (xc_arr <= xs[k])) else xs[0])
+    right_gap = (xc_arr[above & (xc_arr >= xs[k])].max() if np.any(above & (xc_arr >= xs[k])) else xs[-1]) - xs[k]
+    right = right_gap >= left_gap                # put the label on the side with more room
+    ax.text(xs[k] + (0.03 if right else -0.03) * span, ylab, "%.3f eV" % e[k],
+            va="center", ha="left" if right else "right", color=TXT)
     ax.axhline(0, color=MUT, lw=0.5, ls=(0, (3, 2)))
     ax.set_xlabel(xlab)
     ax.set_ylabel("Energy (eV)")
     ax.set_xlim(xs[0] - 0.03 * (xs[-1] - xs[0]), xs[-1] + 0.03 * (xs[-1] - xs[0]))
     ax.set_ylim(-0.04, max(e) * 1.25)
-    ax.legend(frameon=False, fontsize=8, loc="upper right")
+    ax.legend(frameon=False, fontsize=8, loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2,
+              handletextpad=0.3, columnspacing=1.2, borderaxespad=0.2)
     if a.label:
         ax.text(0.03, 0.95, a.label, transform=ax.transAxes, va="top", fontweight="semibold")
     fig.tight_layout(pad=0.3)

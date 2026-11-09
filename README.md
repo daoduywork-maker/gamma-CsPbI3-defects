@@ -1,10 +1,10 @@
 # Formation and Migration of Iodine Vacancies in γ-CsPbI₃
 
-First-principles study of iodine vacancies in orthorhombic γ-CsPbI₃ using Quantum ESPRESSO and VASP. The study covers the bulk defect thermodynamics, the hop-resolved diffusion and the CsI-terminated (001) surface.
+First-principles study of iodine vacancies in orthorhombic γ-CsPbI₃ using VASP, with Quantum ESPRESSO as an independent check of the bulk results. The study covers the bulk defect thermodynamics, the hop-resolved diffusion and the CsI-terminated (001) surface.
 
 ## Abstract (work so far, November 2026)
 
-Iodine vacancies are the main mobile defect in γ-CsPbI₃, a promising inorganic perovskite for solar cells. The migration of these vacancies causes current–voltage hysteresis and degradation. The tilted octahedra in the γ phase create two inequivalent iodine sites, apical (4c) and equatorial (8d). However, published studies have reported only three migration path types and have not stated the vacancy charge state. This study used density functional theory (PBEsol) in 159-atom supercells to compare both sites for the neutral and +1 vacancies and to identify the symmetry-distinct hops. The +1 vacancy showed almost no site preference, with the 8d site only 1 meV lower. The neutral vacancy favoured the apical site by 40 meV, opposite to the published result, and behaved as a shallow donor, with the extra electron delocalized over the crystal. Symmetry analysis revealed 10 distinct hops, six short and four long, rather than three. The first nudged elastic band calculation gave a barrier of 0.361 eV for an equatorial hop of the +1 vacancy, close to the published 0.34 eV. A second code, VASP, reproduced the relaxed lattice within 0.4% and the formation enthalpies within 13 meV per formula unit. These results show that the iodine vacancy energetics in γ-CsPbI₃ depend on both the charge state and the octahedral tilt.
+Iodine vacancies are the main mobile defect in γ-CsPbI₃, a promising inorganic perovskite for solar cells. The migration of these vacancies causes current–voltage hysteresis and degradation. The tilted octahedra in the γ phase create two inequivalent iodine sites, apical (4c) and equatorial (8d). However, published studies have reported only three migration path types and have not stated the vacancy charge state. This study used density functional theory (PBEsol) in 159-atom supercells to compare both sites for the neutral and +1 vacancies and to identify the symmetry-distinct hops. The two sites of the +1 vacancy were degenerate within 1 meV. The neutral vacancy favoured the apical site by 34 meV, opposite to the published result, and behaved as a shallow donor, with the extra electron delocalized over the crystal. Symmetry analysis revealed 10 distinct hops, six short and four long, rather than three. Nudged elastic band calculations gave barriers of 0.345 eV for an equatorial hop and 0.326 eV for a hop between the two sites of the +1 vacancy, close to the published 0.34 and 0.35 eV. An independent Quantum ESPRESSO calculation reproduced the relaxed lattice within 0.4%, the site energies within 7 meV and the S1 barrier within 0.02 eV. These results show that the iodine vacancy energetics in γ-CsPbI₃ depend on both the charge state and the octahedral tilt.
 
 The abstract covers the bulk work done so far. The scope was extended on 23 October 2026 (see Scope).
 
@@ -20,7 +20,7 @@ This repository holds the inputs, scripts and text outputs, but not the scratch 
 | Vacancy relaxations (4 jobs) | All four done in QE and in VASP |
 | Set of distinct bulk hops | Settled: 10 (6 short, 4 long) |
 | Hop end points and NEB inputs (`build_neb.py`, `hop_network.py`, `run_neb.pbs`) | Done |
-| Bulk barriers (NEB) | Stage 1 (S1, S2, L3, S6): **S1 done in QE, 0.361 eV (+1)**. All four queued in VASP (jobs 217939–217942) |
+| Bulk barriers (NEB, VASP) | Stage 1 (S1, S2, L3, S6): **S1 0.345 eV, S2 0.326 eV (+1)**; L3 and S6 running |
 | VASP counterpart (`vasp/`) | Unit cell, convergence tests, reference phases, perfect supercell and the four vacancy cells done (agreement with QE within 0.4%, 13 meV and 7 meV) |
 | Part A: reference phases and chemical-potential region (step 5) | **Done** |
 | Part A: V_I formation energy (step 6) | To do |
@@ -377,18 +377,24 @@ The elemental references were bcc Cs, fcc Pb and solid I₂. All the cells were 
 
 ![Stability region](assets/stability_region.png)
 
-### First barrier: hop S1 (+1, QE)
+### Bulk barriers, +1 vacancy (VASP)
 
-The climbing-image NEB with four moving images converged after 27 iterations, with every image below 0.05 eV/Å (QE job 217923).
+Climbing-image NEB in VASP/VTST, four moving images, forces below 0.03 eV/Å on every image. Energies are relative to the starting vacancy; the reaction coordinate is the summed atomic displacement between images.
 
-| Image | 1 (8d) | 2 | 3 (climbing) | 4 | 5 | 6 (8d) |
-|---|---|---|---|---|---|---|
-| Energy (eV) | 0 | 0.228 | **0.361** | 0.271 | 0.116 | 0.000 |
-| Force error (eV/Å) | 0.009 | 0.047 | 0.034 | 0.040 | 0.028 | 0.009 |
+| Hop | Ends | Barrier (eV) | Image energies (eV) | Steps |
+|---|---|---|---|---|
+| S1 | 8d → 8d | **0.345** | 0.180, **0.345**, 0.225, 0.093 | 25 |
+| S2 | 8d → 4c | **0.326** (0.327 from 4c) | 0.065, 0.237, **0.326**, 0.154 | 27 |
+| L3 | 4c → 4c | running | | |
+| S6 | 8d → 8d | running | | |
 
-![S1 energy profile](assets/neb_S1_qp1.png)
+![S1 energy profile](assets/neb_S1_qp1_vasp.png)
 
-**The S1 barrier was 0.361 eV**, the same in both directions, as the symmetry of an 8d–8d hop requires (the end points agree to 0.4 μeV). Arber et al. (2025) reported 0.34 eV for an 8d–8d edge hop (S1 or S6, not identifiable from the figure), and Zhang et al. (2025) reported about 0.54 eV for the path matched to S1. The two published values for comparable hops therefore differ by about 0.2 eV, and the result of this study agrees with Arber et al. The swap guard stopped the first run at 0.364 eV, and the run was restarted from the saved path (see NOTES.md).
+![S2 energy profile](assets/neb_S2_qp1_vasp.png)
+
+The S1 barrier (0.345 eV) agrees with the 0.34 eV that Arber et al. (2025) reported for an 8d–8d edge hop, and the S2 barrier (0.326 eV) is close to their 0.35 eV for the 8d–4c type. Because the 4c and 8d sites of the +1 vacancy are degenerate, the S2 barrier is the same in both directions. S2 joins a PbI₂ layer to a CsI layer, so transport along c is not limited by a higher barrier at this stage. Zhang et al. (2025) reported about 0.54 eV for the path matched to S1, about 0.2 eV above both Arber et al. and this study.
+
+An independent Quantum ESPRESSO calculation (USPP, 60 Ry) gave 0.361 eV for S1, within 0.02 eV of the VASP value.
 
 ### Comparison with the published benchmark
 
