@@ -92,14 +92,32 @@ def main():
     ax.plot(xs[k], e[k], "o", ms=6.5, mfc="none", mec=OR, mew=1.2, zorder=4, label="climbing image")
     ax.annotate("", xy=(xs[k], e[k]), xytext=(xs[k], 0), arrowprops=dict(arrowstyle="<->", color=MUT, lw=0.8))
     span = xs[-1] - xs[0]
-    ylab = 0.3 * e[k]                            # low under the peak, where the gap to the curve is widest
+    # barrier label: try beside the arrow under the peak, then just outside the curve; keep the first
+    # position whose text box misses the curve, the image markers and the frame
     xc_arr, ec_arr = np.asarray(xc), np.asarray(ec)
-    above = ec_arr >= ylab
-    left_gap = xs[k] - (xc_arr[above & (xc_arr <= xs[k])].min() if np.any(above & (xc_arr <= xs[k])) else xs[0])
-    right_gap = (xc_arr[above & (xc_arr >= xs[k])].max() if np.any(above & (xc_arr >= xs[k])) else xs[-1]) - xs[k]
-    right = right_gap >= left_gap                # put the label on the side with more room
-    ax.text(xs[k] + (0.03 if right else -0.03) * span, ylab, "%.3f eV" % e[k],
-            va="center", ha="left" if right else "right", color=TXT)
+    w, h = 0.27 * span, 0.07 * e[k]              # approximate text box (data units)
+    lo, hi = xs[0] - 0.03 * span, xs[-1] + 0.03 * span
+    cands = []
+    for frac in (0.3, 0.2, 0.45, 0.6, 0.75):
+        y = frac * e[k]
+        cands += [(y, xs[k] + 0.03 * span, True), (y, xs[k] - 0.03 * span, False)]
+        r = xc_arr[(xc_arr > xs[k]) & (ec_arr <= y)]
+        l = xc_arr[(xc_arr < xs[k]) & (ec_arr <= y)]
+        if len(r):
+            cands.append((y, r.min() + 0.03 * span, True))
+        if len(l):
+            cands.append((y, l.max() - 0.03 * span, False))
+    choice = None
+    for y, x, right in cands:
+        x0, x1 = (x, x + w) if right else (x - w, x)
+        if x0 < lo or x1 > hi:
+            continue
+        inbox = lambda X, Y: (X >= x0) & (X <= x1) & (np.abs(Y - y) < h)
+        if not np.any(inbox(xc_arr, ec_arr)) and not np.any(inbox(np.asarray(xs), np.asarray(e))):
+            choice = (y, x, right)
+            break
+    y, x, right = choice or (0.3 * e[k], xs[k] + 0.03 * span, True)
+    ax.text(x, y, "%.3f eV" % e[k], va="center", ha="left" if right else "right", color=TXT)
     ax.axhline(0, color=MUT, lw=0.5, ls=(0, (3, 2)))
     ax.set_xlabel(xlab)
     ax.set_ylabel("Energy (eV)")

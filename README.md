@@ -20,7 +20,7 @@ This repository holds the inputs, scripts and text outputs, but not the scratch 
 | Vacancy relaxations (4 jobs) | All four done in QE and in VASP |
 | Set of distinct bulk hops | Settled: 10 (6 short, 4 long) |
 | Hop end points and NEB inputs (`build_neb.py`, `hop_network.py`, `run_neb.pbs`) | Done |
-| Bulk barriers (NEB, VASP) | Stage 1 (S1, S2, L3, S6): **S1 0.345 eV, S2 0.326 eV (+1)**; L3 and S6 running |
+| Bulk barriers (NEB, VASP) | Stage 1 done (+1): **S1 0.345, S2 0.326, S6 0.434, L3 0.777 eV** |
 | VASP counterpart (`vasp/`) | Unit cell, convergence tests, reference phases, perfect supercell and the four vacancy cells done (agreement with QE within 0.4%, 13 meV and 7 meV) |
 | Part A: reference phases and chemical-potential region (step 5) | **Done** |
 | Part A: V_I formation energy (step 6) | To do |
@@ -385,16 +385,34 @@ Climbing-image NEB in VASP/VTST, four moving images, forces below 0.03 eV/Å on 
 |---|---|---|---|---|
 | S1 | 8d → 8d | **0.345** | 0.180, **0.345**, 0.225, 0.093 | 25 |
 | S2 | 8d → 4c | **0.326** (0.327 from 4c) | 0.065, 0.237, **0.326**, 0.154 | 27 |
-| L3 | 4c → 4c | running | | |
-| S6 | 8d → 8d | running | | |
+| S6 | 8d → 8d | **0.434** | 0.235, **0.434**, 0.297, 0.104 | 39 |
+| L3 | 4c → 4c | **0.777** | 0.081, 0.426, **0.777**, 0.254 | 33 |
 
 ![S1 energy profile](assets/neb_S1_qp1_vasp.png)
 
 ![S2 energy profile](assets/neb_S2_qp1_vasp.png)
 
-The S1 barrier (0.345 eV) agrees with the 0.34 eV that Arber et al. (2025) reported for an 8d–8d edge hop, and the S2 barrier (0.326 eV) is close to their 0.35 eV for the 8d–4c type. Because the 4c and 8d sites of the +1 vacancy are degenerate, the S2 barrier is the same in both directions. S2 joins a PbI₂ layer to a CsI layer, so transport along c is not limited by a higher barrier at this stage. Zhang et al. (2025) reported about 0.54 eV for the path matched to S1, about 0.2 eV above both Arber et al. and this study.
+![S6 energy profile](assets/neb_S6_qp1_vasp.png)
+
+![L3 energy profile](assets/neb_L3_qp1_vasp.png)
+
+The S1 barrier (0.345 eV) agrees with the 0.34 eV that Arber et al. (2025) reported for an 8d–8d edge hop, and the S2 barrier (0.326 eV) is close to their 0.35 eV for the 8d–4c type. Because the 4c and 8d sites of the +1 vacancy are degenerate, the S2 barrier is the same in both directions. S2 joins a PbI₂ layer to a CsI layer, so transport along c is not limited by a higher barrier at this stage. Zhang et al. (2025) reported about 0.54 eV for the path matched to S1, about 0.2 eV above both Arber et al. and this study. The two 8d–8d edge hops differ by 0.09 eV (S1 0.345 eV, S6 0.434 eV), more than the 0.03 eV threshold, so one barrier per path type does not describe the network; at 300 K the S6 rate is about 30 times lower than the S1 rate. The long 4c–4c hop L3 (0.777 eV) agrees with the 0.77 eV of Arber et al. and is about 10⁷ times slower than S1, so it drops out of the bulk diffusion.
 
 An independent Quantum ESPRESSO calculation (USPP, 60 Ry) gave 0.361 eV for S1, within 0.02 eV of the VASP value.
+
+### Spin–orbit coupling check (VASP)
+
+Spin–orbit coupling (SOC) single points (`vasp_ncl`) on the PBEsol structures:
+
+| Quantity | PBEsol | PBEsol + SOC |
+|---|---|---|
+| Band gap, perfect supercell (direct at Γ) | 1.619 eV | 0.703 eV |
+| +1 vacancy, E(8d) − E(4c) | +0.9 meV | +1.0 meV |
+| Neutral vacancy, E(8d) − E(4c) | +33.5 meV | −71.0 meV |
+| Largest force with SOC, +1 cells | — | 0.012 and 0.015 eV/Å |
+| Largest force with SOC, neutral cells | — | 0.271 (4c) and 0.092 eV/Å (8d) |
+
+SOC lowered the Pb-6p conduction band and closed the gap by 0.92 eV. The +1 vacancy, with an empty conduction band, kept its degenerate sites and its PBEsol geometry (forces at the relaxation limit). The neutral vacancy, whose extra electron occupies the conduction band, reversed its site preference, and SOC produced forces of 0.1–0.3 eV/Å on its PBEsol structures, so its site energy is not converged at this level; SOC relaxations of the two neutral cells are running. Because V_I is a shallow donor, the +1 state governs migration, and the +1 results do not depend on SOC.
 
 ### Comparison with the published benchmark
 
