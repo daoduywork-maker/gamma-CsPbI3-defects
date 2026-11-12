@@ -1,40 +1,34 @@
-# Formation and Migration of Iodine Vacancies in γ-CsPbI₃
+# Iodine Vacancies in γ-CsPbI₃: Thermodynamics, Hop-Resolved Migration and Strain
 
-First-principles study of iodine vacancies in orthorhombic γ-CsPbI₃ using VASP, with Quantum ESPRESSO as an independent check of the bulk results. The study covers the bulk defect thermodynamics, the hop-resolved diffusion and the CsI-terminated (001) surface.
+First-principles study of the iodine vacancy in orthorhombic γ-CsPbI₃ with VASP (PBEsol), with Quantum ESPRESSO as an independent check of the bulk results. The study covers the phase stability and defect thermodynamics, the hop-resolved migration and diffusion tensor, the effect of the charge state on migration, and the effect of biaxial strain on phase stability, vacancy formation and migration.
 
 ## Abstract (work so far, November 2026)
 
-Iodine vacancies are the main mobile defect in γ-CsPbI₃, a promising inorganic perovskite for solar cells. The migration of these vacancies causes current–voltage hysteresis and degradation. The tilted octahedra in the γ phase create two inequivalent iodine sites, apical (4c) and equatorial (8d). However, published studies have reported only three migration path types and have not stated the vacancy charge state. This study used density functional theory (PBEsol) in 159-atom supercells to compare both sites for the neutral and +1 vacancies and to identify the symmetry-distinct hops. The two sites of the +1 vacancy were degenerate within 1 meV. The neutral vacancy favoured the apical site by 34 meV, opposite to the published result, and behaved as a shallow donor, with the extra electron delocalized over the crystal. Symmetry analysis revealed 10 distinct hops, six short and four long, rather than three. Nudged elastic band calculations gave barriers of 0.345 eV for an equatorial hop and 0.326 eV for a hop between the two sites of the +1 vacancy, close to the published 0.34 and 0.35 eV. An independent Quantum ESPRESSO calculation reproduced the relaxed lattice within 0.4%, the site energies within 7 meV and the S1 barrier within 0.02 eV. These results show that the iodine vacancy energetics in γ-CsPbI₃ depend on both the charge state and the octahedral tilt.
-
-The abstract covers the bulk work done so far. The scope was extended on 23 October 2026 (see Scope).
+Iodine vacancies are the main mobile defect in γ-CsPbI₃, an all-inorganic perovskite whose black phase is metastable against the yellow δ phase. Substrate clamping strain stabilizes the black phase in thin films, but tensile strain also accelerates ion migration in halide perovskites. This study used density functional theory (PBEsol) in 159-atom supercells to resolve the iodine vacancy energetics in γ-CsPbI₃ by site, charge state and migration hop. The two inequivalent iodine sites, apical (4c) and equatorial (8d), were degenerate within 1 meV for the +1 vacancy, with and without spin–orbit coupling. The neutral vacancy behaved as a shallow donor, and the site preference of the neutral vacancy changed sign when spin–orbit coupling was added. Symmetry analysis revealed 10 distinct vacancy hops instead of the three path types reported before. Climbing-image nudged elastic band calculations gave barriers of 0.326 eV (8d–4c), 0.345 eV and 0.434 eV (two 8d–8d hops) and 0.777 eV (4c–4c) for the +1 vacancy, so two hops of the same type differed by a factor of about 30 in rate at 300 K. CsI-terminated (001) slabs showed that the surface reduced the octahedral tilt over a decay length of about 1 nm. An independent Quantum ESPRESSO calculation reproduced the lattice within 0.4%, the site energies within 7 meV and the barrier of the lowest equatorial hop within 0.02 eV. These results show that one barrier per path type does not describe vacancy transport in γ-CsPbI₃ and that the vacancy energetics respond strongly to the octahedral tilt, which strain and surfaces both change.
 
 This repository holds the inputs, scripts and text outputs, but not the scratch data (wavefunctions and charge densities).
 
 ## Status
 
-| Stage | State |
-|---|---|
-| Convergence test, soft and tight relaxation of the unit cell | Done |
-| Cluster setup; `neb.x` and `pp.x` compiled (Quantum ESPRESSO 6.5) | Done |
-| Perfect 2×2×2 supercell relaxation | Done |
-| Vacancy relaxations (4 jobs) | All four done in QE and in VASP |
-| Set of distinct bulk hops | Settled: 10 (6 short, 4 long) |
-| Hop end points and NEB inputs (`build_neb.py`, `hop_network.py`, `run_neb.pbs`) | Done |
-| Bulk barriers (NEB, VASP) | Stage 1 done (+1): **S1 0.345, S2 0.326, S6 0.434, L3 0.777 eV** |
-| VASP counterpart (`vasp/`) | Unit cell, convergence tests, reference phases, perfect supercell and the four vacancy cells done (agreement with QE within 0.4%, 13 meV and 7 meV) |
-| Part A: reference phases and chemical-potential region (step 5) | **Done** |
-| Part A: V_I formation energy (step 6) | To do |
-| Part A: bulk diffusion coefficients (step 7) | To do |
-| Part B: CsI-terminated slab, formation energy, barriers and diffusion against depth (steps 8–11) | Step 8 thickness test submitted (VASP, 7, 9 and 11 layers). Steps 9–11 to do |
-| Part C: in-plane strain on the slab (step 12) | To do |
+| Part | Item | State |
+|---|---|---|
+| Setup | Convergence tests, unit cell, 2×2×2 supercell (VASP; QE check) | **Done** |
+| A1 | Reference phases CsI, PbI₂, Cs, Pb, I₂ | **Done** |
+| A1 | Convex hull: δ-CsPbI₃, Cs₄PbI₆, CsPb₂I₅ (α and β optional) | To do (structures needed) |
+| A2 | V_I at +1 and 0, both sites (PBEsol; SOC single points) | **Done** |
+| A2 | V_I at 0 with SOC relaxation; V_I at −1 | Running / to do |
+| A2 | Charge correction, potential alignment, dielectric constant, HSE06+SOC band edges, formation-energy diagram | HSE06+SOC queued; rest to do |
+| B1 | Barriers, +1 vacancy | **S1, S2, S6, L3 done**; S3, S4, S5 queued; L2 check to do |
+| B2 | Barriers, neutral vacancy (S1, S2) | To do |
+| B3 | Diffusion tensor (kinetic Monte Carlo on the hop network) | To do |
+| C | Biaxial (001) strain: γ–δ energy, V_I formation, barriers, diffusion tensor | To do |
+| Side result | CsI-terminated (001) slabs: tilt recovery against depth | 7–15 layers done; 17 layers running |
 
-## Introduction
+## 1. Introduction
 
-### γ-CsPbI₃
+### 1.1 γ-CsPbI₃
 
-CsPbI₃ is a halide perovskite with the formula ABX₃. Each Pb atom sits at the centre of an octahedron of six iodine atoms. The octahedra share corners and form a three-dimensional network, and the Cs atoms fill the cavities between them.
-
-The compound has four phases.
+**Structure and phases.** CsPbI₃ is a halide perovskite with the formula ABX₃. Each Pb atom sits at the centre of an octahedron of six iodine atoms, the octahedra share corners and form a three-dimensional network, and the Cs atoms fill the cavities between them. The compound has four phases.
 
 | Phase | Structure | Notes |
 |---|---|---|
@@ -43,177 +37,137 @@ The compound has four phases.
 | γ | Orthorhombic perovskite, tilted about all three axes | The black perovskite phase found at room temperature; metastable |
 | δ | Orthorhombic, not a perovskite (yellow) | The stable phase at room temperature; poor light absorber |
 
-Solar cells and light emitters use the γ phase, which has a band gap of 1.7 eV.
-
-The cubic structure is not an energy minimum at zero temperature because the octahedra lower the energy by tilting. A relaxation without thermal motion, such as the calculations in this study, therefore ends in the γ structure. The γ structure is also the perovskite phase present in devices at room temperature.
+**Why the γ phase.** Solar cells and light emitters use the black γ phase, which has a band gap of about 1.7 eV and suits the top cell of a perovskite/silicon tandem. The cubic structure is not an energy minimum at zero temperature because the octahedra lower the energy by tilting, so a relaxation without thermal motion, such as the calculations in this study, ends in the γ structure.
 
 ![Top and side views of the relaxed γ-CsPbI₃ lattice](assets/gamma_CsPbI3_lattice_tilted_octahedra.png)
 
-The figure shows the soft-relaxed structure in `qe/01_unitcell/final/`. The tight relaxation moved the atoms by less than 0.03 Å, which is not visible at this scale. The top view shows one layer of octahedra (each Pb with the four in-plane iodine atoms) and the Cs atoms above the layer. Neighbouring octahedra rotate about c in opposite senses. The side view shows one sheet of octahedra along the in-plane diagonal, with bent rather than straight Pb–I–Pb links along c.
+**Reading the figure.** The figure shows the soft-relaxed structure in `qe/01_unitcell/final/`. The top view shows one layer of octahedra, each Pb with the four in-plane iodine atoms, and the Cs atoms above the layer. Neighbouring octahedra rotate about c in opposite senses. The side view shows one sheet of octahedra along the in-plane diagonal, with bent rather than straight Pb–I–Pb links along c.
 
-| Property | Value (this work, PBEsol) |
+| Property | Value (this work, VASP PBEsol) |
 |---|---|
 | Space group | Pnma (No. 62), written here in the Pbnm setting with c as the long axis |
 | Atoms per unit cell | 20 (4 Cs, 4 Pb, 12 I) |
-| Lattice parameters | a = 8.362 Å, b = 8.961 Å, c = 12.350 Å |
-| Pb–I bond lengths | 3.17 to 3.19 Å |
-| Pb–I–Pb angles | 148° (equatorial) and 155° (apical); 180° in the cubic phase |
-| Iodine sites | 4 apical (linking octahedra along c) and 8 equatorial (linking them within the ab plane) |
+| Lattice parameters | a = 8.371 Å, b = 8.950 Å, c = 12.402 Å |
+| Pb–I bond lengths | 3.17–3.19 Å |
+| Pb–I–Pb angles | 148.5° (equatorial) and 156.2° (apical); 180° in the cubic phase |
+| Iodine sites | 4 apical (4c, linking octahedra along c) and 8 equatorial (8d, linking them within the ab plane) |
 
-The tilting makes the two iodine sites different, so this study treats the apical and equatorial positions separately.
-
-### The two iodine sites
+### 1.2 The two iodine sites
 
 ![Apical and equatorial iodine vacancies around one Pb atom](assets/iodine_vacancy_sites_apical_vs_equatorial.png)
 
-Each Pb sits at the centre of an octahedron of six iodine atoms. The tilt makes these six atoms inequivalent, with two apical and four equatorial sites.
+**Apical and equatorial sites.** The tilt makes the six iodine atoms of one octahedron inequivalent. The two **apical (4c)** sites lie above and below Pb along c, in the CsI layers. The four **equatorial (8d)** sites lie around Pb in the PbI₂ layers. The two sites differ only through the octahedral tilt, so any change of the tilt, from strain or from a surface, shifts the energy balance between them.
 
-- **Apical (4c)**: the two above and below Pb, along c, in the CsI layers.
-- **Equatorial (8d)**: the four around Pb, in the PbI₂ layers.
+### 1.3 Ion migration and phase stability
 
-### Why defects matter
+**Ionic weak point.** Halide perovskites tolerate defects electronically because most native defects create no deep trap states. The weak point is ionic. Iodine vacancies form easily and move at room temperature, and the moving ions cause current–voltage hysteresis, ion accumulation at the contacts and loss of stability.
 
-Halide perovskites tolerate defects electronically because most native defects create no deep trap states. Solution-processed films therefore still perform well. The weak point of these materials is ionic. Iodine vacancies form easily and move at room temperature, and the moving ions cause three problems.
+**Phase stability and strain.** The black γ phase of CsPbI₃ transforms into the yellow δ phase at room temperature, fastest in humid air. Steele et al. (2019) kept γ-CsPbI₃ films black by clamping the film to the substrate during quenching, which left about 1% of in-plane tensile strain, and Le et al. (2023) found that more strongly strained nanoplates stayed black longer. Tensile strain, however, also lowers the activation energy of ion migration, as measured in strained films (Zhao et al., 2017, cited by Xu et al., 2019) and calculated for CsPbI₂Br (Xue et al., 2020). The strain that keeps CsPbI₃ black may therefore make the iodine vacancies move faster, and this trade-off has not been quantified.
 
-- Current–voltage hysteresis and a slow, drifting response in solar cells and detectors.
-- Ions piling up at interfaces and reacting with contacts.
-- Loss of stability, including the change of γ-CsPbI₃ to the yellow δ phase, which tends to start at surfaces and grain boundaries.
-
-Vacancies form, collect and escape at surfaces, where the perovskite also meets the other device layers. The vacancy mobility near the surface, and whether the surface attracts vacancies, guides the surface passivation and interface design.
-
-## Literature review
+## 2. Literature review
 
 Full notes, numbers and sources: [`Literatures/literature_review.md`](Literatures/literature_review.md).
 
+### 2.1 Key studies
+
 | Paper | What it did | What it leaves open |
 |---|---|---|
-| **Arber 2025** (anchor) | Bulk γ-CsPbI₃, PBEsol, 2×2×2 supercell: iodine vacancy barriers 0.34 eV (8d-8d), 0.35 eV (8d-4c), about 0.77 eV (4c-4c); MD activation energy 0.42 eV | Surfaces; more than one barrier per type of path; the charge state |
-| Biega 2021 | Cubic CsPbBr₃ slabs: the long axial-to-axial barrier is about half the bulk value at the surface | Edge hops; the tilted phase; a slab whose barriers return to the bulk value |
-| Ahmad 2024 | Orthorhombic CsPbI₃ 17-layer slabs: vacancy and interstitial formation energies against depth | Barriers; a slab interior that matches the bulk (off by 0.05–0.66 eV) |
-| Zhang 2025 | Bulk γ-CsPbI₃ under strain, PBEsol: two V_I paths, about 0.51 eV (edge towards the apical site) and 0.54 eV (in-plane); rectangular relaxed cell with PBEsol, PBE and HSE06; V_I a shallow donor | Charge state and supercell size; site energies; only two paths |
+| **Arber et al. 2025** (*Chem. Mater.*, anchor) | Bulk γ-CsPbI₃, PBEsol, 2×2×2 supercell. Vacancy barriers 0.34 eV (8d–8d), 0.35 eV (8d–4c), about 0.77 eV (4c–4c); B-site dopants; MD activation energy 0.42 eV | One barrier per path type; charge state not stated; no diffusion tensor |
+| **Zhang et al. 2025** (*Appl. Surf. Sci.*) | γ-CsPbI₃, PBEsol, biaxial strain on (100), (010), (001) from −3% to +1%: tilt angles, γ–δ enthalpy difference, formation energies of six defects, V_I barriers for two paths (about 0.51 and 0.54 eV) within ±1%, V_I a shallow donor (SOC levels) | Charge state of the barriers not stated (formulae default to q = 0); D3 added only in the NEB; supercell size not stated; two paths only |
+| **Xue et al. 2020** (*Nat. Commun.*) | CsPbI₂Br films: tensile strain from annealing raises ion migration; compressive strain from the hole-transport layer improves stability. DFT for one halide-vacancy path: 0.547, 0.667, 0.794 eV at +1.5%, 0, −1.5% | Not CsPbI₃; one path |
+| **Steele et al. 2019** (*Science*) | Substrate clamping leaves about 1% in-plane tensile strain and stabilizes black CsPbI₃ films; SCAN volumes of γ (241 Å³ per formula unit) and δ (229 Å³) | No defect or migration data |
+| **Le et al. 2023** (*Matter*) | CsPbI₃ nanoplates on mica: thinner, more strained plates stay black longer; the transformation is linked to surface iodide vacancies (from MD) | No barriers |
+| Smolders et al. 2024 (*Chem. Mater.*) | Diffusivity tensors of Br and Cs vacancies in biaxially strained CsPbBr₃ | Title only, not yet read |
+| Ahmad et al. 2024; Biega and Leppert 2021 | Slabs of orthorhombic CsPbI₃ (formation energies against depth) and cubic CsPbBr₃ (surface barriers) | Background for the side result |
 
-**Methods taken from the group's earlier work** (J.-B. Liu group, same approach for other halide perovskites)
+### 2.2 Methods taken from the group's earlier work
 
 | Paper | What it did | Used here for |
 |---|---|---|
-| Xu 2017 (J. Phys. Chem. Lett. 8, 4391) | Cs₂AgInBr₆: chemical-potential stability region, formation energies of all intrinsic defects against E_F, transition levels, self-consistent Fermi level and defect and carrier concentrations | Part A, steps 5–6 (V_I only) |
-| Xu 2019 (J. Power Sources 412, 689) | Cs₂AgInX₆: CI-NEB for the dominant defects only (vacancy and concerted interstitial mechanisms), diffusion coefficients, strain effect. SI: barriers change by ≤ 0.02 eV between PBE+SOC, HSE+SOC and HSE; halogen-vacancy levels stay at the band edge in all three | Diffusion (steps 7 and 11), strain (step 12); barriers kept at the GGA level |
+| Xu et al. 2017 (*J. Phys. Chem. Lett.* 8, 4391) | Cs₂AgInBr₆: stability region, formation energies against E_F, transition levels, core-level potential alignment | Part A |
+| Xu et al. 2019 (*J. Power Sources* 412, 689) | Cs₂AgInX₆: CI-NEB for the dominant defects in 160-atom cells, diffusion coefficients, biaxial strain (a = b fixed, c from a fit of E(c)); −0.5% raised the Ag_i barrier from 0.15 to 0.24 eV; barriers changed by at most 0.02 eV between PBE+SOC, HSE+SOC and HSE | Parts B and C |
 
-The group relaxed the structures with PBE and spin–orbit coupling (PBE+SOC), ran single points with HSE06+SOC, aligned the potentials with core levels and used no image-charge term. This study keeps the core-level alignment and the GGA-level barriers.
+### 2.3 The gap
 
-### The gap
-
-- **Arber et al. (2025)** gave one barrier per type of path, although the tilted structure has several distinct variants of each type, and did not state the charge state.
-- **Biega and Leppert (2021)** showed a surface effect for one long jump only, in the cubic bromide, in a thin, partly frozen slab that never returned to the bulk value.
-- **Ahmad et al. (2024)** studied the right material and surface but reported only formation energies, and the slab interior did not reproduce the bulk value.
-- **Zhang et al. (2025)** applied biaxial strain to the bulk barriers only and reported barriers for the top layer of a γ-CsPbI₃ (001) film only, without strain and not against depth.
-
-**Overall gap.** To the authors' knowledge, no study has reported iodine vacancy migration barriers in γ-CsPbI₃ layer by layer below the surface, in a slab whose interior reproduces the bulk.
-
-The overall gap splits into four specific gaps.
+**Overall gap.** To the authors' knowledge, no study has reported the strain response of every distinct iodine vacancy hop in γ-CsPbI₃ for the charge state that migrates, together with the strain response of the γ–δ stability in the same settings. The overall gap splits into four specific gaps.
 
 | Gap | Statement |
 |---|---|
-| **G1 — Hop resolution** | Bulk barriers are known only per type of path, although the tilted structure has 10 symmetry-distinct hops (six short and four long). The published values do not state the charge state. |
-| **G2 — Depth** | The surface effect on vacancy migration is known only for one long jump in cubic CsPbBr₃ and for the top layer of a γ-CsPbI₃ (001) film. No study has reported barriers against depth in γ-CsPbI₃, so the depth reached by the surface effect is unknown. |
-| **G3 — Slab–bulk consistency** | Neither surface study recovered the bulk value inside the slab, so the surface and bulk values cannot be compared cleanly. |
-| **G4 — Strain at the surface** | Films on substrates are strained in-plane, but the strain effect on vacancy barriers in γ-CsPbI₃ is known only for the bulk. The surface layers can relax out of plane, so the surface may respond to strain differently from the bulk. |
+| **G1. Hop resolution** | Bulk barriers are known only per path type, although the tilted structure has 10 symmetry-distinct hops, and the published barriers do not state the charge state. |
+| **G2. Charge state** | No study has compared the barriers of the +1 and neutral vacancy in γ-CsPbI₃, although the published values scatter by about 0.2 eV. |
+| **G3. Diffusion tensor** | The diffusion of iodine vacancies in γ-CsPbI₃ is known only as an MD average; no hop-resolved tensor has been reported. |
+| **G4. Strain trade-off** | Strain stabilizes the black phase (experiment and DFT), and strain changes ion migration (one or two paths, other compositions or an unstated charge state), but both effects have not been computed together for γ-CsPbI₃. |
 
-### Research questions
+### 2.4 Research questions and hypotheses
 
-| | Question | Gap | Hypothesis |
+| | Research question | Gap | Hypothesis |
 |---|---|---|---|
-| **RQ1** | Which site does the vacancy prefer, and by how much, in each charge state? | G1 | **H1.** 8d by a few hundredths of an eV in both; one charge state reproduces the +0.03 eV of Arber et al. (2025). |
-| **RQ2** | What are the bulk hop barriers, and how do the number and direction of hops shape transport in the ab plane and along c? What diffusion coefficients follow? | G1 | **H2.** Variants of one type differ by a few hundredths of an eV; long hops are clearly higher. Transport along c needs 4c–8d hops, so the barriers of these hops and the time the vacancy spends on 4c set the transport along c, which makes the diffusion anisotropic. |
-| **RQ3** | How do the site energies, formation energy, barriers and diffusion coefficients change layer by layer below the CsI-terminated surface? | G2 | **H3.** Barriers drop and the vacancy is slightly more stable in the top layers; the effect fades within two to three layers (about 1 nm). |
-| **RQ4** | Once the surface splits each pair of equivalent hops, which direction is favoured? | G2 | **H4.** Hops towards the surface are easier, giving a net drift of vacancies to the surface. |
-| **RQ5** | Does the middle of the slab reproduce the bulk site energy and barrier? | G3 | **H5.** Yes, within about 0.02 eV, for a symmetric 11-layer slab with all atoms free. |
-| **RQ6** | How does in-plane strain change the formation energy, barriers and diffusion near the surface, compared with the same strain in the bulk? | G4 | **H6.** Compressive strain raises the barriers in the bulk, as Zhang et al. (2025) found, but the top layers relax out of plane and respond more weakly. |
+| **RQ1** | The site preference and formation energy of the vacancy in each charge state, and the charge state that dominates across the band gap | G1 | **H1.** V_I is a shallow donor, so V_I⁺ dominates for every Fermi level in the gap, with degenerate 4c and 8d sites. |
+| **RQ2** | The barriers of all short hops and the resulting diffusion tensor | G1, G3 | **H2.** Hops of one type differ by more than 0.03 eV, and transport along c, which needs 4c–8d hops, differs from transport in the ab plane. |
+| **RQ3** | The effect of the charge state on the barriers | G2 | **H3.** The neutral and +1 barriers differ by less than 0.03 eV because the extra electron of the neutral vacancy is delocalized. |
+| **RQ4** | The effect of biaxial (001) strain on the γ–δ energy difference, the vacancy formation energy, the barriers and the diffusion tensor | G4 | **H4.** Tensile strain of about 1% favours γ over δ and lowers the barriers; compressive strain does the opposite, so phase stability and ion migration trade off against each other. |
 
-**Novelty**
+### 2.5 Novelty
 
 | | Contribution | Gap |
 |---|---|---|
-| **N1** | The hop network of the vacancy (barriers, multiplicities, directions) with both charge states stated, and a bulk reference for every hop the slab will split | G1 |
-| **N2** | Depth-resolved vacancy barriers in γ-CsPbI₃, followed back to the bulk | G2 |
-| **N3** | The surface splitting of equivalent hops as a measure of directional drift | G2 |
-| **N4** | A slab checked against a bulk reference with the same settings | G3 |
-| **N5** | In-plane strain effects on vacancy formation and migration near the surface, each compared with the bulk under the same strain | G4 |
-| **N6** | One consistent set of settings from the bulk to the strained slab: site preference, formation energy, hop network, barriers and diffusion coefficients | G1–G4 |
+| **N1** | The hop network of the vacancy (barriers, multiplicities, directions) with the charge state stated | G1 |
+| **N2** | A direct comparison of +1 and neutral barriers in γ-CsPbI₃ | G2 |
+| **N3** | A DFT diffusion tensor of the iodine vacancy in γ-CsPbI₃ | G3 |
+| **N4** | A strain map that places phase stability and hop-resolved migration on one scale, at the clamping strain measured by Steele et al. (2019) | G4 |
+| **N5** | One consistent set of settings from phase stability to diffusion | G1–G4 |
 
-**Limits on the novelty claim.** A web search and a cited-by check of the papers by Arber et al., Biega and Leppert, and Ahmad et al. (October 2026, Google Scholar and the publishers' "cited by" lists) found no depth-resolved vacancy barriers in γ-CsPbI₃. The closest studies were Pols et al. (2022), with reactive MD of CsPbI₃ slabs that showed iodine vacancies moving in and out of the surface but gave no barriers, surface studies of CsPbI₃ with formation energies only (Li et al., arXiv 2411.01599; arXiv 2309.04870), bulk-only migration studies (Tyagi et al., arXiv 2409.16051; Miskin et al., 2025) and the top-layer barriers of Zhang et al. (2025). The Ahmad group works on defect mobility near interfaces in other materials and is the most likely group to extend the formation-energy study to barriers.
+**Limits on the novelty claim.** Zhang et al. (2025) computed the strain response of the γ–δ enthalpy difference and of two vacancy paths, so the novelty of Part C lies in the hop resolution, the charge state and the diffusion tensor, not in the use of strain itself. Smolders et al. (2024) computed strained diffusivity tensors for CsPbBr₃, which makes them the closest methodological precedent, and their paper still has to be read before the claim of N3 and N4 is final.
 
-**If the hypotheses fail.** If H3 is false (no change below the top layer), the surface effect is confined to one layer, which still answers G2. If H5 is false, a comparison of the neutral and +1 vacancies separates a structural mismatch from a charge-referencing error, which answers G3.
+## 3. Scope
 
-### Scope
+**Three parts.** Part A gives the thermodynamic frame (phase stability and the formation energy of the vacancy). Part B resolves the migration (barriers, charge state and diffusion tensor). Part C applies biaxial strain to the quantities of Parts A and B. Only the iodine vacancy is studied.
 
-The study has three parts. The bulk part gives the reference values, the slab part is the main new contribution, and the strain part applies in-plane strain to the slab, as in a film on a substrate. Only the iodine vacancy is studied, in the +1 state for every quantity and in the neutral state for the site energies and the stage 1 barriers.
+| Part | Quantities | Steps |
+|---|---|---|
+| **A1. Convex hull** | Energies of γ-, δ- (and optionally α-, β-) CsPbI₃, Cs₄PbI₆, CsPb₂I₅, CsI, PbI₂, Cs, Pb and I₂; energy above the hull; chemical-potential region | 1, 5 |
+| **A2. Formation energy** | V_I at +1, 0 and −1 on both sites, against E_F and the chemical potentials, with charge correction and potential alignment; transition levels; HSE06+SOC band edges | 2, 3, 6 |
+| **B1. Barriers** | +1 barriers of S1–S6 and L3, with L2 as a check of the long hops | 4 |
+| **B2. Charge state** | Neutral barriers of S1 and S2 | 4 |
+| **B3. Diffusion tensor** | Kinetic Monte Carlo on the hop network | 7 |
+| **C. Strain** | Biaxial (001) strain of −1%, 0, +0.5% and +1%: γ–δ energy difference, V_I⁺ formation and site energies, barriers of S1, S2 and S6, diffusion tensor | 10 |
 
-Quantum ESPRESSO and VASP cross-check the bulk results, at the request of the supervisor (31 October 2026). The slab and strain steps (8–12) run in VASP only because a slab NEB in Quantum ESPRESSO would need about 85 GB per node, more than the 75 GB planned for a std40 node (see NOTES.md).
+**Settings.** All relaxations and NEB calculations use PBEsol without spin–orbit coupling or dispersion, consistent with Arber et al. (2025). Spin–orbit coupling and HSE06 enter as checks. Xu et al. (2019) found that the barriers changed by at most 0.02 eV between functionals, and the +1 results of this study did not change with spin–orbit coupling (Section 5.6).
 
-| Part | Quantities | Steps | Gap |
-|---|---|---|---|
-| **A. Bulk reference** | V_I site energies (4c, 8d); formation energy against E_F in the chemical-potential region; barriers of the hops needed for diffusion (S1–S6, L3 and an L2 check); diffusion coefficients along a, b and c | 1–7 | G1 |
-| **B. Surface** | CsI-terminated (001) slab whose middle reproduces the bulk; V_I formation energy, barriers and diffusion coefficients layer by layer | 8–11 | G2, G3 |
-| **C. Strain on the slab** | In-plane biaxial strain of −1%, 0 and +1%; formation energy, barriers and diffusion coefficients at depths 1 and 2 and at the slab centre, each compared with the bulk under the same strain | 12 | G4 |
+**Out of scope.** The CsI-terminated slab (steps 8 and 9) stopped as a full study because the surface reduces the octahedral tilt over about 1 nm, so a slab whose middle reproduces the bulk site energies would need 15 or more layers and slab NEBs on 8 nodes each. The finished slab calculations give the tilt recovery against depth as a side result (Section 5.7).
 
-**Settings.** All the relaxations and NEB calculations use PBEsol without spin–orbit coupling or dispersion, consistent with the earlier steps and with Arber et al. (2025). Xu et al. (2019) found that the barriers changed by at most 0.02 eV between functionals.
+## 4. Methods
 
-## Methods
+### 4.1 Settings
 
-### Settings
+| Item | VASP (main) | Quantum ESPRESSO (check) |
+|---|---|---|
+| Version | 6.3.2 with VTST | 7.6 (laptop), 6.5 (cluster) |
+| Functional | PBEsol (`GGA = PS`) | PBEsol |
+| Potentials | PAW Cs_sv, Pb_d, I | SSSP 1.3.0 efficiency (Cs ultrasoft, Pb and I PAW) |
+| Cutoff | 500 eV, `PREC = Accurate`, `LASPH` | 60 Ry (density 480 Ry) |
+| k-mesh | 4×4×3 (unit cell), 2×2×2 (supercell), Γ-centred | the same, unshifted |
+| Force limit | 0.01 eV/Å | 4×10⁻⁴ Ry/Bohr |
+| Spin–orbit coupling | Single points and relaxations as checks (`vasp_ncl`) | Not included |
+| Hybrid functional | HSE06+SOC single points at Γ (check) | — |
 
-| Item | Value |
-|---|---|
-| Code | Quantum ESPRESSO `pw.x`: version 7.6 on the laptop (convergence test, soft relaxation), version 6.5 on the cluster (tight relaxation and all defect calculations) |
-| Functional | PBEsol |
-| Spin-orbit coupling | Not included (scalar-relativistic pseudopotentials) |
-| Dispersion correction | None |
-| Pseudopotentials | SSSP 1.3.0 PBEsol efficiency |
-| Plane-wave cutoff | 60 Ry (density 480 Ry) |
-| k-mesh, 20-atom cell | 4×4×3 |
-| k-mesh, 160-atom supercell | 2×2×2 |
-
-**Pseudopotential files**
-
-| Element | File |
-|---|---|
-| Cs | `cs_pbesol_v1.uspp.F.UPF` |
-| Pb | `Pb.pbesol-dn-kjpaw_psl.0.2.2.UPF` |
-| I | `I.pbesol-n-kjpaw_psl.0.2.UPF` |
-
-The VASP counterpart (PAW potentials Cs_sv, Pb_d and I, 500 eV, Γ-centred k-meshes) is described in `vasp/README.md`.
-
+### 4.2 Steps
 
 | Step | Calculation | Result |
 |---|---|---|
-| 1 | Tight relaxation of the 20-atom cell | Reference lattice. **Done** |
-| 2 | Perfect 2×2×2 supercell (160 atoms) | Energy reference |
-| 3 | 4c and 8d vacancy, charge +1 and neutral | Site energy difference; charge state compared with Arber et al. |
-| 4 | NEB for the bulk hops needed for diffusion (S1–S6, L3, an L2 check) | Bulk barriers; validation against Arber et al. |
-| 5 | Reference phases: Cs, Pb, I₂, CsI, PbI₂ | Chemical-potential region of γ-CsPbI₃ |
-| 6 | V_I formation energy (from steps 2, 3 and 5), core-level alignment, charge correction | Formation energy against E_F and the chemical potentials, transition level, vacancy concentration |
-| 7 | Barriers + hop network + site energies | Bulk diffusion coefficients along a, b and c |
-| 8 | CsI-terminated (001) slab: build and convergence (VASP) | Slab whose middle reproduces the bulk |
-| 9 | Vacancies at increasing depth (VASP) | Site and formation energy against depth |
-| 10 | NEB at increasing depth (VASP) | Barriers against depth, converging to step 4 |
-| 11 | Barriers + hop network at each depth | Diffusion coefficients against depth, within each layer and across layers |
-| 12 | Slab and bulk under −1%, 0 and +1% in-plane strain (VASP) | Formation energy, barriers and diffusion coefficients against strain at depths 1 and 2 and at the centre |
+| 1 | 20-atom unit cell, variable-cell relaxation | Reference lattice |
+| 2 | Perfect 2×2×2 supercell (160 atoms) | Energy and band-edge reference |
+| 3 | V_I on 4c and 8d at +1, 0 and −1 | Site energies, formation energies |
+| 4 | CI-NEB for S1–S6, L3 (+1), L2 check, S1 and S2 (neutral) | Barriers |
+| 5 | Reference and competing phases | Convex hull, chemical-potential region |
+| 6 | Charge correction, potential alignment, dielectric constant, HSE06+SOC single points | Formation-energy diagram, transition levels |
+| 7 | Kinetic Monte Carlo on the hop network | Diffusion tensor |
+| 8–9 | CsI-terminated (001) slabs (side result) | Tilt recovery against depth |
+| 10 | Biaxial (001) strain on γ, δ and the vacancy supercells | Strain response of the quantities of steps 3, 4, 5 and 7 |
 
 Each supercell holds one vacancy, and the cell is fixed in all the defect calculations.
 
-### Bulk (steps 2 to 4)
-
-**Validation targets from Arber et al. (2025)** (same material, functional and supercell)
-
-| Quantity | Arber et al. | Check in this study |
-|---|---|---|
-| Vacancy site energy, 4c minus 8d | about +0.03 eV (inferred from the end points of Fig. S1 of Arber et al., not stated in the text) | Step 3, both charge states |
-| Barrier 8d to 8d | 0.34 eV | Step 4 |
-| Barrier 8d to 4c (average of both directions) | 0.35 eV | Step 4 |
-| Barrier 4c to 4c (long jump) | about 0.77 eV | Step 4 |
-
-Arber et al. did not state the charge state. The charge state in this study that reproduces these numbers indicates the one they used. A second reference, Zhang et al. (2025), used PBEsol with a rectangular cell like the one in this study. Fig. 6c of Zhang et al. gave about 0.51 eV for an edge hop towards the apical site and 0.54 eV for an in-plane hop, and the edge-hop profile ended about 15 meV below the start.
+### 4.3 Hop set and hop network
 
 **Hop set.** All octahedra are equivalent (Pb on Wyckoff site 4b), and Pb is an inversion centre, so the 12 edges of one octahedron give **six short hops** (S1–S6). Hops between corner-sharing octahedra give **four long hops** (L1–L4).
 
@@ -221,14 +175,12 @@ Arber et al. did not state the charge state. The charge state in this study that
 
 | Hop | Ends | Length (Å) | | Hop | Ends | Length (Å) |
 |---|---|---|---|---|---|---|
-| S1 | 8d–8d | 4.41 | | L1 | 8d–8d | 4.80 |
-| S2 | 4c–8d | 4.43 | | L2 | 8d–8d | 5.18 |
-| S3 | 4c–8d | 4.45 | | L3 | 4c–4c | 5.28 |
-| S4 | 4c–8d | 4.53 | | L4 | 4c–8d | 5.93 |
+| S1 | 8d–8d | 4.40 | | L1 | 8d–8d | 4.78 |
+| S2 | 4c–8d | 4.43 | | L2 | 8d–8d | 5.26 |
+| S3 | 4c–8d | 4.46 | | L3 | 4c–4c | 5.32 |
+| S4 | 4c–8d | 4.52 | | L4 | 4c–8d | 5.98 |
 | S5 | 4c–8d | 4.56 | | | | |
 | S6 | 8d–8d | 4.60 | | | | |
-
-The lengths come from the tight-relaxed cell. In the bulk, one vacancy per site type is enough, and each 4c–8d NEB gives both directions.
 
 **Hop network.** The script `tools/hop_network.py` counted the hops of each kind available to one vacancy in the perfect supercell and recorded where each hop leads.
 
@@ -242,151 +194,152 @@ The lengths come from the tight-relaxed cell. In the bulk, one vacancy per site 
 | L4 | 4c–8d | 1 | 2 | between layers |
 | Total | | 11 | 12 | |
 
-Half of the short hops from an 8d site lead to a 4c site, and a 4c vacancy has no short hop to another 4c site. Transport in the ab plane can run on 8d–8d hops alone, whereas transport along c needs 4c–8d hops (8d → 4c → 8d) or the long L2 hop. The diffusion and the anisotropy therefore depend on the barriers of all three kinds of hops, the hop counts and the 4c/8d site energies, not on the lowest barrier alone.
+**Consequence for transport.** Transport in the ab plane can run on 8d–8d hops alone, whereas transport along c needs 4c–8d hops (8d → 4c → 8d) or the long L2 hop. The diffusion tensor therefore depends on the barriers of all kinds of hops, the hop counts and the 4c/8d site energies, not on the lowest barrier alone.
 
-**Published paths matched to the hops.** The papers named path types, not variants, so the paths were matched to the hops by geometry.
+**Published paths matched to the hops.** The papers named path types, not variants, so the paths were matched to the hops by geometry. The 4c–4c jump of Arber et al. is L3, the only 4c–4c hop. The 8d–8d and 8d–4c edges of Arber et al. cannot be assigned because their Fig. 1 is a schematic. The "in-plane" and "out-of-plane" paths of Zhang et al. are probably S1 and S2, read from the arrows of their Fig. 6 (±0.3 Å).
 
-| Published path | Value | Hop (this study) | How identified |
-|---|---|---|---|
-| Arber: 4c–4c in the Cs–I plane | about 0.77 eV | **L3** | The only 4c–4c hop |
-| Arber: 8d–8d edge in the Pb–I plane | 0.34 eV | S1 or S6 | Not identifiable (Fig. 1 of Arber et al. is a schematic) |
-| Arber: 8d–4c edge | 0.35 eV (average of both directions) | one of S2–S5 | Not identifiable, as above |
-| Zhang: "in-plane" path | about 0.54 eV | **S1** (probable) | Arrow in Fig. 6b of Zhang et al. rises about 1 Å along c: S1 (1.00 Å), not S6 (0 Å) |
-| Zhang: "out-of-plane" path | about 0.51 eV | **S2** (probable) | Arrow in Fig. 6a of Zhang et al. rises about 2.7 Å along c with almost no sideways component in the [110] view: S2 (2.59 Å, 0.4 Å sideways), not S3/S5 (3.59 Å) or S4 (1.2 Å sideways) |
+### 4.4 Formation energy and phase stability
 
-The assignments of the Zhang et al. paths came from a raster figure (±0.3 Å) and assume a view along [110] with the same a < b labelling as in this study, which the PBEsol cell of Zhang et al. (8.39 / 8.96 / 12.37 Å) has.
+**Formation energy.** The formation energy of the iodine vacancy in charge state q is
 
-**NEB plan (staged).**
+$$
+E_\mathrm{f}[V_\mathrm{I}^q] = E[V_\mathrm{I}^q] - E[\mathrm{perfect}] + \mu_\mathrm{I} + q\,(E_\mathrm{VBM} + E_\mathrm{F}) + E_\mathrm{corr}
+\tag{1}
+$$
 
-| Stage | Hops | Purpose |
+where E[V_I^q] is the total energy of the vacancy supercell, E[perfect] is the total energy of the perfect supercell, μ_I is the iodine chemical potential, E_VBM is the valence band maximum of the perfect supercell, E_F is the Fermi level measured from E_VBM, and E_corr is the finite-size correction (Freysoldt scheme with potential alignment).
+
+**Chemical-potential region.** The chemical potentials, written relative to the elemental phases, satisfy
+
+$$
+\begin{aligned}
+\Delta\mu_\mathrm{Cs} + \Delta\mu_\mathrm{Pb} + 3\,\Delta\mu_\mathrm{I} &= \Delta H_\mathrm{f}(\mathrm{CsPbI_3}),\\
+\Delta\mu_\mathrm{Cs} + \Delta\mu_\mathrm{I} &< \Delta H_\mathrm{f}(\mathrm{CsI}),\\
+\Delta\mu_\mathrm{Pb} + 2\,\Delta\mu_\mathrm{I} &< \Delta H_\mathrm{f}(\mathrm{PbI_2}),
+\end{aligned}
+$$
+
+with every Δμ ≤ 0 and the same condition for every other competing phase on the hull.
+
+**Transition level.** The transition level between charge states q and q′ is the Fermi level at which both formation energies are equal,
+
+$$
+\varepsilon(q/q') = \frac{E_\mathrm{f}[V_\mathrm{I}^q;\,E_\mathrm{F}=0] - E_\mathrm{f}[V_\mathrm{I}^{q'};\,E_\mathrm{F}=0]}{q' - q}.
+\tag{2}
+$$
+
+**Site occupation.** For two sites with multiplicities g₄c = 1 and g₈d = 2, the fraction of vacancies on 4c at temperature T is
+
+$$
+x_\mathrm{4c} = \left[1 + 2\exp\!\left(-\frac{E(8\mathrm{d}) - E(4\mathrm{c})}{k_\mathrm{B}T}\right)\right]^{-1}.
+$$
+
+**Phase stability.** The stability of γ against δ, per formula unit, is
+
+$$
+\Delta E_{\gamma\delta} = E_\gamma - E_\delta,
+\tag{3}
+$$
+
+and the energy above the hull of each phase follows from the lower convex envelope of the formation enthalpies of all phases in the Cs–Pb–I system.
+
+### 4.5 Diffusion tensor
+
+**Hop rates.** Each hop j has the rate
+
+$$
+\Gamma_j = \nu\,\exp\!\left(-\frac{E_{\mathrm{a},j}}{k_\mathrm{B}T}\right),
+$$
+
+with the attempt frequency ν = 10¹² Hz (to be checked with a partial Hessian).
+
+**Kinetic Monte Carlo.** A kinetic Monte Carlo walk on the full hop network (hop counts, hop vectors and 4c/8d site energies) gives the vacancy diffusion tensor
+
+$$
+\boxed{D_{\alpha\beta} = \lim_{t\to\infty} \frac{\langle \Delta r_\alpha\,\Delta r_\beta \rangle}{2t}}
+\tag{4}
+$$
+
+with α, β ∈ {a, b, c}. The iodide diffusion coefficient follows from the vacancy concentration of step 6 and the correlation factor from the same walk.
+
+### 4.6 Strain
+
+**Strain definition.** Following Xu et al. (2019), the biaxial (001) strain fixes the in-plane lattice parameters at
+
+$$
+a = a_0\,(1+\varepsilon), \qquad b = b_0\,(1+\varepsilon),
+$$
+
+and the out-of-plane parameter c follows from a fit of the total energy E(c) at each ε. The same strain is applied to γ and δ, to the perfect supercell and to the vacancy supercells, so every quantity of steps 3, 4, 5 and 7 is computed at ε = −1%, 0, +0.5% and +1%. The tensile values match the clamping strain of about 1% measured by Steele et al. (2019).
+
+## 5. Results so far
+
+### 5.1 Convergence
+
+| k-mesh | VASP, energy above 6×6×4 (meV/atom) | QE (meV/atom) |
 |---|---|---|
-| 1: comparison with published values | **S1, S2, L3, S6** | S1 and S2 are like-for-like with Zhang and stand for Arber's 8d–8d and 8d–4c types; L3 is Arber's 4c–4c jump; S6 is the other 8d–8d edge (Arber's could be either) and gives a first measure of the spread within a type |
-| 2: spread of the 4c–8d hops | S3, S4, S5 | Completes the edge hops between layers, which control transport along c |
-| 3: check of the long hops | L2 | The direct route along c. If L2 is as high as L3, the long hops drop out of the diffusion, and L1 and L4 are not computed |
+| 2×2×1 | 45.2 | 45.46 |
+| 3×3×2 | 2.48 | 2.52 |
+| 4×4×3 | 0.22 | 0.23 |
+| 5×5×4 | 0.004 | 0.004 |
 
-If S1 and S6 (and S2–S5) differ by less than 0.03 eV, one barrier per type will be reported, with the spread as the uncertainty. At 300 K a 0.05 eV difference changes a rate about sevenfold, so the threshold is kept small. The +1 charge state runs first, followed by the neutral state for stage 1. Stage 1 continues in VASP for S2, L3 and S6, with S1 repeated as the cross-check between the codes. Each hop that the surface splits will be compared with the bulk value of the same hop, not with a type average.
+**Cutoff.** In VASP, all cutoffs from 350 to 650 eV gave the same energy within 0.08 meV/atom, so 500 eV is well converged. In Quantum ESPRESSO, 60 Ry gave 0.86 meV/atom above 80 Ry.
 
-**Checks.** A localized extra electron on the neutral vacancy would give a total magnetisation of about 1 μB per cell. Both neutral relaxations gave 0 μB, which shows a shallow donor with a delocalized electron.
-
-### Formation energy (steps 5 and 6)
-
-The formation energy of the iodine vacancy in charge state q is
-
-E_f[V_I^q] = E[V_I^q] − E[perfect] + μ_I + q (E_VBM + E_F) + E_corr
-
-- μ_I is the iodine chemical potential. The stability of γ-CsPbI₃ limits the chemical potentials to Δμ_Cs + Δμ_Pb + 3Δμ_I = ΔH_f(CsPbI₃), with every Δμᵢ ≤ 0 and no competing phase forming, for example Δμ_Cs + Δμ_I < ΔH_f(CsI) and Δμ_Pb + 2Δμ_I < ΔH_f(PbI₂). With three elements, the allowed region is a polygon in the (Δμ_Pb, Δμ_I) plane.
-- E_F is the Fermi level, a free variable from the valence band maximum (VBM, E_VBM) to the conduction band minimum (CBM). The transition level ε(+/0) is the E_F at which the +1 and neutral lines cross.
-- E_corr is the potential alignment from core levels far from the defect (the method of the group) plus the image-charge correction, about 0.06 eV for V_I⁺ (static dielectric constant of 18). The slab uses the two-dimensional form of the correction with the same alignment.
-- The vacancy concentration at a chosen E_F is c = N_sites g exp(−E_f/k_BT).
-- Site differences and barriers need none of these terms because both end points have the same charge in the same cell.
-
-### Diffusion (steps 7 and 11)
-
-Each hop rate is Γ = ν exp(−E_a/k_BT), with ν = 10¹² Hz. Kinetic Monte Carlo on the hop network (counts, hop vectors and 4c/8d site energies) gives the vacancy diffusion coefficient along each axis, D_xx = ⟨Δx²⟩/(2t). In the slab, the same method uses the barriers of each layer to give the in-plane D of each layer and the rate of hops between layers. The iodide diffusion coefficient follows as D_I = f c_v D, with the vacancy fraction c_v from step 6 and the correlation factor f from the same simulation.
-
-## Results so far
-
-### Convergence
-
-| k-mesh (50 Ry) | Energy above 6×6×4 (meV/atom) |
-|---|---|
-| 2×2×1 | 45.46 |
-| 3×3×2 | 2.52 |
-| 4×4×3 | 0.23 |
-| 5×5×4 | 0.004 |
-
-| Cutoff (4×4×3) | Energy above 80 Ry (meV/atom) | Pressure (kbar) |
-|---|---|---|
-| 40 Ry | 5.83 | −1.89 |
-| 50 Ry | 3.29 | −1.57 |
-| 60 Ry | 0.86 | −1.48 |
-| 70 Ry | 0.40 | −1.35 |
-| 80 Ry | 0 | −1.39 |
-
-### Relaxed unit cell
+### 5.2 Relaxed unit cell
 
 | | a (Å) | b (Å) | c (Å) | Volume (Å³) |
 |---|---|---|---|---|
 | Experiment, 293 K | 8.5766 | 8.8561 | 12.4722 | 947.33 |
-| Soft relaxation | 8.3776 | 8.9330 | 12.3518 | 924.38 |
-| **Tight relaxation** | **8.3620** | **8.9607** | **12.3503** | **925.41** |
-| Tight vs soft | −0.19% | +0.31% | −0.01% | +0.11% |
-| Tight vs experiment | −2.50% | +1.18% | −0.98% | −2.31% |
+| **VASP** | **8.3705** | **8.9497** | **12.4020** | **929.08** |
+| QE (tight relaxation) | 8.3620 | 8.9607 | 12.3503 | 925.41 |
+| VASP vs experiment | −2.40% | +1.06% | −0.56% | −1.93% |
 
-| | Pb–I–Pb angles | Pb–I bond lengths (Å) |
-|---|---|---|
-| Experiment, 293 K | 150.84° to 160.63° | 3.148 to 3.221 |
-| Soft relaxation | 148.09° to 153.54° | 3.172 to 3.188 |
-| **Tight relaxation** | **148.19° and 154.54°** | **3.165 to 3.190** |
+**Lattice.** The VASP cell agreed with the QE cell within 0.4% on every axis. Like every other 0 K relaxation, the cell is rectangular in the ab plane (a and b 6.9% apart), whereas the cell of Arber et al. (2025) was nearly square (0.3% apart, Section 5.8).
 
-| | Soft relaxation | Tight relaxation |
-|---|---|---|
-| Force limit (largest component) | 0.026 eV/Å (10⁻³ Ry/Bohr) | 0.010 eV/Å (4×10⁻⁴ Ry/Bohr) |
-| Pressure limit | 0.5 kbar | 0.2 kbar |
-| Final largest force component | | 0.0047 eV/Å (1.8×10⁻⁴ Ry/Bohr) |
-| Final pressure | −0.04 kbar | −0.13 kbar |
-| Steps and time | 37 + 3 evaluations, 16 h 24 min on a 6-core laptop | 14 steps, 1 h 32 min on one 40-core node |
-| Code | Quantum ESPRESSO 7.6 | Quantum ESPRESSO 6.5 |
-
-The tight relaxation lowered the energy by 1.9 meV per 20-atom cell. The volume and c changed little, whereas a shortened and b lengthened by 0.2–0.3%. The cell is therefore soft against exchanging a for b, which goes with a small change in the octahedral tilt. The two code versions gave the same total force to six decimal places for the soft-relaxed structure.
-
-The defect calculations use the tight-relaxed cell.
-
-
-### Perfect supercell (2×2×2, 160 atoms)
+### 5.3 Perfect supercell and band gap
 
 | | Value |
 |---|---|
-| Total energy | −65326.88713687 Ry (−888,817.58 eV) |
-| Highest occupied level (VBM) | 3.4105 eV |
-| Relaxation | Converged on the first SCF (0 BFGS steps), with every force component already below 0.010 eV/Å (4×10⁻⁴ Ry/Bohr) |
-| Total force (all atoms) | 0.058 eV/Å (0.0022 Ry/Bohr) |
-| Run | Job 217406, 2 nodes (80 cores), 17 SCF iterations, 3 h 6 min |
+| Total energy (VASP) | −486.51068 eV (160 atoms) |
+| Band gap, PBEsol (direct at Γ) | 1.619 eV |
+| Band gap, PBEsol + SOC | 0.703 eV |
+| Memory | 14 GB per std40 node on 4 nodes |
 
-The supercell built from the tightly relaxed unit cell needed no relaxation, so the 4×4×3 unit-cell mesh and the supercell mesh agree on the forces. The supercell energy and VBM are the references for the vacancy cells.
+**Band gap.** The PBEsol gap is close to the measured 1.73 eV only because the missing spin–orbit coupling and the semilocal underestimate of the gap cancel. Spin–orbit coupling lowered the Pb-6p conduction band and closed the gap by 0.92 eV, so the band edges for the formation-energy diagram come from HSE06+SOC (queued).
 
-### Iodine vacancy, charge +1
+### 5.4 Stability region
 
-| Site | Total energy (Ry) | Run | Convergence |
+| Compound | ΔH_f, VASP (eV per formula unit) | QE | Experiment (approx.) |
 |---|---|---|---|
-| Apical (4c) | −64954.16973158 | Job 217407, 2 nodes | 47 SCF cycles, 46 BFGS steps, largest force 3.1×10⁻⁴ Ry/Bohr, highest occupied level 3.3779 eV |
-| Equatorial (8d) | −64954.16980915 | Job 217408, 2 nodes | 59 SCF cycles, 58 BFGS steps, largest force 3.7×10⁻⁴ Ry/Bohr |
+| CsI | −3.079 | −3.092 | −3.59 |
+| PbI₂ | −1.827 | −1.837 | −1.82 |
+| γ-CsPbI₃ | −4.985 | −4.991 | — |
 
-The energy difference E(8d) − E(4c) = −1.06 meV makes the two sites nearly degenerate, with the equatorial site slightly lower. The sign agrees with the +0.03 eV (4c above 8d) of Arber et al. (2025), but the magnitude is about 30 times smaller. Arber et al. did not state the charge state, so the comparison is not conclusive (see NOTES.md, open check 7). VASP gave +0.9 meV (E = −485.98408 eV for 4c and −485.98322 eV for 8d), opposite in sign but equally small. The last ionic steps of both relaxations still changed the energy by 0.3–0.7 meV, so both codes show that the two sites are degenerate within ±1 meV for the +1 vacancy.
+**Decomposition margin.** γ-CsPbI₃ was stable against CsI + PbI₂ by only **79 meV per formula unit** (QE 63 meV), so the region is a thin strip in the (Δμ_Pb, Δμ_I) plane, running from the iodine-rich end (Δμ_I = 0) to the iodine-poor end (Δμ_I ≈ −0.93 eV). The vacancy formation energy contains +μ_I, so the strip reduces in practice to one variable, Δμ_I. CsI is about 0.5 eV less bound than measured, a known GGA tendency for alkali compounds. Solid I₂ lay 0.31 eV per atom below the I₂ molecule (measured sublimation energy about 0.32 eV). δ-CsPbI₃, Cs₄PbI₆ and CsPb₂I₅ are not yet included and can only shrink the strip.
 
-### Iodine vacancy, neutral
+![Stability region (Quantum ESPRESSO values)](assets/stability_region.png)
 
-| Site | Total energy (Ry) | Run | Convergence |
-|---|---|---|---|
-| Apical (4c) | −64953.80113061 | Job 217409, 3 nodes | 69 SCF cycles, 68 BFGS steps, largest force 3.3×10⁻⁴ Ry/Bohr |
-| Equatorial (8d) | −64953.79815909 | Job 217410, 3 nodes | 54 SCF cycles, 53 BFGS steps, largest force 3.6×10⁻⁴ Ry/Bohr |
+### 5.5 Iodine vacancy: site energies
 
-The energy difference E(8d) − E(4c) = +40.4 meV shows that the neutral vacancy prefers the apical site (70% on 4c at 300 K), opposite in sign to Arber et al. (2025). VASP gave +33.5 meV (E = −482.55124 eV for 4c and −482.51776 eV for 8d, 65% on 4c), with the same sign and a difference of 7 meV between the codes. The total magnetisation was 0 μB in both cells in both codes, so the extra electron delocalized and the vacancy acted as a shallow donor. Zhang et al. (2025) also found V_I to be a shallow donor (PBEsol, with spin–orbit coupling for the levels). Two further checks agreed. The Fermi level of the neutral cells lay 1.56 eV (4c) and 1.68 eV (8d) above the pristine VBM, and the rough transition level E(0) − E(+1) − E_VBM was 1.61 eV (4c) and 1.65 eV (8d), both at the band edge (gap of about 1.6 eV without SOC). These values are uncorrected, and step 6 will give the proper transition level. PBEsol tends to over-delocalize electrons, so an HSE check would settle the question.
+| Charge | E(8d) − E(4c), QE | VASP | VASP + SOC (single point) | VASP + SOC (relaxation, running) |
+|---|---|---|---|---|
+| +1 | −1.1 meV | +0.9 meV | +1.0 meV | — |
+| 0 | +40.4 meV | +33.5 meV | −71.0 meV | −17.5 meV after 9 and 4 steps |
 
-### Stability region (step 5)
+**+1 vacancy.** The two sites were degenerate within 1 meV in both codes and with spin–orbit coupling, and the largest SOC force on the PBEsol structures was 0.015 eV/Å, at the relaxation limit. With degenerate sites, one third of the +1 vacancies sit on 4c at any temperature.
 
-The elemental references were bcc Cs, fcc Pb and solid I₂. All the cells were relaxed (vc-relax) with the CsPbI₃ settings, and the CsPbI₃ energy was the perfect-supercell energy divided by 32.
+**Neutral vacancy.** Both neutral cells ended with a total magnetisation of 0 μB, so the extra electron delocalized and the vacancy acted as a shallow donor. The site preference depended on the method. Spin–orbit coupling reversed the sign and produced forces of 0.09–0.27 eV/Å, and the SOC relaxation reduced the difference from −71 to −17.5 meV within the first steps. The extra electron occupies the Pb-6p conduction band, which spin–orbit coupling shifts, so the neutral site energy is not a robust quantity at this level of theory.
 
-| Compound | ΔH_f (eV per formula unit) | Experiment (approx.) | Relaxed lattice vs experiment |
-|---|---|---|---|
-| CsI | −3.09 | −3.59 | a −1.4% |
-| PbI₂ | −1.84 | −1.82 | a −0.5%, c +0.6% |
-| γ-CsPbI₃ | −4.99 | — | (unit cell, see above) |
-
-γ-CsPbI₃ is stable against CsI + PbI₂ by only **63 meV per formula unit**, so the region is a thin strip in the (Δμ_Pb, Δμ_I) plane. The strip runs from the iodine-rich end (A and B, with Δμ_I = 0 and Δμ_Pb ≈ −1.9 eV) to the lead-rich, iodine-poor end (C and D, with Δμ_Pb = 0 and Δμ_I ≈ −0.93 eV). CsI is about 0.5 eV less bound than measured, a known GGA tendency for alkali compounds, which shifts the CsI edge. Solid I₂ lies 0.34 eV per atom below the I₂ molecule (measured sublimation energy about 0.32 eV), so PBEsol describes the iodine reference well without dispersion. The I₂ cell changed shape (a +5%, b −7%), but the volume changed by only −4%. δ-CsPbI₃ has the same composition as γ-CsPbI₃ and would empty the region, so the analysis leaves δ-CsPbI₃ out. Cs₄PbI₆ and CsPb₂I₅ can only shrink the strip further. The file `qe/05_reference_phases/stability_region.txt` lists the corner values.
-
-![Stability region](assets/stability_region.png)
-
-### Bulk barriers, +1 vacancy (VASP)
-
-Climbing-image NEB in VASP/VTST, four moving images, forces below 0.03 eV/Å on every image. Energies are relative to the starting vacancy; the reaction coordinate is the summed atomic displacement between images.
+### 5.6 Barriers, +1 vacancy
 
 | Hop | Ends | Barrier (eV) | Image energies (eV) | Steps |
 |---|---|---|---|---|
-| S1 | 8d → 8d | **0.345** | 0.180, **0.345**, 0.225, 0.093 | 25 |
 | S2 | 8d → 4c | **0.326** (0.327 from 4c) | 0.065, 0.237, **0.326**, 0.154 | 27 |
+| S1 | 8d → 8d | **0.345** | 0.180, **0.345**, 0.225, 0.093 | 25 |
 | S6 | 8d → 8d | **0.434** | 0.235, **0.434**, 0.297, 0.104 | 39 |
 | L3 | 4c → 4c | **0.777** | 0.081, 0.426, **0.777**, 0.254 | 33 |
+
+All four NEBs (VASP/VTST, four moving images, climbing image) converged below 0.03 eV/Å on every image. Energies are relative to the starting vacancy, and the reaction coordinate is the summed atomic displacement between images.
 
 ![S1 energy profile](assets/neb_S1_qp1_vasp.png)
 
@@ -396,140 +349,101 @@ Climbing-image NEB in VASP/VTST, four moving images, forces below 0.03 eV/Å on 
 
 ![L3 energy profile](assets/neb_L3_qp1_vasp.png)
 
-The S1 barrier (0.345 eV) agrees with the 0.34 eV that Arber et al. (2025) reported for an 8d–8d edge hop, and the S2 barrier (0.326 eV) is close to their 0.35 eV for the 8d–4c type. Because the 4c and 8d sites of the +1 vacancy are degenerate, the S2 barrier is the same in both directions. S2 joins a PbI₂ layer to a CsI layer, so transport along c is not limited by a higher barrier at this stage. Zhang et al. (2025) reported about 0.54 eV for the path matched to S1, about 0.2 eV above both Arber et al. and this study. The two 8d–8d edge hops differ by 0.09 eV (S1 0.345 eV, S6 0.434 eV), more than the 0.03 eV threshold, so one barrier per path type does not describe the network; at 300 K the S6 rate is about 30 times lower than the S1 rate. The long 4c–4c hop L3 (0.777 eV) agrees with the 0.77 eV of Arber et al. and is about 10⁷ times slower than S1, so it drops out of the bulk diffusion.
+**Agreement with Arber et al.** The S1 barrier (0.345 eV) agrees with the 0.34 eV that Arber et al. (2025) reported for an 8d–8d edge, the S2 barrier (0.326 eV) is close to their 0.35 eV for the 8d–4c type, and the L3 barrier (0.777 eV) agrees with their 0.77 eV. Zhang et al. (2025) reported about 0.54 eV for the path matched to S1, about 0.2 eV above both Arber et al. and this study.
 
-An independent Quantum ESPRESSO calculation (USPP, 60 Ry) gave 0.361 eV for S1, within 0.02 eV of the VASP value.
+**Spread within one type.** The two 8d–8d edges differ by 0.09 eV (S1 0.345 eV, S6 0.434 eV), so at 300 K the S6 rate is about 30 times lower than the S1 rate, and one barrier per path type does not describe the network. The lowest barrier belongs to S2, which joins a PbI₂ layer to a CsI layer, so transport along c is not blocked by a higher barrier. L3 is about 10⁷ times slower than S1 and drops out of the bulk diffusion.
 
-### Spin–orbit coupling check (VASP)
+**Cross-check.** An independent Quantum ESPRESSO calculation gave 0.361 eV for S1, within 0.02 eV of the VASP value.
 
-Spin–orbit coupling (SOC) single points (`vasp_ncl`) on the PBEsol structures:
+### 5.7 Side result: CsI-terminated (001) slabs
 
-| Quantity | PBEsol | PBEsol + SOC |
-|---|---|---|
-| Band gap, perfect supercell (direct at Γ) | 1.619 eV | 0.703 eV |
-| +1 vacancy, E(8d) − E(4c) | +0.9 meV | +1.0 meV |
-| Neutral vacancy, E(8d) − E(4c) | +33.5 meV | −71.0 meV |
-| Largest force with SOC, +1 cells | — | 0.012 and 0.015 eV/Å |
-| Largest force with SOC, neutral cells | — | 0.271 (4c) and 0.092 eV/Å (8d) |
+**Energy.** The energy cost of two additional layers approached two formula units of bulk within 4 meV from 11 layers on (offsets 6.9, 4.2, 3.5 and 4.0 meV for 7→9, 9→11, 11→13 and 13→15 layers), which is the k-mesh error of the bulk reference.
 
-SOC lowered the Pb-6p conduction band and closed the gap by 0.92 eV. The +1 vacancy, with an empty conduction band, kept its degenerate sites and its PBEsol geometry (forces at the relaxation limit). The neutral vacancy, whose extra electron occupies the conduction band, reversed its site preference, and SOC produced forces of 0.1–0.3 eV/Å on its PBEsol structures, so its site energy is not converged at this level; SOC relaxations of the two neutral cells are running. Because V_I is a shallow donor, the +1 state governs migration, and the +1 results do not depend on SOC.
+| Depth below the CsI surface | Apical Pb–I–Pb, 11 layers | 13 layers | Bulk |
+|---|---|---|---|
+| 5.9 Å (layer 3) | 157.83° | 157.72° | 156.17° |
+| 12 Å (layer 5) | 157.10° (middle) | 156.87° | 156.17° |
+| 18 Å (layer 7) | — | 156.74° (middle) | 156.17° |
 
-### Comparison with the published benchmark
+**Tilt recovery.** Bonds and equatorial angles reached the bulk values by the second PbI₂ layer (about 9 Å), whereas the apical tilt recovered over a decay length of about 1 nm per surface, and the middle PbI₂ spacing stayed 0.3–0.45% above the bulk value. This agrees with the cubic-like surface shell of about 2 nm that Pols et al. (2022) observed in reactive MD.
 
-The relaxed cell of Arber et al. (2025) was nearly square in the ab plane (8.68 and 8.71 Å, 0.3% apart), unlike the experimental cell (8.58 and 8.86 Å, 3.3% apart) and every other 0 K relaxation found. The a–b difference was 7.2% in this study, 7.6% for the PBEsol cell of Seidu et al. (2021), 6.8% (PBEsol) and 7.5% (HSE06) for Zhang et al. (2025), and 4–13% for LDA, PBE and SCAN. The hybrid-functional cell shows that the rectangular shape is not an artefact of semilocal DFT. The edge hop towards the apical site of Zhang et al. ended about 15 meV below the start (read from Fig. 6c), the same direction as the neutral result of this study, but the charge state was not stated. The 4c and 8d sites differ only through the octahedral tilt, so a less-tilted cell may explain part of the difference in site energies. The file `Literatures/literature_review.md` gives the details.
+**Sensitivity of the site energy.** At the centre of an 11-layer 2×2 slab, E(8d) − E(4c) of the +1 vacancy was at most −21 meV, against +1 meV in the bulk, with the 4c vacancy in the CsI layer 3.1 Å from the centre. The 4c/8d balance therefore shifts by about 20 meV for a 0.9° change of the apical angle, which makes the site energy a sensitive probe of the tilt under strain.
 
-## File structure
+### 5.8 Comparison with the published benchmark
 
-The Quantum ESPRESSO work sits in `qe/`, the VASP work in `vasp/`, and the scripts used with both codes in `tools/`. Inside `qe/` and `vasp/`, each step of the Methods has one numbered folder. The analysis steps (6, 7 and 11) will add their scripts to `tools/`.
+**Cell shape.** The relaxed cell of Arber et al. (2025) was nearly square in the ab plane (8.68 and 8.71 Å, 0.3% apart), unlike the experimental cell (8.58 and 8.86 Å, 3.3% apart) and every other 0 K relaxation found (6.8–7.6% for PBEsol and HSE06, 4–13% for LDA, PBE and SCAN). The 4c and 8d sites differ only through the octahedral tilt, and Section 5.7 shows how strongly the site energy responds to the tilt, so a less-tilted cell may explain part of the difference in the published site energies. The file `Literatures/literature_review.md` gives the details.
+
+## 6. File structure
+
+**Layout.** The VASP work sits in `vasp/`, the Quantum ESPRESSO check in `qe/`, and the scripts used with both codes in `tools/`. Inside `qe/` and `vasp/`, each step of the Methods has one numbered folder.
 
 ```
 .
 ├── README.md                    this file
 ├── NOTES.md                     working notes: cluster, jobs, decisions, commands
-├── Literatures/                 literature_review.md (Arber, Biega and Ahmad papers in detail, plus related work) and the papers (not tracked)
+├── Literatures/                 literature_review.md and the papers (not tracked)
 ├── LICENSE
 ├── assets/                      figures used in this README
 ├── presentation/                progress report for the supervisor (Beamer source and PDF)
 │
-├── qe/                          Quantum ESPRESSO, steps 1–5 (bulk)
-│   ├── 01_unitcell/             step 1: convergence test, soft and tight relaxation of the 20-atom cell
-│   ├── 02_pristine/             step 2: perfect 2×2×2 supercell (160 atoms)
-│   ├── 03_vacancies/            step 3: 4c and 8d vacancies, charge +1 and neutral
-│   ├── 04_bulk_neb/             step 4: NEB runs (q+1/S1 converged; S2, L3, S6 inputs)
-│   ├── 05_reference_phases/     step 5: Cs, Pb, I₂, CsI, PbI₂ inputs, job script, stability region
-│   ├── run_qe.pbs               PBS job script for pw.x, shared by all QE cluster jobs
-│   └── run_neb.pbs              PBS job script for neb.x (swap guard)
+├── vasp/                        VASP, the main calculations (see vasp/README.md)
+│   ├── build_vasp.py            inputs for steps 1, 2, 3, 5, 8 and 9 (unitcell, supercell, refs, slab, slabvac)
+│   ├── make_potcar.sh           POTCAR from POSCAR, on the cluster
+│   ├── make_soc.sh              SOC single points and relaxations (soc/, soc_relax/)
+│   ├── make_hse.sh              HSE06+SOC single points at Γ (hse_soc/)
+│   ├── run_vasp.pbs             PBS job script with memory watch and swap guard
+│   ├── 01_unitcell/             step 1: cutoff and k-mesh tests, relaxation
+│   ├── 02_pristine/             step 2: perfect 2×2×2 supercell
+│   ├── 03_vacancies/            step 3: q+1/ and q0/, vac_I_apical and vac_I_equatorial
+│   ├── 04_bulk_neb/q+1/         step 4: S1–S6, L3 (00 … 05, neb_data.txt)
+│   ├── 05_reference_phases/     step 5: Cs, Pb, I₂, CsI, PbI₂, I₂ molecule
+│   ├── 08_slab/                 step 8: CsI-terminated slabs L07 … L17
+│   └── 09_slab_vacancies/       step 9: 2×2 L11 slab with centre vacancies
 │
-├── vasp/                        VASP: steps 1–5 (cross-check), the remaining bulk NEBs, and the slab and strain steps 8–12 (see vasp/README.md)
+├── qe/                          Quantum ESPRESSO check, steps 1–5
+│   ├── 01_unitcell/ … 05_reference_phases/
+│   ├── run_qe.pbs, run_neb.pbs  PBS job scripts
 │
 └── tools/                       scripts for both codes
     ├── build_neb.py             NEB inputs from the relaxed vacancies (--code qe or vasp)
     ├── hop_network.py           hop counts and directions → hop_network.txt
-    └── plot_neb.py              NEB energy profile in the project figure style
+    ├── plot_neb.py              NEB energy profile in the project figure style (QE or VASP)
+    └── slab_geometry.py         layer-by-layer bonds, angles and spacings of a slab
 ```
 
-### `qe/01_unitcell/`
+**Cluster copy.** The cluster copy lives in `~/cspbi3/`. The QE step folders and job scripts sit directly in `~/cspbi3/`, not in a `qe/` folder, and `vasp/` is the same in both places.
 
-```
-qe/01_unitcell/
-├── gamma_CsPbI3_vcrelax.in      base input: experimental γ-CsPbI₃ cell (20 atoms) and settings
-├── kconv.sh                     convergence test (k-mesh and cutoff)
-├── conv/                        its inputs and outputs: k221 … k664 at 50 Ry, e40 … e80 at 4×4×3
-├── conv_summary.txt             energies from the convergence test
-├── relax2stage.sh               two-stage variable-cell relaxation (soft)
-├── stage1_k332/                 stage 1, coarse 3×3×2 k-mesh: vcrelax.in, vcrelax.out
-├── stage2_k443/                 stage 2, converged 4×4×3 k-mesh: vcrelax.in, vcrelax.out
-├── final/                       soft-relaxed structure: scf-ready input, structure blocks, .cif
-├── relax_summary.txt            energies, forces, timing; lattice against experiment
-└── tight/                       tight relaxation, run on the cluster
-    ├── unit_tight_relaxed.in    the tight-relaxed cell; every later structure is built from it
-    ├── vcrelax.in               tight-relaxation input
-    ├── vcrelax.out              its output
-    └── vcrelax.cif
-```
+## 7. How to reproduce
 
-The base input holds the experimental room-temperature structure (Sutton et al., ACS Energy Lett. 2018). Both shell scripts read the base input from their own folder, and neither script changes the base input.
-
-### `qe/02_pristine/` and `qe/03_vacancies/`
-
-```
-qe/02_pristine/
-├── relax.in                     perfect supercell, atoms relaxed at fixed cell: the energy reference
-└── relax.cif
-
-qe/03_vacancies/
-├── build_defects.py             writes qe/01_unitcell/tight/vcrelax.in, qe/02_pristine/ and qe/03_vacancies/
-├── sites_report.txt             which atoms were removed
-├── q+1/                         charge +1
-│   ├── vac_I_apical/            vacancy on a 4c site: relax.in, relax.cif
-│   └── vac_I_equatorial/        vacancy on an 8d site
-└── q0/                          the same two, neutral and spin-polarised
-    ├── vac_I_apical/
-    └── vac_I_equatorial/
-```
-
-`build_defects.py` builds vacancies only. The NEB inputs come from `tools/build_neb.py` (end points by symmetry from the relaxed vacancies, IDPP path, `neb.in`), for example `python3 tools/build_neb.py S1 --charge q+1`. `tools/hop_network.py` writes the hop counts and directions to `tools/hop_network.txt`.
-
-`run_qe.pbs` loads the modules and runs `pw.x` in the folder from which the job is submitted, with nodes × 40 processes. The node count, input name and k-point pools go on the `qsub` line, for example `qsub -N pristine -l nodes=2:ppn=40 -v INPUT=relax.in,NK=2 ~/cspbi3/run_qe.pbs`. Check the memory first (see `NOTES.md`).
-
-The cluster copy lives in `~/cspbi3/`. There, the QE step folders (`01_unitcell/tight`, `02_pristine`, `03_vacancies/{q+1,q0,kmesh221_test}`, `04_bulk_neb`, `05_reference_phases`) and the QE job scripts sit directly in `~/cspbi3/`, not in a `qe/` folder, next to `vasp/` and `pseudo_pbesol/`.
-
-## How to reproduce
-
-Python used for the scripts (WSL, system Python): Python 3.14.4, numpy 2.3.5, scipy 1.16.3, ASE 3.26.0, spglib 2.7.0. The cluster has no Python, so the scripts run locally and the outputs are copied to the cluster.
+**Software.** Python 3.14.4, numpy 2.3.5, scipy 1.16.3, ASE 3.26.0 and spglib 2.7.0 (WSL, system Python). The cluster has no Python, so the scripts run locally and the outputs are copied to the cluster.
 
 ```bash
-# 1. convergence test and soft relaxation
-cd qe/01_unitcell
-bash kconv.sh | tee conv_summary.txt
-bash relax2stage.sh
-cd ../..
-
-# 2-3. supercell and vacancy inputs (from the project root, after the tight relaxation)
-python3 qe/03_vacancies/build_defects.py qe/01_unitcell/tight/unit_tight_relaxed.in --out qe --pseudo-dir /path/to/pseudo
-
-# VASP counterpart and slabs (see vasp/README.md)
-python3 vasp/build_vasp.py unitcell        # or: supercell --unit vasp/01_unitcell/relax/CONTCAR, refs, slab
+# VASP inputs (from the project root)
+python3 vasp/build_vasp.py unitcell
+python3 vasp/build_vasp.py supercell --unit vasp/01_unitcell/relax/CONTCAR
+python3 vasp/build_vasp.py refs
 python3 tools/build_neb.py S1 --charge q+1 --code vasp
+python3 tools/plot_neb.py --vasp vasp/04_bulk_neb/q+1/S1 --label "S1, +1" --out assets/neb_S1_qp1_vasp.png
+
+# on the cluster, from ~/cspbi3/vasp
+bash make_potcar.sh 03_vacancies/q+1/vac_I_apical
+bash make_soc.sh 03_vacancies/q+1/vac_I_apical            # RELAX=1 for a SOC relaxation
+bash make_hse.sh 02_pristine                               # HSE06+SOC at Γ
+
+# Quantum ESPRESSO check
+python3 qe/03_vacancies/build_defects.py qe/01_unitcell/tight/unit_tight_relaxed.in --out qe --pseudo-dir /path/to/pseudo
 ```
 
-Set `PW` (path to `pw.x`) and `NP` (number of MPI processes) at the top of each shell script. Set `pseudo_dir` in `qe/01_unitcell/gamma_CsPbI3_vcrelax.in`. `build_defects.py` needs Python 3 with NumPy and ASE.
+## 8. Not tracked
 
-## Not tracked
-
-Listed in `.gitignore`:
-
-- `tmp/` and `*.save/`: Quantum ESPRESSO scratch data
-- `*.wfc*`, `*.xml`: wavefunctions and data files
-- `backup/`, `*:Zone.Identifier`, `__pycache__/`
-- `Literatures/*.pdf`, `Literatures/*.docx`: the papers and supporting information (copyrighted), kept locally only
+- `tmp/`, `*.save/`, `*.wfc*`, `*.xml`: Quantum ESPRESSO scratch data
 - `POTCAR`, `WAVECAR`, `CHG`, `CHGCAR`: VASP potentials (licensed) and scratch data
+- `Literatures/*.pdf`, `Literatures/*.docx`: the papers and supporting information (copyrighted)
+- `backup/`, `*:Zone.Identifier`, `__pycache__/`
 
-## Next steps
+## 9. Next steps
 
-1. VASP +1 vacancy relaxations (jobs 217925 and 217926), then VASP NEB stage 1 (S1, S2, L3, S6) on four std40 nodes.
-2. VASP neutral vacancy relaxations (jobs 217927 and 217928) as the cross-check of the QE site energies.
-3. Step 8 slab thickness test (VASP, 7, 9 and 11 layers, job 217936), then the thinnest passing slab at 2×2 in-plane with a vacancy at the centre.
-4. Step 6: V_I formation energy against E_F, with core-level alignment and charge correction.
-5. NEB stage 2 (S3–S5) and the L2 check, then the step 7 bulk diffusion coefficients.
-6. Steps 9–11 in the chosen slab, then step 12 (strain).
+1. Part A1: relax δ-CsPbI₃, Cs₄PbI₆ and CsPb₂I₅ (structures needed) and build the convex hull.
+2. Part A2: finish the neutral SOC relaxations, relax V_I⁻ on both sites, compute the dielectric constant and the potential alignment, and combine them with the HSE06+SOC band edges into the formation-energy diagram.
+3. Part B: finish S3, S4 and S5, run the L2 check and the neutral S1 and S2 NEBs, and compute the diffusion tensor.
+4. Part C: strain γ, δ and the vacancy supercells at −1%, 0, +0.5% and +1%, then repeat the barriers of S1, S2 and S6 and the diffusion tensor.
