@@ -400,14 +400,15 @@ All four NEBs (VASP/VTST, four moving images, climbing image) converged below 0.
 │   ├── 04_bulk_neb/q+1/         step 4: S1–S6, L3 (00 … 05, neb_data.txt)
 │   ├── 05_reference_phases/     step 5: Cs, Pb, I₂, CsI, PbI₂, I₂ molecule
 │   ├── 08_slab/                 step 8: CsI-terminated slabs L07 … L17
-│   └── 09_slab_vacancies/       step 9: 2×2 L11 slab with centre vacancies
+│   └── 10_strain/               step 10: biaxial strain, unit/eps*/c* E(c) scans
 │
 ├── qe/                          Quantum ESPRESSO check, steps 1–5
-│   ├── 01_unitcell/ … 05_reference_phases/
+│   ├── 01_unitcell/ … 05_reference_phases/   (04_bulk_neb holds the converged S1 only)
 │   ├── run_qe.pbs, run_neb.pbs  PBS job scripts
 │
 └── tools/                       scripts for both codes
     ├── build_neb.py             NEB inputs from the relaxed vacancies (--code qe or vasp)
+    ├── fit_strain_c.py          E(c) fit per in-plane strain → c(ε), ΔE
     ├── hop_network.py           hop counts and directions → hop_network.txt
     ├── plot_neb.py              NEB energy profile in the project figure style (QE or VASP)
     └── slab_geometry.py         layer-by-layer bonds, angles and spacings of a slab

@@ -1,9 +1,0 @@
-Slab: vasp/08_slab/L11/CONTCAR repeated 2x2x1, 216 atoms, cell 16.7410 17.8994 46.0051 A, k-mesh 2 2 1 (Gamma)
-Slab centre z = 23.003 A; middle PbI2 layer z = 23.003, nearest CsI layer z = 19.902
-
-vac_I_8d_centre: removed atom 206 (POSCAR order) at (9.939, 10.690, 22.526) A, 0.48 A from the slab centre; NELECT 1880
-vac_I_4c_centre: removed atom 131 (POSCAR order) at (4.811, 8.981, 19.892) A, 3.11 A from the slab centre; NELECT 1880
-
-Compare E(8d) - E(4c) with the bulk (VASP +0.9 meV, QE -1.06 meV); then the centre barriers.
-Charged slab: VASP adds a compensating background; the vacancies sit at the centre, so the
-background term is nearly the same for both and cancels in the difference.

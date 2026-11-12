@@ -10,7 +10,7 @@ image (as VTST nebbarrier.pl).
 
 QE:
 
-    python3 tools/plot_neb.py qe/04_bulk_neb/q+1/S1/neb_S1_qp1 --label "S1, +1" --out assets/neb_S1_qp1.png
+    python3 tools/plot_neb.py qe/04_bulk_neb/q+1/S1/neb_S1_qp1 --label "S1, +1" --out assets/neb_S1_qp1_qe.png
 
 The .dat file has: reaction coordinate (0-1), energy (eV, relative to image 1), error (eV/A).
 The .int file has: reaction coordinate, interpolated energy (eV).
