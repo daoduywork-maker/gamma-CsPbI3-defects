@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Fit E(c) for each in-plane strain (step 10, method of Xu et al. 2019, SI Note 1).
+Fit E(c) for each in-plane strain (step 6, method of Xu et al. 2019, SI Note 1).
 
 Input: a text file with one line per relaxed cell, "eps dc E" (strains in %, energy in eV),
-made on the cluster with the grep loop in vasp/10_strain/README.md.
+made on the cluster with the grep loop in vasp/06_strain/README.md.
 
-    python3 tools/fit_strain_c.py vasp/10_strain/unit/energies.txt --c0 12.4020 --out assets/strain_unit_Ec.png
+    python3 tools/fit_strain_c.py vasp/06_strain/unit/energies.txt --c0 12.4020 --out assets/strain_unit_Ec.png
 
 For each eps, a cubic polynomial in dc is fitted (quadratic if fewer than 5 points); its minimum
 gives the relaxed out-of-plane strain dc*(eps), c(eps) = c0(1 + dc*/100) and E_min(eps).

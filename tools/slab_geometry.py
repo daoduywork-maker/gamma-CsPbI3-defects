@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Layer-by-layer geometry of the CsI-terminated (001) slabs against the bulk (step 8 check).
+Layer-by-layer geometry of the CsI-terminated (001) slabs against the bulk (step 7 check).
 
-    python3 tools/slab_geometry.py vasp/08_slab/L11/CONTCAR [more CONTCARs ...]
+    python3 tools/slab_geometry.py vasp/07_slab/L11/CONTCAR [more CONTCARs ...]
                                    [--bulk vasp/01_unitcell/relax/CONTCAR]
 
 Prints, for every layer from the surface inwards: Pb-I bond range and equatorial

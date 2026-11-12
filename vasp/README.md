@@ -25,7 +25,7 @@ One VASP build for everything: `vasp/vasp632vtst` (NEB needs VTST).
 | V5 | `05_reference_phases/` (6 phases) | `build_vasp.py refs` | 1 node, one job, `DIRS=...` | — |
 | V2–V3 | `02_pristine/`, `03_vacancies/q+1`, `q0` | `build_vasp.py supercell --unit 01_unitcell/relax/CONTCAR` | 4 nodes each | V1b CONTCAR |
 | V4 | `04_bulk_neb/q+1/S1, S2, L3, S6` | `tools/build_neb.py S1 --charge q+1 --code vasp` | 4 nodes (1 image per node) | V3 CONTCARs |
-| V8 | `08_slab/L07, L09, L11` (CsI-terminated (001), 1×1 in-plane, 34/44/54 atoms) | `build_vasp.py slab` | 1 node, one job, `DIRS=...` | V1b CONTCAR |
+| V8 | `07_slab/L07, L09, L11` (CsI-terminated (001), 1×1 in-plane, 34/44/54 atoms) | `build_vasp.py slab` | 1 node, one job, `DIRS=...` | V1b CONTCAR |
 
 V1 and V5 are built and can run now. V2–V4 are built when the relaxed files come back (the cluster has no Python).
 

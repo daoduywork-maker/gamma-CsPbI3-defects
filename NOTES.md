@@ -2,7 +2,7 @@
 
 Practical details that are not in the README: where things live, how jobs were run, decisions and their reasons, open checks, and commands that work. The README holds the science, the plan and the results.
 
-Last updated: 2026-10-31
+Last updated: 2026-11-12
 
 **For Claude:** read this file again after every context reset or chat compaction, before giving cluster commands. The cluster facts below are the reference; do not rely on memory of earlier turns.
 
@@ -25,6 +25,8 @@ Change flow: edit in the Desktop copy, review with `git diff`, commit there, the
 `~/cspbi3/` mirrors the repository: `01_unitcell/tight` (was `unitcell_tight`), `02_pristine` (was `pristine_222`), `03_vacancies/q+1`, `03_vacancies/q0`, `03_vacancies/kmesh221_test` (was `kmesh_test`), `04_bulk_neb`, `05_reference_phases`, `vasp/`, `pseudo_pbesol/` (keep this path: QE inputs point to it), `run_qe.pbs`, `run_neb.pbs`. Older job logs and notes use the old names.
 
 **Repository layout (since 4 Nov) differs from the cluster.** In the repository the QE step folders and job scripts are under `qe/` (`qe/01_unitcell` … `qe/05_reference_phases`, `qe/run_qe.pbs`, `qe/run_neb.pbs`), the scripts for both codes (`build_neb.py`, `hop_network.py`, `plot_neb.py`) are in `tools/`, and the empty step 6 and 7 folders were removed. On the cluster the QE folders stay directly in `~/cspbi3/`, so a QE file at `qe/<path>` in the repository is at `~/cspbi3/<path>` on the cluster; `vasp/` is the same in both. Scripts run from the repository root, e.g. `python3 tools/build_neb.py S2 --charge q+1 --code vasp`.
+
+**VASP step renumbering (12 Nov).** After the rescope the VASP folders run 01–07 with no gaps: `08_slab` → `07_slab` (step 7, side result), `10_strain` → `06_strain` (step 6), `09_slab_vacancies` deleted (its numbers are in the job log below). Method steps now: 6 strain, 7 slab, 8 charge correction and formation-energy diagram (was 6), 9 diffusion tensor (was 7). Job rows and decisions written before 12 Nov use the old numbers. On the cluster `08_slab` stays as a symlink to `07_slab` until job 217951 ends.
 
 ## The cluster
 

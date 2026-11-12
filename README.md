@@ -128,15 +128,15 @@ Full notes, numbers and sources: [`Literatures/literature_review.md`](Literature
 | Part | Quantities | Steps |
 |---|---|---|
 | **A1. Convex hull** | Energies of γ-, δ- (and optionally α-, β-) CsPbI₃, Cs₄PbI₆, CsPb₂I₅, CsI, PbI₂, Cs, Pb and I₂; energy above the hull; chemical-potential region | 1, 5 |
-| **A2. Formation energy** | V_I at +1, 0 and −1 on both sites, against E_F and the chemical potentials, with charge correction and potential alignment; transition levels; HSE06+SOC band edges | 2, 3, 6 |
+| **A2. Formation energy** | V_I at +1, 0 and −1 on both sites, against E_F and the chemical potentials, with charge correction and potential alignment; transition levels; HSE06+SOC band edges | 2, 3, 8 |
 | **B1. Barriers** | +1 barriers of S1–S6 and L3, with L2 as a check of the long hops | 4 |
 | **B2. Charge state** | Neutral barriers of S1 and S2 | 4 |
-| **B3. Diffusion tensor** | Master equation on the hop network, Vineyard prefactors of the moving ion | 7 |
-| **C. Strain** | Biaxial (001) strain of −1%, 0, +0.5% and +1%: γ–δ energy difference, V_I⁺ formation and site energies, barriers of S1, S2 and S6, diffusion tensor | 10 |
+| **B3. Diffusion tensor** | Master equation on the hop network, Vineyard prefactors of the moving ion | 9 |
+| **C. Strain** | Biaxial (001) strain of −1%, 0, +0.5% and +1%: γ–δ energy difference, V_I⁺ formation and site energies, barriers of S1, S2 and S6, diffusion tensor | 6 |
 
 **Settings.** All relaxations and NEB calculations use PBEsol without spin–orbit coupling or dispersion, consistent with Arber et al. (2025). Spin–orbit coupling and HSE06 enter as checks. Xu et al. (2019) found that the barriers changed by at most 0.02 eV between functionals, and the +1 results of this study did not change with spin–orbit coupling (Section 5.6).
 
-**Out of scope.** The CsI-terminated slab (steps 8 and 9) stopped as a full study because the surface reduces the octahedral tilt over about 1 nm, so a slab whose middle reproduces the bulk site energies would need 15 or more layers and slab NEBs on 8 nodes each. The finished slab calculations give the tilt recovery against depth as a side result (Section 5.7).
+**Out of scope.** The CsI-terminated slab (step 7) stopped as a full study because the surface reduces the octahedral tilt over about 1 nm, so a slab whose middle reproduces the bulk site energies would need 15 or more layers and slab NEBs on 8 nodes each. The finished slab calculations give the tilt recovery against depth as a side result (Section 5.7).
 
 ## 4. Methods
 
@@ -162,10 +162,10 @@ Full notes, numbers and sources: [`Literatures/literature_review.md`](Literature
 | 3 | V_I on 4c and 8d at +1, 0 and −1 | Site energies, formation energies |
 | 4 | CI-NEB for S1–S6, L3 (+1), L2 check, S1 and S2 (neutral) | Barriers |
 | 5 | Reference and competing phases | Convex hull, chemical-potential region |
-| 6 | Charge correction, potential alignment, dielectric constant, HSE06+SOC single points | Formation-energy diagram, transition levels |
-| 7 | Master equation on the hop network, Vineyard prefactors | Diffusion tensor |
-| 8–9 | CsI-terminated (001) slabs (side result) | Tilt recovery against depth |
-| 10 | Biaxial (001) strain on γ, δ and the vacancy supercells | Strain response of the quantities of steps 3, 4, 5 and 7 |
+| 6 | Biaxial (001) strain on γ, δ and the vacancy supercells | Strain response of the quantities of steps 3, 4, 5 and 9 |
+| 7 | CsI-terminated (001) slabs (side result) | Tilt recovery against depth |
+| 8 | Charge correction, potential alignment, dielectric constant, HSE06+SOC single points | Formation-energy diagram, transition levels |
+| 9 | Master equation on the hop network, Vineyard prefactors | Diffusion tensor |
 
 Each supercell holds one vacancy, and the cell is fixed in all the defect calculations.
 
@@ -262,7 +262,7 @@ $$
 \tag{4}
 $$
 
-with α, β ∈ {a, b, c}. The iodide diffusion coefficient follows from the vacancy concentration of step 6 and the correlation factor from the same walk.
+with α, β ∈ {a, b, c}. The iodide diffusion coefficient follows from the vacancy concentration of step 8 and the correlation factor from the same walk.
 
 ### 4.6 Strain
 
@@ -272,7 +272,7 @@ $$
 a = a_0\,(1+\varepsilon), \qquad b = b_0\,(1+\varepsilon),
 $$
 
-and the out-of-plane parameter c follows from a fit of the total energy E(c), with c scanned from −2% to +2% in 0.5% steps and the atoms relaxed at each point. The same strain is applied to γ and δ, to the perfect supercell and to the vacancy supercells, so every quantity of steps 3, 4, 5 and 7 is computed at ε = −1%, 0, +0.5% and +1%. The tensile values match the clamping strain of about 1% measured by Steele et al. (2019).
+and the out-of-plane parameter c follows from a fit of the total energy E(c), with c scanned from −2% to +2% in 0.5% steps and the atoms relaxed at each point. The same strain is applied to γ and δ, to the perfect supercell and to the vacancy supercells, so every quantity of steps 3, 4, 5 and 9 is computed at ε = −1%, 0, +0.5% and +1%. The tensile values match the clamping strain of about 1% measured by Steele et al. (2019).
 
 ## 5. Results so far
 
@@ -389,7 +389,7 @@ All four NEBs (VASP/VTST, four moving images, climbing image) converged below 0.
 ├── presentation/                progress report for the supervisor (Beamer source and PDF)
 │
 ├── vasp/                        VASP, the main calculations (see vasp/README.md)
-│   ├── build_vasp.py            inputs for steps 1, 2, 3, 5, 8 and 9 (unitcell, supercell, refs, slab, slabvac)
+│   ├── build_vasp.py            inputs for steps 1, 2, 3, 5, 6 and 7 (unitcell, supercell, refs, strain, slab, slabvac)
 │   ├── make_potcar.sh           POTCAR from POSCAR, on the cluster
 │   ├── make_soc.sh              SOC single points and relaxations (soc/, soc_relax/)
 │   ├── make_hse.sh              HSE06+SOC single points at Γ (hse_soc/)
@@ -399,8 +399,8 @@ All four NEBs (VASP/VTST, four moving images, climbing image) converged below 0.
 │   ├── 03_vacancies/            step 3: q+1/ and q0/, vac_I_apical and vac_I_equatorial
 │   ├── 04_bulk_neb/q+1/         step 4: S1–S6, L3 (00 … 05, neb_data.txt)
 │   ├── 05_reference_phases/     step 5: Cs, Pb, I₂, CsI, PbI₂, I₂ molecule
-│   ├── 08_slab/                 step 8: CsI-terminated slabs L07 … L17
-│   └── 10_strain/               step 10: biaxial strain, unit/eps*/c* E(c) scans
+│   ├── 06_strain/               step 6: biaxial strain, unit/eps*/c* E(c) scans
+│   └── 07_slab/                 step 7: CsI-terminated slabs L07 … L17 (side result)
 │
 ├── qe/                          Quantum ESPRESSO check, steps 1–5
 │   ├── 01_unitcell/ … 05_reference_phases/   (04_bulk_neb holds the converged S1 only)
