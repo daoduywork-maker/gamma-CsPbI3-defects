@@ -18,6 +18,8 @@ Subcommands (run from the project root; the cluster has no Python):
              python3 vasp/build_vasp.py refs
   slab       step 8: CsI-terminated (001) slabs, 7, 9 and 11 layers, 1x1 in-plane
              python3 vasp/build_vasp.py slab [--layers 13 15 17]
+  strain     step 10: gamma unit cells under biaxial (001) strain, E(c) scans
+             python3 vasp/build_vasp.py strain
   slabvac    step 9 test: 2x2 copy of a relaxed slab with +1 vacancies at its centre
              python3 vasp/build_vasp.py slabvac --slab vasp/08_slab/L11/CONTCAR
 
@@ -396,6 +398,48 @@ def cmd_slabvac(a):
     print("\n".join(rep))
 
 
+# ---- step 10: biaxial (001) strain, unit cell E(c) scans (method of Xu et al. 2019) -------
+STRAIN_EPS = (-1.0, 0.0, 0.5, 1.0)                    # % on a and b
+STRAIN_C = tuple(x / 2 for x in range(-4, 5))         # % on c: -2.0 ... +2.0 in 0.5 steps
+
+
+def cmd_strain(a):
+    """Strained gamma unit cells for E(c) scans.
+
+    For each in-plane strain eps, a and b are fixed at a0(1+eps) and b0(1+eps); c is scanned
+    from -2% to +2% around c0, and the atoms relax at fixed cell. The fitted minimum of E(c)
+    gives c(eps) (Xu et al. 2019, SI Note 1). Folders: vasp/10_strain/unit/eps<e>/c<dc>/.
+    """
+    unit = sort_atoms(read(a.unit, format="vasp"))
+    a0, b0, c0 = unit.cell.lengths()
+    out = os.path.join(HERE, "10_strain", "unit")
+    eps_list = a.eps or STRAIN_EPS
+    rows = ["Unit cell: %s, a0 %.4f, b0 %.4f, c0 %.4f A" % (a.unit, a0, b0, c0),
+            "In-plane strain (%%): %s; c scan (%%): %s" % (" ".join("%+.1f" % e for e in eps_list),
+                                                          " ".join("%+.1f" % c for c in STRAIN_C)), ""]
+    for e in eps_list:
+        dirs = []
+        for dc in STRAIN_C:
+            at = unit.copy()
+            at.set_cell(np.diag([a0 * (1 + e / 100), b0 * (1 + e / 100), c0 * (1 + dc / 100)]), scale_atoms=True)
+            d = os.path.join(out, "eps%+.1f" % e, "c%+.1f" % dc)
+            os.makedirs(d, exist_ok=True)
+            write_poscar(os.path.join(d, "POSCAR"), at, "strained unit cell")
+            write_kpoints(os.path.join(d, "KPOINTS"), K_UNIT)
+            incar(os.path.join(d, "INCAR"), "gamma unit cell, in-plane strain %+.1f%%, c %+.1f%%" % (e, dc),
+                  base_tags(".FALSE.") + [
+                      "Relaxation: atoms only, cell fixed (E(c) scan)",
+                      ("IBRION", 2, "conjugate gradient"),
+                      ("ISIF", 2, "fixed cell"),
+                      ("NSW", 100, ""),
+                      ("EDIFFG", EDIFFG, "eV/A")] + para_tags(10, 4))
+            dirs.append("c%+.1f" % dc)
+        rows.append("eps %+.1f%%: a %.4f, b %.4f A; folders %s" % (e, a0 * (1 + e / 100), b0 * (1 + e / 100), " ".join(dirs)))
+    with open(os.path.join(out, "report.txt"), "w") as f:
+        f.write("\n".join(rows) + "\n")
+    print("\n".join(rows))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -411,7 +455,12 @@ def main():
     p = sub.add_parser("slabvac")
     p.add_argument("--slab", default="vasp/08_slab/L11/CONTCAR", help="relaxed 1x1 slab (CONTCAR)")
     p.add_argument("--name", default="L11_2x2")
+    p = sub.add_parser("strain")
+    p.add_argument("--unit", default="vasp/01_unitcell/relax/CONTCAR", help="relaxed VASP unit cell (CONTCAR)")
+    p.add_argument("--eps", type=float, nargs="+", help="in-plane strains in %% (default -1 0 0.5 1)")
     a = ap.parse_args()
+    if a.cmd == "strain":
+        return cmd_strain(a)
     if a.cmd == "slabvac":
         return cmd_slabvac(a)
     {"unitcell": cmd_unitcell, "supercell": cmd_supercell, "refs": cmd_refs, "slab": cmd_slab}[a.cmd](a)

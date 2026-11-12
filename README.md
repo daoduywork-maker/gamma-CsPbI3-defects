@@ -20,8 +20,8 @@ This repository holds the inputs, scripts and text outputs, but not the scratch 
 | A2 | Charge correction, potential alignment, dielectric constant, HSE06+SOC band edges, formation-energy diagram | HSE06+SOC queued; rest to do |
 | B1 | Barriers, +1 vacancy | **S1, S2, S6, L3 done**; S3, S4, S5 queued; L2 check to do |
 | B2 | Barriers, neutral vacancy (S1, S2) | To do |
-| B3 | Diffusion tensor (kinetic Monte Carlo on the hop network) | To do |
-| C | Biaxial (001) strain: γ–δ energy, V_I formation, barriers, diffusion tensor | To do |
+| B3 | Diffusion tensor (master equation on the hop network, Vineyard prefactors) | To do |
+| C | Biaxial (001) strain: γ–δ energy, V_I formation, barriers, diffusion tensor | Unit-cell E(c) scans built (36 cells); rest to do |
 | Side result | CsI-terminated (001) slabs: tilt recovery against depth | 7–15 layers done; 17 layers running |
 
 ## 1. Introduction
@@ -77,7 +77,9 @@ Full notes, numbers and sources: [`Literatures/literature_review.md`](Literature
 | **Xue et al. 2020** (*Nat. Commun.*) | CsPbI₂Br films: tensile strain from annealing raises ion migration; compressive strain from the hole-transport layer improves stability. DFT for one halide-vacancy path: 0.547, 0.667, 0.794 eV at +1.5%, 0, −1.5% | Not CsPbI₃; one path |
 | **Steele et al. 2019** (*Science*) | Substrate clamping leaves about 1% in-plane tensile strain and stabilizes black CsPbI₃ films; SCAN volumes of γ (241 Å³ per formula unit) and δ (229 Å³) | No defect or migration data |
 | **Le et al. 2023** (*Matter*) | CsPbI₃ nanoplates on mica: thinner, more strained plates stay black longer; the transformation is linked to surface iodide vacancies (from MD) | No barriers |
-| Smolders et al. 2024 (*Chem. Mater.*) | Diffusivity tensors of Br and Cs vacancies in biaxially strained CsPbBr₃ | Title only, not yet read |
+| **Smolders et al. 2024** (*Chem. Mater.* 36, 2334) | Orthorhombic (Pnma) CsPbBr₃, SCAN, 320-atom cells: V_Br⁺ and V_Cs⁻ barriers for all nearest-neighbour site pairs (0.23–0.34 eV for V_Br⁺ unstrained) under biaxial strain from −4% to +4% on all three planes; Vineyard prefactors of the moving ion; master-equation diffusivity tensors. The barriers rose or fell with strain depending on the hop and the plane, often non-monotonically | Bromide only; no phase stability; no formation energies against μ and E_F; no charge-state comparison |
+| Woo et al. 2022 (*Discovery Mater.* 2, 8) | Cubic CsPbX₃ (X = Cl, Br, I) under triaxial strain: halide-vacancy barriers | Cubic phase only (cited by Smolders et al., not read) |
+| **Steele et al. 2021** (*J. Am. Chem. Soc.* 143, 10500) | Perspective: the black-phase stability of γ-CsPbI₃ follows from the suppression of the spontaneous strain that octahedral tilting creates; dopants stabilize γ by reducing the tilt-driven strain | No defect or migration data |
 | Ahmad et al. 2024; Biega and Leppert 2021 | Slabs of orthorhombic CsPbI₃ (formation energies against depth) and cubic CsPbBr₃ (surface barriers) | Background for the side result |
 
 ### 2.2 Methods taken from the group's earlier work
@@ -95,7 +97,7 @@ Full notes, numbers and sources: [`Literatures/literature_review.md`](Literature
 |---|---|
 | **G1. Hop resolution** | Bulk barriers are known only per path type, although the tilted structure has 10 symmetry-distinct hops, and the published barriers do not state the charge state. |
 | **G2. Charge state** | No study has compared the barriers of the +1 and neutral vacancy in γ-CsPbI₃, although the published values scatter by about 0.2 eV. |
-| **G3. Diffusion tensor** | The diffusion of iodine vacancies in γ-CsPbI₃ is known only as an MD average; no hop-resolved tensor has been reported. |
+| **G3. Diffusion tensor** | The diffusion of iodine vacancies in γ-CsPbI₃ is known only as an MD average. Smolders et al. (2024) computed hop-resolved diffusivity tensors under strain for CsPbBr₃, but not for the iodide. |
 | **G4. Strain trade-off** | Strain stabilizes the black phase (experiment and DFT), and strain changes ion migration (one or two paths, other compositions or an unstated charge state), but both effects have not been computed together for γ-CsPbI₃. |
 
 ### 2.4 Research questions and hypotheses
@@ -105,7 +107,7 @@ Full notes, numbers and sources: [`Literatures/literature_review.md`](Literature
 | **RQ1** | The site preference and formation energy of the vacancy in each charge state, and the charge state that dominates across the band gap | G1 | **H1.** V_I is a shallow donor, so V_I⁺ dominates for every Fermi level in the gap, with degenerate 4c and 8d sites. |
 | **RQ2** | The barriers of all short hops and the resulting diffusion tensor | G1, G3 | **H2.** Hops of one type differ by more than 0.03 eV, and transport along c, which needs 4c–8d hops, differs from transport in the ab plane. |
 | **RQ3** | The effect of the charge state on the barriers | G2 | **H3.** The neutral and +1 barriers differ by less than 0.03 eV because the extra electron of the neutral vacancy is delocalized. |
-| **RQ4** | The effect of biaxial (001) strain on the γ–δ energy difference, the vacancy formation energy, the barriers and the diffusion tensor | G4 | **H4.** Tensile strain of about 1% favours γ over δ and lowers the barriers; compressive strain does the opposite, so phase stability and ion migration trade off against each other. |
+| **RQ4** | The effect of biaxial (001) strain on the γ–δ energy difference, the vacancy formation energy, the barriers and the diffusion tensor | G4 | **H4.** Tensile strain of about 1% favours γ over δ, whereas the barriers respond differently from hop to hop (as Smolders et al. (2024) found for CsPbBr₃), so the net effect of the clamping strain on iodine transport has to come from the full tensor. |
 
 ### 2.5 Novelty
 
@@ -117,7 +119,7 @@ Full notes, numbers and sources: [`Literatures/literature_review.md`](Literature
 | **N4** | A strain map that places phase stability and hop-resolved migration on one scale, at the clamping strain measured by Steele et al. (2019) | G4 |
 | **N5** | One consistent set of settings from phase stability to diffusion | G1–G4 |
 
-**Limits on the novelty claim.** Zhang et al. (2025) computed the strain response of the γ–δ enthalpy difference and of two vacancy paths, so the novelty of Part C lies in the hop resolution, the charge state and the diffusion tensor, not in the use of strain itself. Smolders et al. (2024) computed strained diffusivity tensors for CsPbBr₃, which makes them the closest methodological precedent, and their paper still has to be read before the claim of N3 and N4 is final.
+**Limits on the novelty claim.** The method of Parts B3 and C (hop-resolved barriers, a diffusivity tensor and its strain response) follows Smolders et al. (2024), who applied it to CsPbBr₃, and Zhang et al. (2025) computed the strain response of the γ–δ enthalpy difference and of two vacancy paths in γ-CsPbI₃. The novelty therefore lies in the combination for γ-CsPbI₃, the phase whose black form strain is used to stabilize: the hop-resolved +1 tensor, the γ–δ stability and the formation energy against μ and E_F on one strain scale, and the charge-state comparison.
 
 ## 3. Scope
 
@@ -129,7 +131,7 @@ Full notes, numbers and sources: [`Literatures/literature_review.md`](Literature
 | **A2. Formation energy** | V_I at +1, 0 and −1 on both sites, against E_F and the chemical potentials, with charge correction and potential alignment; transition levels; HSE06+SOC band edges | 2, 3, 6 |
 | **B1. Barriers** | +1 barriers of S1–S6 and L3, with L2 as a check of the long hops | 4 |
 | **B2. Charge state** | Neutral barriers of S1 and S2 | 4 |
-| **B3. Diffusion tensor** | Kinetic Monte Carlo on the hop network | 7 |
+| **B3. Diffusion tensor** | Master equation on the hop network, Vineyard prefactors of the moving ion | 7 |
 | **C. Strain** | Biaxial (001) strain of −1%, 0, +0.5% and +1%: γ–δ energy difference, V_I⁺ formation and site energies, barriers of S1, S2 and S6, diffusion tensor | 10 |
 
 **Settings.** All relaxations and NEB calculations use PBEsol without spin–orbit coupling or dispersion, consistent with Arber et al. (2025). Spin–orbit coupling and HSE06 enter as checks. Xu et al. (2019) found that the barriers changed by at most 0.02 eV between functionals, and the +1 results of this study did not change with spin–orbit coupling (Section 5.6).
@@ -161,7 +163,7 @@ Full notes, numbers and sources: [`Literatures/literature_review.md`](Literature
 | 4 | CI-NEB for S1–S6, L3 (+1), L2 check, S1 and S2 (neutral) | Barriers |
 | 5 | Reference and competing phases | Convex hull, chemical-potential region |
 | 6 | Charge correction, potential alignment, dielectric constant, HSE06+SOC single points | Formation-energy diagram, transition levels |
-| 7 | Kinetic Monte Carlo on the hop network | Diffusion tensor |
+| 7 | Master equation on the hop network, Vineyard prefactors | Diffusion tensor |
 | 8–9 | CsI-terminated (001) slabs (side result) | Tilt recovery against depth |
 | 10 | Biaxial (001) strain on γ, δ and the vacancy supercells | Strain response of the quantities of steps 3, 4, 5 and 7 |
 
@@ -251,9 +253,9 @@ $$
 \Gamma_j = \nu\,\exp\!\left(-\frac{E_{\mathrm{a},j}}{k_\mathrm{B}T}\right),
 $$
 
-with the attempt frequency ν = 10¹² Hz (to be checked with a partial Hessian).
+where the attempt frequency ν follows from the Vineyard formula with the vibrational modes of the moving ion only, as in Smolders et al. (2024), in place of the common estimate of 10¹² Hz.
 
-**Kinetic Monte Carlo.** A kinetic Monte Carlo walk on the full hop network (hop counts, hop vectors and 4c/8d site energies) gives the vacancy diffusion tensor
+**Master equation.** For one vacancy in the dilute limit, a master equation on the sites of the unit cell, with the rates of all hops, gives the vacancy diffusion tensor exactly (Smolders et al., 2024), which replaces a kinetic Monte Carlo walk
 
 $$
 \boxed{D_{\alpha\beta} = \lim_{t\to\infty} \frac{\langle \Delta r_\alpha\,\Delta r_\beta \rangle}{2t}}
@@ -270,7 +272,7 @@ $$
 a = a_0\,(1+\varepsilon), \qquad b = b_0\,(1+\varepsilon),
 $$
 
-and the out-of-plane parameter c follows from a fit of the total energy E(c) at each ε. The same strain is applied to γ and δ, to the perfect supercell and to the vacancy supercells, so every quantity of steps 3, 4, 5 and 7 is computed at ε = −1%, 0, +0.5% and +1%. The tensile values match the clamping strain of about 1% measured by Steele et al. (2019).
+and the out-of-plane parameter c follows from a fit of the total energy E(c), with c scanned from −2% to +2% in 0.5% steps and the atoms relaxed at each point. The same strain is applied to γ and δ, to the perfect supercell and to the vacancy supercells, so every quantity of steps 3, 4, 5 and 7 is computed at ε = −1%, 0, +0.5% and +1%. The tensile values match the clamping strain of about 1% measured by Steele et al. (2019).
 
 ## 5. Results so far
 

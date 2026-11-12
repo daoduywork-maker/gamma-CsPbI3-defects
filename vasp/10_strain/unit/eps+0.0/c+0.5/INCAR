@@ -1,0 +1,27 @@
+SYSTEM = gamma unit cell, in-plane strain +0.0%, c +0.5%
+
+# Electronic structure (same physics as the QE runs)
+GGA      = PS              ! PBEsol
+PREC     = Accurate      
+ENCUT    = 500             ! eV; PAW Cs_sv, Pb_d, I
+LASPH    = .TRUE.          ! non-spherical terms inside the PAW spheres
+LREAL    = .FALSE.         ! Auto for the 159/160-atom cells, .FALSE. for small cells
+ALGO     = Normal        
+NELM     = 200           
+EDIFF    = 1E-6            ! eV
+ISMEAR   = 0               ! Gaussian
+SIGMA    = 0.01            ! eV; insulator (QE: fixed occupations)
+
+# Output
+LWAVE    = .FALSE.       
+LCHARG   = .FALSE.       
+
+# Relaxation: atoms only, cell fixed (E(c) scan)
+IBRION   = 2               ! conjugate gradient
+ISIF     = 2               ! fixed cell
+NSW      = 100           
+EDIFFG   = -0.01           ! eV/A
+
+# Parallelisation (40 cores per std40 node)
+NCORE    = 10            
+KPAR     = 4               ! k-point groups, more of them is faster but uses more memory
