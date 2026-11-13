@@ -1,0 +1,79 @@
+#!/bin/bash
+# PBS job script: several small VASP runs side by side in ONE 4-node job (one chain per node).
+#
+# Why: std40 nodes come in groups of four, and 1-node jobs leave the other nodes of a
+# group idle (senior's rule, NOTES.md). Small cells (unit cells, delta, references)
+# therefore go in one 4-node job: each node runs its own chain of folders, in order.
+#
+# CHAINS = a text file in the submit folder, one line per node, folders separated by spaces
+# (paths relative to the submit folder). Example, from ~/cspbi3/vasp:
+#     for e in -1.0 +0.0 +0.5 +1.0; do echo $(ls -d 06_strain/unit/eps$e/c*); done > chains.txt
+#     qsub -N v_str -v CHAINS=chains.txt run_multi.pbs
+# A folder whose INCAR has ISIF = 3 (variable cell) runs twice, the second time from CONTCAR.
+
+#PBS -N vasp_multi
+#PBS -q std40
+#PBS -l nodes=4:ppn=40
+#PBS -l walltime=96:00:00
+#PBS -j oe
+
+MPI_MODULE="${MPI_MODULE:-intel/intel2020}"
+VASP_MODULE="${VASP_MODULE:-vasp/vasp632vtst}"
+VASP_EXE="${VASP_EXE:-vasp_std}"
+SWAP_LIMIT_GB="${SWAP_LIMIT_GB:-2}"
+
+cd "$PBS_O_WORKDIR" || exit 1
+source /etc/profile 2>/dev/null
+module purge; module load "$MPI_MODULE"; module load "$VASP_MODULE"
+EXE=$(which "$VASP_EXE" 2>/dev/null)
+[ -z "$EXE" ] && { echo "vasp not found"; exit 1; }
+[ -s "$CHAINS" ] || { echo "CHAINS file '$CHAINS' missing"; exit 1; }
+
+NODES=($(sort -u "$PBS_NODEFILE"))
+PPN=$(( $(wc -l < "$PBS_NODEFILE") / ${#NODES[@]} ))
+mapfile -t LINES < <(grep -v '^ *$' "$CHAINS")
+echo "job id : $PBS_JOBID"; echo "nodes  : ${NODES[*]} ($PPN cores each)"; echo "chains : ${#LINES[@]}"
+echo "started: $(date)"
+[ "${#LINES[@]}" -gt "${#NODES[@]}" ] && echo "WARNING: more chains than nodes, the extra lines are ignored"
+
+# memory watch, same as run_vasp.pbs
+(
+  while true; do
+    for n in "${NODES[@]}"; do
+      line=$(ssh -o BatchMode=yes "$n" "free -g | awk '/Mem/{m=\$3} /Swap/{s=\$3} END{print m, s}'" 2>/dev/null)
+      echo "$(date '+%m-%d %H:%M') $n used=${line% *}G swap=${line#* }G" >> "$PBS_O_WORKDIR/mem.log"
+      swap=${line#* }
+      if [ -n "$swap" ] && [ "$swap" -gt "$SWAP_LIMIT_GB" ] 2>/dev/null; then
+        echo "$(date) swap ${swap} GB on $n: stopping" | tee -a "$PBS_O_WORKDIR/mem.log"
+        pkill -u "$USER" -f "$VASP_EXE"; touch "$PBS_O_WORKDIR/STOPPED_SWAP"; exit 0
+      fi
+    done
+    sleep 300
+  done
+) &
+WATCH=$!
+
+run_chain() {   # $1 = node, $2 = folders
+  local node=$1 hf="$PBS_O_WORKDIR/.hosts_$node.$PBS_JOBID"
+  for i in $(seq 1 "$PPN"); do echo "$node"; done > "$hf"
+  for d in $2; do
+    cd "$PBS_O_WORKDIR/$d" || { echo "[$node] no folder $d"; continue; }
+    [ -f POTCAR ] || { echo "[$node] $d: POTCAR missing"; continue; }
+    st=1; grep -qE '^ *ISIF *= *3' INCAR && st=2
+    for s in $(seq 1 $st); do
+      [ -f "$PBS_O_WORKDIR/STOPPED_SWAP" ] && return
+      echo "[$node] $d stage $s/$st: $(date '+%m-%d %H:%M')"
+      mpirun -np "$PPN" -machinefile "$hf" "$EXE" > vasp.out 2>&1
+      if [ "$st" -gt 1 ]; then cp OUTCAR OUTCAR.$s; cp OSZICAR OSZICAR.$s; [ -s CONTCAR ] && cp CONTCAR POSCAR; fi
+      echo "[$node] $d: $(grep -c 'reached required accuracy' OUTCAR) converged, $(grep 'free  energy   TOTEN' OUTCAR | tail -1)"
+    done
+  done
+  rm -f "$hf"
+}
+
+for k in "${!NODES[@]}"; do
+  [ -n "${LINES[$k]}" ] && run_chain "${NODES[$k]}" "${LINES[$k]}" &
+done
+wait $(jobs -p | grep -v "^$WATCH$") 2>/dev/null
+kill "$WATCH" 2>/dev/null
+echo "finished: $(date)"

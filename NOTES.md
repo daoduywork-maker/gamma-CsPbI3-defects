@@ -111,6 +111,8 @@ make -j 4 pw neb pp
 
 **Incident, 9 Oct: jobs submitted without a memory check.** A std40 node has 92 GB. QE's estimate (printed in the first minute, `Estimated total dynamical RAM`) was 137 GB for the pristine and +1 supercells and 193 GB for the spin-polarised neutral ones. On one node the jobs ran out of memory: node32 showed 92 GB used plus 45 GB of swap, 92% of CPU time waiting on the disk, pw.x in state `D`. The +1 jobs were killed, the pristine one never finished its first SCF iteration. Fix: resubmit on 2 or 3 nodes; the job script takes the process count from the node list, so only `-l nodes=N:ppn=40` changes.
 
+**Small cells (13 Nov):** unit cells, δ and reference phases go in ONE 4-node job with `vasp/run_multi.pbs` (one chain of folders per node, `CHAINS=<file>`), never as separate 1-node jobs. Senior asked again after jobs 217981–217985 were queued as five 1-node jobs.
+
 **Node rule (from a senior, 10 Oct):** the std40 nodes are grouped in fours and most jobs take whole groups. Long jobs use 4 or 8 nodes; 1 or 3 nodes leave nodes of a group idle.
 
 **Before every submission (memory checklist)**
