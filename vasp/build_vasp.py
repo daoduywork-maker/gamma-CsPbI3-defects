@@ -16,6 +16,8 @@ Subcommands (run from the project root; the cluster has no Python):
              python3 vasp/build_vasp.py supercell --unit vasp/01_unitcell/relax/CONTCAR
   refs       step 5: Cs, Pb, solid I2, CsI, PbI2 and the I2 molecule
              python3 vasp/build_vasp.py refs
+  delta      step 5/6: delta-CsPbI3 (Pnma, edge-sharing) variable-cell relaxation
+             python3 vasp/build_vasp.py delta
   slab       step 7: CsI-terminated (001) slabs, 7, 9 and 11 layers, 1x1 in-plane
              python3 vasp/build_vasp.py slab [--layers 13 15 17]
   strain     step 6: gamma unit cells under biaxial (001) strain, E(c) scans
@@ -266,6 +268,31 @@ def cmd_refs(a):
     print("\n".join(rows))
 
 
+
+# ---- step 5/6: delta-CsPbI3, the competing non-perovskite phase -------------
+DELTA_CIF = os.path.join(HERE, "05_reference_phases", "cifs", "delta_CsPbI3_mp.cif")
+
+
+def cmd_delta(a):
+    """Variable-cell relaxation of delta-CsPbI3 with the gamma unit-cell settings.
+    k-mesh n_i = ceil(36 A / |a_i|), the same density as the gamma 4x4x3 mesh."""
+    atoms = sort_atoms(read(a.cif))
+    k = tuple(int(math.ceil(36.0 / L)) for L in atoms.cell.lengths())
+    d = os.path.join(HERE, "05_reference_phases", "delta_CsPbI3")
+    os.makedirs(d, exist_ok=True)
+    write_poscar(os.path.join(d, "POSCAR"), atoms, "delta-CsPbI3 start (Materials Project, PBE)")
+    write_kpoints(os.path.join(d, "KPOINTS"), k)
+    incar(os.path.join(d, "INCAR"), "delta-CsPbI3, variable-cell relaxation",
+          base_tags(".FALSE.") + ["Relaxation: cell shape, volume and atoms",
+                                  ("IBRION", 2, "conjugate gradient"), ("ISIF", 3, ""),
+                                  ("NSW", 200, ""), ("EDIFFG", EDIFFG, "eV/A, as for gamma"),
+                                  ("PSTRESS", 0, "kbar")] + para_tags(10, 4))
+    import spglib
+    sg = spglib.get_spacegroup((atoms.cell, atoms.get_scaled_positions(), atoms.numbers), symprec=1e-3)
+    print("%s: %s, %d atoms, cell %.3f %.3f %.3f A, k %s" % (d, sg, len(atoms), *atoms.cell.lengths(),
+                                                            "x".join(map(str, k))))
+
+
 # ---- step 7: CsI-terminated (001) slabs for the thickness test ----------------
 SLAB_LAYERS = (7, 9, 11)
 SLAB_VACUUM = 15.0               # A of vacuum between periodic copies
@@ -449,6 +476,8 @@ def main():
     p = sub.add_parser("supercell")
     p.add_argument("--unit", required=True, help="relaxed VASP unit cell (CONTCAR)")
     sub.add_parser("refs")
+    p = sub.add_parser("delta")
+    p.add_argument("--cif", default=DELTA_CIF)
     p = sub.add_parser("slab")
     p.add_argument("--unit", default="vasp/01_unitcell/relax/CONTCAR", help="relaxed VASP unit cell (CONTCAR)")
     p.add_argument("--layers", type=int, nargs="+", help="odd layer counts (default 7 9 11)")
@@ -463,7 +492,7 @@ def main():
         return cmd_strain(a)
     if a.cmd == "slabvac":
         return cmd_slabvac(a)
-    {"unitcell": cmd_unitcell, "supercell": cmd_supercell, "refs": cmd_refs, "slab": cmd_slab}[a.cmd](a)
+    {"unitcell": cmd_unitcell, "supercell": cmd_supercell, "refs": cmd_refs, "delta": cmd_delta, "slab": cmd_slab}[a.cmd](a)
 
 
 if __name__ == "__main__":
