@@ -1,0 +1,37 @@
+SYSTEM = gamma unit cell, HSE06+SOC single point
+
+# Electronic structure (same physics as the QE runs)
+PREC     = Accurate      
+ENCUT    = 500             ! eV; PAW Cs_sv, Pb_d, I
+LASPH    = .TRUE.          ! non-spherical terms inside the PAW spheres
+LREAL    = .FALSE.         ! Auto for the 159/160-atom cells, .FALSE. for small cells
+NELM     = 200           
+EDIFF    = 1E-6            ! eV
+ISMEAR   = 0               ! Gaussian
+SIGMA    = 0.01            ! eV; insulator (QE: fixed occupations)
+
+# Output
+LWAVE    = .FALSE.       
+LCHARG   = .FALSE.       
+
+# HSE06
+GGA      = PE              ! PBE base for HSE06
+LHFCALC  = .TRUE.        
+HFSCREEN = 0.2             ! 1/A, HSE06
+AEXX     = 0.25            ! exact-exchange fraction
+PRECFOCK = Normal        
+ALGO     = All           
+
+# Single point
+NSW      = 0             
+IBRION   = -1            
+
+# Spin-orbit coupling
+LSORBIT  = .TRUE.        
+MAGMOM   = 60*0            ! non-magnetic start
+GGA_COMPAT = .FALSE.         ! recommended with SOC
+LMAXMIX  = 4               ! d electrons (Pb_d)
+
+# Parallelisation (40 cores per std40 node)
+NCORE    = 1             
+KPAR     = 4               ! k-point groups, more of them is faster but uses more memory

@@ -151,7 +151,7 @@ Full notes, numbers and sources: [`Literatures/literature_review.md`](Literature
 | k-mesh | 4×4×3 (unit cell), 2×2×2 (supercell), Γ-centred | the same, unshifted |
 | Force limit | 0.01 eV/Å | 4×10⁻⁴ Ry/Bohr |
 | Spin–orbit coupling | Single points and relaxations as checks (`vasp_ncl`) | Not included |
-| Hybrid functional | HSE06+SOC single points at Γ (check) | — |
+| Hybrid functional | HSE06+SOC band edges in the 20-atom unit cell | — |
 
 ### 4.2 Steps
 
@@ -392,9 +392,9 @@ All four NEBs (VASP/VTST, four moving images, climbing image) converged below 0.
 │   ├── build_vasp.py            inputs for steps 1, 2, 3, 5, 6 and 7 (unitcell, supercell, refs, strain, slab, slabvac)
 │   ├── make_potcar.sh           POTCAR from POSCAR, on the cluster
 │   ├── make_soc.sh              SOC single points and relaxations (soc/, soc_relax/)
-│   ├── make_hse.sh              HSE06+SOC single points at Γ (hse_soc/)
 │   ├── run_vasp.pbs             PBS job script with memory watch and swap guard
-│   ├── 01_unitcell/             step 1: cutoff and k-mesh tests, relaxation
+│   ├── run_multi.pbs            small cells side by side in one 4-node job (one chain per node)
+│   ├── 01_unitcell/             step 1: cutoff and k-mesh tests, relaxation; band_edges/ (step 8)
 │   ├── 02_pristine/             step 2: perfect 2×2×2 supercell
 │   ├── 03_vacancies/            step 3: q+1/ and q0/, vac_I_apical and vac_I_equatorial
 │   ├── 04_bulk_neb/q+1/         step 4: S1–S6, L3 (00 … 05, neb_data.txt)
@@ -425,13 +425,14 @@ All four NEBs (VASP/VTST, four moving images, climbing image) converged below 0.
 python3 vasp/build_vasp.py unitcell
 python3 vasp/build_vasp.py supercell --unit vasp/01_unitcell/relax/CONTCAR
 python3 vasp/build_vasp.py refs
+python3 vasp/build_vasp.py delta                           # δ-CsPbI₃ relaxation
+python3 vasp/build_vasp.py bandedges                       # unit-cell PBEsol, PBEsol+SOC, HSE06+SOC; SOC on δ
 python3 tools/build_neb.py S1 --charge q+1 --code vasp
 python3 tools/plot_neb.py --vasp vasp/04_bulk_neb/q+1/S1 --label "S1, +1" --out assets/neb_S1_qp1_vasp.png
 
 # on the cluster, from ~/cspbi3/vasp
 bash make_potcar.sh 03_vacancies/q+1/vac_I_apical
 bash make_soc.sh 03_vacancies/q+1/vac_I_apical            # RELAX=1 for a SOC relaxation
-bash make_hse.sh 02_pristine                               # HSE06+SOC at Γ
 
 # Quantum ESPRESSO check
 python3 qe/03_vacancies/build_defects.py qe/01_unitcell/tight/unit_tight_relaxed.in --out qe --pseudo-dir /path/to/pseudo

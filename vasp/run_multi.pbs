@@ -10,6 +10,7 @@
 #     for e in -1.0 +0.0 +0.5 +1.0; do echo $(ls -d 06_strain/unit/eps$e/c*); done > chains.txt
 #     qsub -N v_str -v CHAINS=chains.txt run_multi.pbs
 # A folder whose INCAR has ISIF = 3 (variable cell) runs twice, the second time from CONTCAR.
+# A folder with a file FROM (e.g. ../CONTCAR) gets that structure as POSCAR before it runs.
 
 #PBS -N vasp_multi
 #PBS -q std40
@@ -59,6 +60,7 @@ run_chain() {   # $1 = node, $2 = folders
   for d in $2; do
     cd "$PBS_O_WORKDIR/$d" || { echo "[$node] no folder $d"; continue; }
     [ -f POTCAR ] || { echo "[$node] $d: POTCAR missing"; continue; }
+    if [ -f FROM ]; then src=$(cat FROM); [ -s "$src" ] || { echo "[$node] $d: $src missing"; continue; }; cp "$src" POSCAR; fi
     st=1; grep -qE '^ *ISIF *= *3' INCAR && st=2
     for s in $(seq 1 $st); do
       [ -f "$PBS_O_WORKDIR/STOPPED_SWAP" ] && return

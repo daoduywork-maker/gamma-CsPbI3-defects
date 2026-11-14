@@ -18,6 +18,8 @@ Subcommands (run from the project root; the cluster has no Python):
              python3 vasp/build_vasp.py refs
   delta      step 5/6: delta-CsPbI3 (Pnma, edge-sharing) variable-cell relaxation
              python3 vasp/build_vasp.py delta
+  bandedges  step 8: band edges in the 20-atom unit cell (PBEsol, PBEsol+SOC, HSE06+SOC)
+             and the SOC check of delta; python3 vasp/build_vasp.py bandedges
   slab       step 7: CsI-terminated (001) slabs, 7, 9 and 11 layers, 1x1 in-plane
              python3 vasp/build_vasp.py slab [--layers 13 15 17]
   strain     step 6: gamma unit cells under biaxial (001) strain, E(c) scans
@@ -293,6 +295,64 @@ def cmd_delta(a):
                                                             "x".join(map(str, k))))
 
 
+
+# ---- step 8: band edges in the unit cell, SOC check of the gamma-delta energy -----
+def soc_tags(n):
+    return ["Spin-orbit coupling",
+            ("LSORBIT", ".TRUE.", ""), ("MAGMOM", "%d*0" % (3 * n), "non-magnetic start"),
+            ("GGA_COMPAT", ".FALSE.", "recommended with SOC"), ("LMAXMIX", 4, "d electrons (Pb_d)")]
+
+
+def sp_tags():
+    return ["Single point", ("NSW", 0, ""), ("IBRION", -1, "")]
+
+
+def cmd_bandedges(a):
+    """Unit-cell runs on the relaxed gamma cell (same structure, same 4x4x3 mesh):
+    pbesol      reference eigenvalues and energy (no SOC)
+    pbesol_soc  SOC gap and the SOC energy of gamma
+    hse_soc     HSE06+SOC gap; VBM and CBM shifts relative to pbesol
+    The three bulk runs share the structure and VASP's zero of the electrostatic
+    potential, so the band-edge shifts are eigenvalue differences (checked with the
+    'average (electrostatic) potential at core' lines of OUTCAR).
+    Also delta_CsPbI3/soc: SOC single point on the relaxed delta cell (POSCAR copied
+    from ../CONTCAR at run time by run_multi.pbs, file FROM)."""
+    unit = sort_atoms(read(a.unit, format="vasp"))
+    n = len(unit)
+    base = os.path.join(HERE, "01_unitcell", "band_edges")
+    runs = {
+        "pbesol": ("gamma unit cell, PBEsol single point", base_tags(".FALSE.") + sp_tags() + para_tags(10, 4)),
+        "pbesol_soc": ("gamma unit cell, PBEsol+SOC single point",
+                       base_tags(".FALSE.") + sp_tags() + soc_tags(n) + para_tags(10, 4)),
+    }
+    hse = [t for t in base_tags(".FALSE.") if not (isinstance(t, tuple) and t[0] in ("GGA", "ALGO"))]
+    hse += ["HSE06", ("GGA", "PE", "PBE base for HSE06"), ("LHFCALC", ".TRUE.", ""),
+            ("HFSCREEN", 0.2, "1/A, HSE06"), ("AEXX", 0.25, "exact-exchange fraction"),
+            ("PRECFOCK", "Normal", ""), ("ALGO", "All", "")]
+    runs["hse_soc"] = ("gamma unit cell, HSE06+SOC single point",
+                       hse + sp_tags() + soc_tags(n) + para_tags(1, 4))
+    for name, (title, tags) in runs.items():
+        d = os.path.join(base, name)
+        os.makedirs(d, exist_ok=True)
+        write_poscar(os.path.join(d, "POSCAR"), unit, "relaxed gamma unit cell")
+        write_kpoints(os.path.join(d, "KPOINTS"), (4, 4, 3))
+        incar(os.path.join(d, "INCAR"), title, tags)
+        print(d)
+    dd = os.path.join(HERE, "05_reference_phases", "delta_CsPbI3")
+    d = os.path.join(dd, "soc")
+    os.makedirs(d, exist_ok=True)
+    delta = sort_atoms(read(os.path.join(dd, "POSCAR"), format="vasp"))
+    write_poscar(os.path.join(d, "POSCAR"), delta, "placeholder, replaced by ../CONTCAR at run time")
+    with open(os.path.join(dd, "KPOINTS")) as f:
+        k = tuple(int(x) for x in f.read().split("\n")[3].split())
+    write_kpoints(os.path.join(d, "KPOINTS"), k)
+    with open(os.path.join(d, "FROM"), "w") as f:
+        f.write("../CONTCAR\n")
+    incar(os.path.join(d, "INCAR"), "delta-CsPbI3, PBEsol+SOC single point on the relaxed cell",
+          base_tags(".FALSE.") + sp_tags() + soc_tags(len(delta)) + para_tags(10, 4))
+    print(d, "k %s" % "x".join(map(str, k)))
+
+
 # ---- step 7: CsI-terminated (001) slabs for the thickness test ----------------
 SLAB_LAYERS = (7, 9, 11)
 SLAB_VACUUM = 15.0               # A of vacuum between periodic copies
@@ -476,6 +536,8 @@ def main():
     p = sub.add_parser("supercell")
     p.add_argument("--unit", required=True, help="relaxed VASP unit cell (CONTCAR)")
     sub.add_parser("refs")
+    p = sub.add_parser("bandedges")
+    p.add_argument("--unit", default="vasp/01_unitcell/relax/CONTCAR")
     p = sub.add_parser("delta")
     p.add_argument("--cif", default=DELTA_CIF)
     p = sub.add_parser("slab")
@@ -492,7 +554,7 @@ def main():
         return cmd_strain(a)
     if a.cmd == "slabvac":
         return cmd_slabvac(a)
-    {"unitcell": cmd_unitcell, "supercell": cmd_supercell, "refs": cmd_refs, "delta": cmd_delta, "slab": cmd_slab}[a.cmd](a)
+    {"unitcell": cmd_unitcell, "supercell": cmd_supercell, "refs": cmd_refs, "delta": cmd_delta, "bandedges": cmd_bandedges, "slab": cmd_slab}[a.cmd](a)
 
 
 if __name__ == "__main__":
