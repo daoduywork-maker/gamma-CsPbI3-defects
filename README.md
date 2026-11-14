@@ -317,9 +317,9 @@ and the out-of-plane parameter c follows from a fit of the total energy E(c), wi
 | PbI₂ | −1.827 | −1.837 | −1.82 |
 | γ-CsPbI₃ | −4.985 | −4.991 | — |
 
-**Decomposition margin.** γ-CsPbI₃ was stable against CsI + PbI₂ by only **79 meV per formula unit** (QE 63 meV), so the region is a thin strip in the (Δμ_Pb, Δμ_I) plane, running from the iodine-rich end (Δμ_I = 0) to the iodine-poor end (Δμ_I ≈ −0.93 eV). The vacancy formation energy contains +μ_I, so the strip reduces in practice to one variable, Δμ_I. CsI is about 0.5 eV less bound than measured, a known GGA tendency for alkali compounds. Solid I₂ lay 0.31 eV per atom below the I₂ molecule (measured sublimation energy about 0.32 eV). δ-CsPbI₃, Cs₄PbI₆ and CsPb₂I₅ are not yet included and can only shrink the strip.
+**Decomposition margin.** γ-CsPbI₃ was stable against CsI + PbI₂ by only **79 meV per formula unit** (QE 63 meV), so the region is a thin strip in the (Δμ_Pb, Δμ_I) plane, running from the iodine-rich end (Δμ_I = 0, corners A and B) to the iodine-poor end (Δμ_I = −0.953 eV, corner D, in equilibrium with Pb metal and CsI). The vacancy formation energy contains +μ_I, so the strip reduces in practice to one variable, Δμ_I. CsI is about 0.5 eV less bound than measured, a known GGA tendency for alkali compounds. Solid I₂ lay 0.31 eV per atom below the I₂ molecule (measured sublimation energy about 0.32 eV). Cs₄PbI₆ and CsPb₂I₅ are left out, and published phase diagrams are cited for them. δ-CsPbI₃ has the same composition as γ, so it cannot form a boundary of the strip: if δ lies below γ, γ has no stability region at all and is treated as metastable, as is usual for the perovskite phases. The γ–δ energy enters instead as ΔE_γδ against strain (Part C).
 
-![Stability region (Quantum ESPRESSO values)](assets/stability_region.png)
+![Stability region (VASP values)](assets/stability_region.png)
 
 ### 5.5 Iodine vacancy: site energies
 

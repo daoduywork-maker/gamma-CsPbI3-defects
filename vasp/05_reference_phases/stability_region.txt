@@ -1,0 +1,17 @@
+Stability region of gamma-CsPbI3 (VASP PBEsol, elements: bcc Cs, fcc Pb, solid I2)
+
+Formation enthalpies (eV per formula unit):
+  CsI       -3.079
+  PbI2      -1.827
+  CsPbI3    -4.985
+
+Decomposition CsPbI3 -> CsI + PbI2: -0.079 eV per formula unit (negative = CsPbI3 stable)
+
+Corners (eV):   dmu_Cs    dmu_Pb    dmu_I
+  D            -2.126     0.000    -0.953
+  C            -2.245     0.000    -0.913
+  B            -3.158    -1.827     0.000
+  A            -3.079    -1.906     0.000
+
+A, B: iodine-rich (dmu_I = 0). C, D: lead-rich, iodine-poor (dmu_Pb = 0).
+Cs4PbI6 and CsPb2I5 not included (published phase diagrams cited instead).

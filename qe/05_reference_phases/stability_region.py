@@ -14,7 +14,7 @@ Conditions (Delta mu_i = mu_i - mu_i(element), elements: bcc Cs, fcc Pb, solid I
 Eliminating Delta mu_Cs leaves a polygon in the (Delta mu_Pb, Delta mu_I) plane.
 delta-CsPbI3 is left out on purpose (same composition; it would empty the region).
 
-Writes assets/stability_region.png and qe/05_reference_phases/stability_region.txt.
+Writes assets/stability_region_qe.png and qe/05_reference_phases/stability_region.txt.
 Run from the project root:  python3 qe/05_reference_phases/stability_region.py
 """
 
@@ -122,7 +122,7 @@ def main():
             transform=ax.transAxes, ha="right", va="top", color=MUT, fontsize=8)
     fig.tight_layout(pad=0.3)
     os.makedirs("assets", exist_ok=True)
-    fig.savefig("assets/stability_region.png", dpi=600, facecolor="white")
+    fig.savefig("assets/stability_region_qe.png", dpi=600, facecolor="white")
 
     rep = ["Stability region of gamma-CsPbI3 (PBEsol, elements: bcc Cs, fcc Pb, solid I2)", "",
            "Formation enthalpies (eV per formula unit):"]
