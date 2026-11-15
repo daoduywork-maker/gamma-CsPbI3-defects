@@ -55,7 +55,8 @@ echo "started: $(date)"
 WATCH=$!
 
 run_chain() {   # $1 = node, $2 = folders
-  local node=$1 hf="$PBS_O_WORKDIR/.hosts_$node.$PBS_JOBID"
+  local node=$1                         # separate line: in "local a=.. b=$a" $a is still empty
+  local hf="$PBS_O_WORKDIR/.hosts_$node.$PBS_JOBID"
   for i in $(seq 1 "$PPN"); do echo "$node"; done > "$hf"
   for d in $2; do
     cd "$PBS_O_WORKDIR/$d" || { echo "[$node] no folder $d"; continue; }
