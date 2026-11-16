@@ -24,6 +24,8 @@ Subcommands (run from the project root; the cluster has no Python):
              python3 vasp/build_vasp.py slab [--layers 13 15 17]
   strain     step 6: gamma unit cells under biaxial (001) strain, E(c) scans
              python3 vasp/build_vasp.py strain
+  strain_delta step 6: delta cells, same strains on each of its three planes, E(x) scans
+             python3 vasp/build_vasp.py strain_delta
   slabvac    step 7 test: 2x2 copy of a relaxed slab with +1 vacancies at its centre
              python3 vasp/build_vasp.py slabvac --slab vasp/07_slab/L11/CONTCAR
 
@@ -527,6 +529,45 @@ def cmd_strain(a):
     print("\n".join(rows))
 
 
+DELTA_PLANES = {"ab": 2, "ac": 1, "bc": 0}   # strained plane -> index of the free (scanned) axis
+
+
+def cmd_strain_delta(a):
+    """Strained delta-CsPbI3 cells, the same biaxial strains as gamma on each of its three planes.
+
+    delta shares no lattice with gamma, so each plane (ab, ac, bc) is strained in turn and the
+    third axis is scanned from -2% to +2%, atoms relaxed at fixed cell; the lowest-energy plane
+    at each strain is the coherent bound. Folders: vasp/06_strain/delta/<plane>/eps<e>/x<d>/.
+    """
+    cell = sort_atoms(read(a.cell, format="vasp"))
+    L0 = cell.cell.lengths()
+    with open(os.path.join(os.path.dirname(a.cell), "KPOINTS")) as f:   # same mesh as the delta relaxation
+        k = tuple(int(x) for x in f.read().split("\n")[3].split())
+    out = os.path.join(HERE, "06_strain", "delta")
+    rows = ["delta cell: %s, a0 %.4f, b0 %.4f, c0 %.4f A, k %s" % (a.cell, *L0, "x".join(map(str, k))), ""]
+    for plane, free in DELTA_PLANES.items():
+        for e in (a.eps or STRAIN_EPS):
+            for dx in STRAIN_C:
+                L = [l * (1 + e / 100) for l in L0]
+                L[free] = L0[free] * (1 + dx / 100)
+                at = cell.copy()
+                at.set_cell(np.diag(L), scale_atoms=True)
+                d = os.path.join(out, plane, "eps%+.1f" % e, "x%+.1f" % dx)
+                os.makedirs(d, exist_ok=True)
+                write_poscar(os.path.join(d, "POSCAR"), at, "strained delta cell")
+                write_kpoints(os.path.join(d, "KPOINTS"), k)
+                incar(os.path.join(d, "INCAR"),
+                      "delta-CsPbI3, %s strain %+.1f%%, free axis %+.1f%%" % (plane, e, dx),
+                      base_tags(".FALSE.") + [
+                          "Relaxation: atoms only, cell fixed (E(x) scan)",
+                          ("IBRION", 2, "conjugate gradient"), ("ISIF", 2, "fixed cell"),
+                          ("NSW", 100, ""), ("EDIFFG", EDIFFG, "eV/A")] + para_tags(10, 4))
+            rows.append("%s eps %+.1f%%: free axis %s scanned" % (plane, e, "abc"[free]))
+    with open(os.path.join(out, "report.txt"), "w") as f:
+        f.write("\n".join(rows) + "\n")
+    print("\n".join(rows))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -549,7 +590,12 @@ def main():
     p = sub.add_parser("strain")
     p.add_argument("--unit", default="vasp/01_unitcell/relax/CONTCAR", help="relaxed VASP unit cell (CONTCAR)")
     p.add_argument("--eps", type=float, nargs="+", help="in-plane strains in %% (default -1 0 0.5 1)")
+    p = sub.add_parser("strain_delta")
+    p.add_argument("--cell", default="vasp/05_reference_phases/delta_CsPbI3/CONTCAR", help="relaxed delta cell")
+    p.add_argument("--eps", type=float, nargs="+")
     a = ap.parse_args()
+    if a.cmd == "strain_delta":
+        return cmd_strain_delta(a)
     if a.cmd == "strain":
         return cmd_strain(a)
     if a.cmd == "slabvac":
