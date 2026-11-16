@@ -61,8 +61,8 @@ def main():
         print("%8.1f %10.3f %10.4f %14.6f %12.2f %10.3f" % (e, dcs, c, em, de, r))
     if ax is not None:
         ax.set_xlabel("Out-of-plane strain of c (%)")
-        ax.set_ylabel("Energy above the minimum (meV)")
-        ax.legend(frameon=False, fontsize=8)
+        ax.set_ylabel("$E - E_{\\min}$ (meV per cell)")
+        ax.legend(frameon=False, fontsize=8, loc="upper center", handletextpad=0.2, labelspacing=0.25)
         fig.tight_layout(pad=0.3)
         fig.savefig(a.out, dpi=600, facecolor="white")
         print("written", a.out)
