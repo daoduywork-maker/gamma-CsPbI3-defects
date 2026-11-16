@@ -11,6 +11,7 @@
 #     qsub -N v_str -v CHAINS=chains.txt run_multi.pbs
 # A folder whose INCAR has ISIF = 3 (variable cell) runs twice, the second time from CONTCAR.
 # A folder with a file FROM (e.g. ../CONTCAR) gets that structure as POSCAR before it runs.
+# A folder whose INCAR has LSORBIT = .TRUE. runs with vasp_ncl, all others with VASP_EXE (vasp_std).
 
 #PBS -N vasp_multi
 #PBS -q std40
@@ -27,6 +28,7 @@ cd "$PBS_O_WORKDIR" || exit 1
 source /etc/profile 2>/dev/null
 module purge; module load "$MPI_MODULE"; module load "$VASP_MODULE"
 EXE=$(which "$VASP_EXE" 2>/dev/null)
+EXE_NCL=$(which vasp_ncl 2>/dev/null)
 [ -z "$EXE" ] && { echo "vasp not found"; exit 1; }
 [ -s "$CHAINS" ] || { echo "CHAINS file '$CHAINS' missing"; exit 1; }
 
@@ -63,10 +65,11 @@ run_chain() {   # $1 = node, $2 = folders
     [ -f POTCAR ] || { echo "[$node] $d: POTCAR missing"; continue; }
     if [ -f FROM ]; then src=$(cat FROM); [ -s "$src" ] || { echo "[$node] $d: $src missing"; continue; }; cp "$src" POSCAR; fi
     st=1; grep -qE '^ *ISIF *= *3' INCAR && st=2
+    exe=$EXE; grep -qiE '^ *LSORBIT *= *\.?T' INCAR && exe=$EXE_NCL   # SOC needs the non-collinear build
     for s in $(seq 1 $st); do
       [ -f "$PBS_O_WORKDIR/STOPPED_SWAP" ] && return
-      echo "[$node] $d stage $s/$st: $(date '+%m-%d %H:%M')"
-      mpirun -np "$PPN" -machinefile "$hf" "$EXE" > vasp.out 2>&1
+      echo "[$node] $d stage $s/$st ($(basename $exe)): $(date '+%m-%d %H:%M')"
+      mpirun -np "$PPN" -machinefile "$hf" "$exe" > vasp.out 2>&1
       if [ "$st" -gt 1 ]; then cp OUTCAR OUTCAR.$s; cp OSZICAR OSZICAR.$s; [ -s CONTCAR ] && cp CONTCAR POSCAR; fi
       echo "[$node] $d: $(grep -c 'reached required accuracy' OUTCAR) converged, $(grep 'free  energy   TOTEN' OUTCAR | tail -1)"
     done
