@@ -24,6 +24,8 @@ Subcommands (run from the project root; the cluster has no Python):
              python3 vasp/build_vasp.py slab [--layers 13 15 17]
   strain     step 6: gamma unit cells under biaxial (001) strain, E(c) scans
              python3 vasp/build_vasp.py strain
+  strain_super step 6c: strained 160-atom supercells, perfect and V_I+ on 4c and 8d
+             python3 vasp/build_vasp.py strain_super
   strain_delta step 6: delta cells, same strains on each of its three planes, E(x) scans
              python3 vasp/build_vasp.py strain_delta
   slabvac    step 7 test: 2x2 copy of a relaxed slab with +1 vacancies at its centre
@@ -568,6 +570,58 @@ def cmd_strain_delta(a):
     print("\n".join(rows))
 
 
+STRAIN_FIT = os.path.join(HERE, "06_strain", "unit", "fit.txt")
+
+
+def read_strain_fit(path=STRAIN_FIT):
+    """dc*(eps) in % from tools/fit_strain_c.py output."""
+    out = {}
+    for line in open(path):
+        p = line.split()
+        try:
+            out[float(p[0])] = float(p[1])
+        except (ValueError, IndexError):
+            pass
+    return out
+
+
+def cmd_strain_super(a):
+    """Strained 160-atom supercells (step 6c): perfect cell and V_I+ on 4c and 8d.
+
+    Built from the relaxed unstrained cells (02_pristine/POSCAR, 03_vacancies/q+1/*/CONTCAR):
+    a and b scaled by (1+eps), c by (1+dc*(eps))/(1+dc*(0)), dc* from the E(c) fit, so the
+    vacancy sites are the same atoms as at eps = 0 and the relaxation starts close. INCAR and
+    KPOINTS copied (atoms relax, cell fixed). Folders: vasp/06_strain/super/eps<e>/...
+    """
+    fit = read_strain_fit()
+    src = {"pristine": "02_pristine/POSCAR",
+           "q+1/vac_I_apical": "03_vacancies/q+1/vac_I_apical/CONTCAR",
+           "q+1/vac_I_equatorial": "03_vacancies/q+1/vac_I_equatorial/CONTCAR"}
+    rows = ["Strained supercells; c factor = (1+dc*(eps))/(1+dc*(0)), dc*(0) = %+.3f%%" % fit[0.0], ""]
+    for e in (a.eps or [x for x in STRAIN_EPS if x != 0.0]):
+        fc = (1 + fit[e] / 100) / (1 + fit[0.0] / 100)
+        for name, rel in src.items():
+            at = read(os.path.join(HERE, rel), format="vasp")
+            L = at.cell.lengths()
+            at.set_cell(np.diag([L[0] * (1 + e / 100), L[1] * (1 + e / 100), L[2] * fc]), scale_atoms=True)
+            d = os.path.join(HERE, "06_strain", "super", "eps%+.1f" % e, name)
+            os.makedirs(d, exist_ok=True)
+            write_poscar(os.path.join(d, "POSCAR"), at, "strained supercell")
+            sd = os.path.dirname(os.path.join(HERE, rel))
+            with open(os.path.join(sd, "KPOINTS")) as f:
+                open(os.path.join(d, "KPOINTS"), "w").write(f.read())
+            with open(os.path.join(sd, "INCAR")) as f:
+                txt = f.read()
+            txt = txt.replace("\n", "\n", 1)
+            first, rest = txt.split("\n", 1)
+            open(os.path.join(d, "INCAR"), "w").write("%s, biaxial strain %+.1f%%\n%s" % (first, e, rest))
+            n = len(at)
+            rows.append("eps %+.1f%%  %-22s %3d atoms  cell %.4f %.4f %.4f A" % (e, name, n, *at.cell.lengths()))
+    rep = os.path.join(HERE, "06_strain", "super", "report.txt")
+    open(rep, "w").write("\n".join(rows) + "\n")
+    print("\n".join(rows))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -593,7 +647,11 @@ def main():
     p = sub.add_parser("strain_delta")
     p.add_argument("--cell", default="vasp/05_reference_phases/delta_CsPbI3/CONTCAR", help="relaxed delta cell")
     p.add_argument("--eps", type=float, nargs="+")
+    p = sub.add_parser("strain_super")
+    p.add_argument("--eps", type=float, nargs="+")
     a = ap.parse_args()
+    if a.cmd == "strain_super":
+        return cmd_strain_super(a)
     if a.cmd == "strain_delta":
         return cmd_strain_delta(a)
     if a.cmd == "strain":
