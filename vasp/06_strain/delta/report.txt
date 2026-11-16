@@ -1,14 +1,17 @@
 delta cell: vasp/05_reference_phases/delta_CsPbI3/CONTCAR, a0 4.7583, b0 10.4198, c0 17.6629 A, k 8x4x2
 
 ab eps -1.0%: free axis c scanned
+ab eps -0.5%: free axis c scanned
 ab eps +0.0%: free axis c scanned
 ab eps +0.5%: free axis c scanned
 ab eps +1.0%: free axis c scanned
 ac eps -1.0%: free axis b scanned
+ac eps -0.5%: free axis b scanned
 ac eps +0.0%: free axis b scanned
 ac eps +0.5%: free axis b scanned
 ac eps +1.0%: free axis b scanned
 bc eps -1.0%: free axis a scanned
+bc eps -0.5%: free axis a scanned
 bc eps +0.0%: free axis a scanned
 bc eps +0.5%: free axis a scanned
 bc eps +1.0%: free axis a scanned

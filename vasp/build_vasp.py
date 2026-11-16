@@ -490,7 +490,7 @@ def cmd_slabvac(a):
 
 
 # ---- step 6: biaxial (001) strain, unit cell E(c) scans (method of Xu et al. 2019) -------
-STRAIN_EPS = (-1.0, 0.0, 0.5, 1.0)                    # % on a and b
+STRAIN_EPS = (-1.0, -0.5, 0.0, 0.5, 1.0)                  # % on a and b
 STRAIN_C = tuple(x / 2 for x in range(-4, 5))         # % on c: -2.0 ... +2.0 in 0.5 steps
 
 
@@ -598,7 +598,7 @@ def cmd_strain_super(a):
            "q+1/vac_I_apical": "03_vacancies/q+1/vac_I_apical/CONTCAR",
            "q+1/vac_I_equatorial": "03_vacancies/q+1/vac_I_equatorial/CONTCAR"}
     rows = ["Strained supercells; c factor = (1+dc*(eps))/(1+dc*(0)), dc*(0) = %+.3f%%" % fit[0.0], ""]
-    for e in (a.eps or [x for x in STRAIN_EPS if x != 0.0]):
+    for e in (a.eps or [x for x in STRAIN_EPS if x != 0.0 and x in fit]):
         fc = (1 + fit[e] / 100) / (1 + fit[0.0] / 100)
         for name, rel in src.items():
             at = read(os.path.join(HERE, rel), format="vasp")
