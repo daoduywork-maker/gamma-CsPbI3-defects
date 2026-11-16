@@ -1,0 +1,23 @@
+Vacancy (V_I+) diffusion tensor, master equation on the hop network
+unit cell vasp/01_unitcell/relax/CONTCAR: 12 iodine sites (4 4c, 8 8d), axes a, b, c = x, y, z
+
+hops from one 4c site: L3 2, L4 2, S2 2, S3 2, S4 2, S5 2
+hops from one 8d site: L1 1, L2 1, L4 1, S1 2, S2 1, S3 1, S4 1, S5 1, S6 2
+
+barriers (eV): S1 0.345, S2 0.326, S3 0.462, S4 0.326, S5 0.348, S6 0.434, L3 0.777
+missing hops (L1, L2, L4) left out; nu = 1e12 Hz; E(8d) - E(4c) = +0.86 meV
+
+T = 300 K, D_v (cm^2/s):
+    3.066e-09   3.085e-25   1.610e-26
+    3.085e-25   2.587e-09   8.731e-27
+    1.610e-26   8.731e-27   4.065e-09
+check, eigenvalue at small k (diagonal):  3.066e-09   2.587e-09   4.065e-09
+anisotropy: D_aa : D_bb : D_cc = 1 : 0.84 : 1.33
+effective activation energy along a (250-400 K): 0.345 eV
+effective activation energy along b (250-400 K): 0.332 eV
+effective activation energy along c (250-400 K): 0.338 eV
+
+Sensitivity at 300 K (ratio to the result above, diagonal a, b, c):
+  L1, L2, L4 added at 0.60 eV        1.00  1.00  1.00
+  only S1, S2, S4, S5 (fast hops)    0.99  0.97  0.99
+  S2 and S4 +0.02 eV                 0.90  0.52  0.69
