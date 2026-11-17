@@ -1,9 +1,10 @@
-% Progress report for the supervisor: gamma-CsPbI3 iodine vacancies
+% Progress report for the supervisor (November 2026): strain, phase stability and iodine-vacancy migration in gamma-CsPbI3
 % Build: pdflatex presentation.tex (run twice). Figures are read from ../assets/.
 \documentclass[aspectratio=169,10pt]{beamer}
 \usetheme[progressbar=frametitle,numbering=fraction]{metropolis}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{lmodern}   % vector fonts (sharp text)
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{xcolor}
@@ -13,6 +14,33 @@
 \definecolor{iod}{HTML}{D85A30}
 \definecolor{cs}{HTML}{1D9E75}
 \setbeamercolor{alerted text}{fg=iod}
+
+% ---------- Tsinghua colours (Tsinghua purple #660874) ----------
+\definecolor{thupurple}{HTML}{660874}
+\definecolor{thulight}{HTML}{F3E8F5}
+\setbeamercolor{palette primary}{bg=thupurple, fg=white}
+\setbeamercolor{frametitle}{bg=thupurple, fg=white}
+\setbeamercolor{progress bar}{fg=thupurple!55, bg=thulight}
+\setbeamercolor{progress bar in head/foot}{fg=thupurple!55, bg=thulight}
+\setbeamercolor{progress bar in section page}{fg=thupurple, bg=thulight}
+\setbeamercolor{title separator}{fg=thupurple}
+\setbeamercolor{title}{fg=thupurple}
+\setbeamercolor{section title}{fg=thupurple}
+\setbeamercolor{structure}{fg=thupurple}
+\setbeamercolor{itemize item}{fg=thupurple}
+\setbeamercolor{itemize subitem}{fg=thupurple!70}
+\setbeamercolor{enumerate item}{fg=thupurple}
+\setbeamercolor{block title}{bg=thupurple, fg=white}
+\setbeamercolor{block body}{bg=thulight, fg=black}
+\setbeamercolor{block title alerted}{bg=iod, fg=white}
+\setbeamercolor{block body alerted}{bg=iod!10, fg=black}
+\setbeamercolor{footline}{fg=thupurple!80}
+\setbeamercolor{normal text}{fg=black!85, bg=white}
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.6ex,dp=1.2ex,leftskip=0.6cm,rightskip=0.6cm]{footline}%
+    \usebeamerfont{page number in head/foot}%
+    Duy M. Dao \quad$\vert$\quad Tsinghua University\hfill\insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}}
 \newcommand{\cpi}{$\gamma$-CsPbI$_3$}
 \newcommand{\done}{\textcolor{cs}{\textbf{done}}}
 \newcommand{\run}{\textcolor{iod}{\textbf{running}}}
@@ -22,485 +50,438 @@
 % ---------- references: [n] marks in text, full entries at the foot of each slide ----------
 \newcommand{\cit}[1]{\textsuperscript{\textcolor{gray}{[#1]}}}
 \newcommand{\refs}[1]{\par\vfill\begingroup\tiny\color{gray}\raggedright #1\par\endgroup}
-\newcommand{\RA}{[1] A.\,N.~Arber, Vikram, F.\,C.~Mocanu, M.\,S.~Islam, Chem.\ Mater.\ \textbf{37}, 4416 (2025).}
-\newcommand{\RB}{[2] R.-I.~Biega, L.~Leppert, J.\ Phys.: Energy \textbf{3}, 034017 (2021).}
-\newcommand{\RC}{[3] B.~Ahmad, M.\,S.\,R.~Limon, Z.~Ahmad, Phys.\ Rev.\ Mater.\ \textbf{8}, 125402 (2024).}
-\newcommand{\RD}{[4] R.\,J.~Sutton \emph{et al.}, ACS Energy Lett.\ \textbf{3}, 1787 (2018).}
-\newcommand{\RE}{[5] J.~Kaczkowski, I.~P{\l}owa\'s-Korus, J.\ Phys.\ Chem.\ Lett.\ \textbf{12}, 6613 (2021).}
-\newcommand{\RF}{[6] A.~Seidu \emph{et al.}, J.\ Chem.\ Phys.\ \textbf{154}, 074712 (2021).}
-\newcommand{\RG}{[7] N.~Xu \emph{et al.}, Point defects in metal halide perovskites, Nat.\ Rev.\ Mater.\ (2025).}
-\newcommand{\RH}{[8] Z.~Wylie \emph{et al.}, ACS Energy Lett.\ \textbf{9}, 4378 (2024).}
-\newcommand{\RI}{[9] J.\,P.~Perdew \emph{et al.}, Phys.\ Rev.\ Lett.\ \textbf{100}, 136406 (2008).}
-\newcommand{\RJ}{[10] P.~Giannozzi \emph{et al.}, J.\ Phys.: Condens.\ Matter \textbf{21}, 395502 (2009); \textbf{29}, 465901 (2017).}
-\newcommand{\RK}{[11] G.~Prandini \emph{et al.}, npj Comput.\ Mater.\ \textbf{4}, 72 (2018).}
-\newcommand{\RL}{[12] J.~Even \emph{et al.}, J.\ Phys.\ Chem.\ Lett.\ \textbf{4}, 2999 (2013).}
-\newcommand{\RM}{[13] C.~Freysoldt \emph{et al.}, Rev.\ Mod.\ Phys.\ \textbf{86}, 253 (2014).}
-\newcommand{\RN}{[14] A.\,J.~Cohen, P.~Mori-S\'anchez, W.~Yang, Science \textbf{321}, 792 (2008).}
-\newcommand{\RO}{[15] G.~Henkelman, B.\,P.~Uberuaga, H.~J\'onsson, J.\ Chem.\ Phys.\ \textbf{113}, 9901 (2000).}
-\newcommand{\RP}{[16] S.~Smidstrup \emph{et al.}, J.\ Chem.\ Phys.\ \textbf{140}, 214106 (2014).}
-\newcommand{\RQ}{[17] A.~Togo, K.~Shinohara, I.~Tanaka, Sci.\ Technol.\ Adv.\ Mater.: Methods \textbf{4}, 2384822 (2024).}
-\newcommand{\RR}{[18] A.\,H.~Larsen \emph{et al.}, J.\ Phys.: Condens.\ Matter \textbf{29}, 273002 (2017).}
-\newcommand{\RT}{[20] J.~Zhang \emph{et al.}, Appl.\ Surf.\ Sci.\ \textbf{679}, 161235 (2025).}
-\newcommand{\RS}{[19] Y.~Huang, W.-J.~Yin, Y.~He, J.\ Phys.\ Chem.\ C \textbf{122}, 1345 (2018).}
+\newcommand{\RA}{[1] NREL, Best Research-Cell Efficiency Chart (2026).}
+\newcommand{\RB}{[2] R.\,J.~Sutton \emph{et al.}, ACS Energy Lett.\ \textbf{3}, 1787 (2018).}
+\newcommand{\RC}{[3] J.\,A.~Steele \emph{et al.}, Science \textbf{365}, 679 (2019).}
+\newcommand{\RD}{[4] J.\,A.~Steele \emph{et al.}, J.\ Am.\ Chem.\ Soc.\ \textbf{143}, 10500 (2021).}
+\newcommand{\RE}{[5] D.-J.~Xue \emph{et al.}, Nat.\ Commun.\ \textbf{11}, 1514 (2020).}
+\newcommand{\RF}{[6] T.\,J.\,A.\,M.~Smolders \emph{et al.}, Chem.\ Mater.\ \textbf{36}, 2334 (2024).}
+\newcommand{\RG}{[7] J.~Zhang \emph{et al.}, Appl.\ Surf.\ Sci.\ \textbf{679}, 161235 (2025).}
+\newcommand{\RH}{[8] A.\,N.~Arber \emph{et al.}, Chem.\ Mater.\ \textbf{37}, 4416 (2025).}
+\newcommand{\RI}{[9] J.~Xu \emph{et al.}, J.\ Phys.\ Chem.\ Lett.\ \textbf{8}, 4391 (2017).}
+\newcommand{\RJ}{[10] J.~Xu \emph{et al.}, J.\ Power Sources \textbf{412}, 689 (2019).}
+\newcommand{\RK}{[11] J.\,P.~Perdew \emph{et al.}, Phys.\ Rev.\ Lett.\ \textbf{100}, 136406 (2008).}
+\newcommand{\RL}{[12] G.~Kresse, J.~Furthm\"uller, Phys.\ Rev.\ B \textbf{54}, 11169 (1996).}
+\newcommand{\RM}{[13] G.~Henkelman, B.\,P.~Uberuaga, H.~J\'onsson, J.\ Chem.\ Phys.\ \textbf{113}, 9901 (2000).}
+\newcommand{\RN}{[14] C.~Freysoldt \emph{et al.}, Rev.\ Mod.\ Phys.\ \textbf{86}, 253 (2014).}
+\newcommand{\RO}{[15] A.\,V.~Krukau \emph{et al.}, J.\ Chem.\ Phys.\ \textbf{125}, 224106 (2006).}
+\newcommand{\RP}{[16] H.\,K.\,D.~Le \emph{et al.}, Matter \textbf{6}, 2368 (2023).}
 
-\title{Iodine Vacancy Sites and Migration Paths in Bulk \cpi}
+\title{Strain, Phase Stability and Iodine-Vacancy Migration in \cpi}
 \subtitle{Progress report}
 \author{Duy M. Dao}
 \institute{School of Materials Science and Engineering, Tsinghua University}
-\setbeamertemplate{title separator}{\vspace{-0.5em}}
-\date{October 2026}
+\setbeamertemplate{title separator}{{\color{thupurple}\rule{\linewidth}{1.5pt}}\par\vspace{0.3em}}
+\date{November 2026}
 
 \begin{document}
 
 \maketitle
 
-\begin{frame}{Outline}
-  \begin{enumerate}
-    \item Motivation
-    \item Literature and gap
-    \item Methods and why
-    \item Results so far
-    \item Next steps
-  \end{enumerate}
-\end{frame}
-
 % =====================================================================
 \section{Motivation}
 
-\begin{frame}{Why iodine vacancies?}
+\begin{frame}{Why all-inorganic CsPbI$_3$}
   \begin{columns}[T]
-    \column{0.55\textwidth}
-    \textbf{Halide perovskites: electronically tolerant, ionically weak}
-    \begin{itemize}
-      \item Most native defects leave no deep traps\cit{7}
-      \item But iodine vacancies form easily and \alert{move at room temperature}\cit{1,7}
-    \end{itemize}
-    \textbf{Moving vacancies cause}
-    \begin{itemize}
-      \item $J$--$V$ hysteresis and drifting response\cit{7}
-      \item Ion pile-up and reactions at contacts
-      \item Loss of stability: \cpi\ $\rightarrow$ yellow $\delta$ phase, starting at surface iodide defects\cit{8}
-    \end{itemize}
-    \column{0.42\textwidth}
-    \begin{block}{Goal of the project}
-      Migration barriers of the iodine vacancy in \cpi:
-      \begin{enumerate}
-        \item every distinct hop in the bulk \alert{(this talk)}
-        \item layer by layer below the CsI-terminated (001) surface \textcolor{gray}{(later)}
-      \end{enumerate}
-    \end{block}
+    \begin{column}{0.52\textwidth}
+      \small
+      \begin{itemize}
+        \item \textbf{Record cells are hybrid.} FA-rich mixed-cation, mixed-halide perovskites reached about 28\,\% (single junction)\cit{1}.
+        \item \textbf{Organic cations limit thermal stability.} MA$^+$ and FA$^+$ are volatile at processing temperatures.
+        \item \textbf{All-inorganic CsPbI$_3$} has no volatile cation and a gap of about 1.7 eV, suited to tandem top cells. Best cells reach about 21--22\,\%.
+        \item \textbf{The obstacle is the phase}, not the absorber itself.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \scriptsize
+      \setlength{\tabcolsep}{4pt}
+      \begin{tabular}{lcc}
+        \toprule
+        & Hybrid & CsPbI$_3$ \\
+        \midrule
+        Best efficiency & $\approx$28\,\% & $\approx$21--22\,\% \\
+        Volatile cation & yes & no \\
+        Black phase stable at RT & mostly & \textbf{no} \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
   \end{columns}
-  \refs{\RA\quad \RG\quad \RH}
+  \refs{\RA\ Values approximate; records change often.}
 \end{frame}
 
-\begin{frame}{\cpi: tilted octahedra make two iodine sites}
-  \centering
-  \includegraphics[width=0.45\textwidth]{gamma_CsPbI3_lattice_tilted_octahedra.png}\hfill
-  \includegraphics[width=0.45\textwidth]{iodine_vacancy_sites_apical_vs_equatorial.png}
-
-  \vspace{0.3em}
+\begin{frame}{The phase problem}
   \small
-  \begin{tabular}{ll}
-    \toprule
-    Space group & Pnma (No.\ 62), 20 atoms per cell\cit{4} \\
-    Apical I, \textbf{4c} & links octahedra along $c$, in the CsI layers; Pb--I--Pb $155^\circ$ \\
-    Equatorial I, \textbf{8d} & links octahedra in the $ab$ plane, in the PbI$_2$ layers; Pb--I--Pb $148^\circ$ \\
-    \bottomrule
-  \end{tabular}
+  \begin{itemize}
+    \item \textbf{Four phases.} Cubic $\alpha$ (above about 300\,$^\circ$C) $\rightarrow$ tetragonal $\beta$ $\rightarrow$ orthorhombic \textbf{$\gamma$} on cooling, by octahedral tilting. All three are black (photoactive).
+    \item \textbf{$\delta$ is the ground state} at room temperature: yellow, edge-sharing PbI$_6$ chains, gap about 2.8 eV\cit{2}.
+    \item \textbf{$\gamma$ is metastable with respect to $\delta$}, not to $\alpha$. Quenching keeps $\gamma$ because $\alpha\rightarrow\beta\rightarrow\gamma$ is displacive and fast, whereas $\gamma\rightarrow\delta$ rebuilds the network and is slow.
+    \item \textbf{This work (PBEsol, 0 K):} $\delta$ lies \alert{79 meV per formula unit} below $\gamma$ and is 6\,\% denser (218.9 vs 232.3 \AA$^3$ per formula unit).
+  \end{itemize}
+  \refs{\RB}
+\end{frame}
 
-  \vspace{0.4em}
-  The two sites differ \alert{only through the octahedral tilt} (in the cubic phase they are equivalent).
-  \refs{\RD\quad Angles and figures: this work (tight PBEsol relaxation).}
+\begin{frame}{Strain: a stabiliser that also moves the ions}
+  \small
+  \begin{itemize}
+    \item \textbf{Clamping keeps the black phase.} Films quenched from 330\,$^\circ$C on glass or ITO kept about 1\,\% in-plane tensile strain and stayed black\cit{3,4}. Lattice-mismatched nanoplates show the same trend\cit{16}.
+    \item \textbf{Tensile strain lowers migration barriers.} In CsPbI$_2$Br the barrier fell from 0.67 to 0.55 eV at +1.5\,\% and rose to 0.79 eV at $-1.5$\,\%\cit{5}.
+    \item \textbf{The response is hop-resolved.} In Pnma CsPbBr$_3$ the diffusivity tensor changed differently along each axis, and not monotonically\cit{6}.
+    \item \textbf{Bulk \cpi\ under strain}\cit{7}: two migration paths only, charge state not stated.
+  \end{itemize}
+  \begin{alertblock}{Tension}
+    \small Tensile strain helps the phase but speeds up ion migration. No study has put both on one strain scale for \cpi.
+  \end{alertblock}
+  \refs{\RC\quad \RD\quad \RE\quad \RF\quad \RG\quad \RP}
+\end{frame}
+
+\begin{frame}{Research questions}
+  \small
+  \begin{enumerate}
+    \item \textbf{Phase.} How biaxial (001) strain changes the $\gamma$--$\delta$ energy difference.
+    \item \textbf{Formation.} How strain changes the formation energy of $V_\mathrm{I}$, and which charge state is relevant across the gap.
+    \item \textbf{Migration.} Which hops carry the transport, and how strain changes the barriers and the diffusivity tensor.
+    \item \textbf{Charge state.} Whether the neutral vacancy exists in the gap, and whether its barrier differs from $+1$.
+  \end{enumerate}
+  \vspace{0.5em}
+  \textbf{Strains:} $\varepsilon = -1,\ -0.5,\ 0,\ +0.5,\ +1$\,\% on $a$ and $b$, with $c$ relaxed. The tensile end matches the clamping strain of Steele \emph{et al.}\cit{3}
+  \refs{\RC}
 \end{frame}
 
 % =====================================================================
-\section{Literature and gap}
+\section{Methods}
 
-\begin{frame}{Key papers}
-  \scriptsize
-  \begin{tabular}{p{0.19\textwidth}p{0.37\textwidth}p{0.34\textwidth}}
-    \toprule
-    Paper & What it did & What it leaves open \\
-    \midrule
-    \textbf{A} Arber 2025\cit{1} \newline \footnotesize Chem.\ Mater. (anchor) & Bulk \cpi, PBEsol, 2$\times$2$\times$2 cell. Barriers 0.34 eV (8d--8d), 0.35 eV (8d--4c), 0.77 eV (4c--4c) & One barrier per path \emph{type}; charge state not stated; no surface \\
-    \addlinespace
-    \textbf{B} Biega 2021\cit{2} \newline \footnotesize J.\ Phys.\ Energy & Cubic CsPbBr$_3$ slabs: long axial jump about half the bulk barrier at the surface & Long jump only; no tilt; thin, partly frozen slab never returns to bulk \\
-    \addlinespace
-    \textbf{C} Ahmad 2024\cit{3} \newline \footnotesize Phys.\ Rev.\ Mater. & CsPbI$_3$, 17-layer slab: vacancy formation energies vs depth & No barriers; equatorial sites only; slab interior off from own bulk by 0.05--0.66 eV \\
-    \addlinespace
-    \textbf{D} Zhang 2025\cit{20} \newline \footnotesize Appl.\ Surf.\ Sci. & Bulk \cpi\ under strain, PBEsol: two paths, 0.51 eV (edge, towards apical) and 0.54 eV (in-plane); rectangular cell (PBEsol, PBE, HSE06) & Charge state; site energies; only two paths \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.2em}
-  \footnotesize\textbf{Gap:} no iodine-vacancy barriers in \cpi\ resolved by hop and by depth, in a slab whose interior reproduces the bulk.
-  \refs{\RA\quad \RB\quad \RC\quad \RT}
-\end{frame}
-
-\begin{frame}{Gaps and research questions}
-  \footnotesize
-  \begin{tabular}{lp{0.42\textwidth}p{0.38\textwidth}}
-    \toprule
-    & Gap & Research question \\
-    \midrule
-    \textbf{G1} & Bulk barriers known per path type only; charge state unstated\cit{1} & \textbf{RQ1} Which site does the vacancy prefer, in each charge state? \newline \textbf{RQ2} Bulk barriers, and how the number and direction of hops shape transport (ab plane vs $c$)? \\
-    \addlinespace
-    \textbf{G2} & Surface effect known for one jump in cubic CsPbBr$_3$ only\cit{2} & \textbf{RQ3--4} Barriers and drift direction layer by layer below the surface \\
-    \addlinespace
-    \textbf{G3} & Neither surface study recovers its own bulk\cit{2,3} & \textbf{RQ5} Does the slab middle reproduce the bulk? \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.2em}
-  \textbf{Scope:} iodine vacancy only; charge $+1$ and neutral; CsI termination. \\
-  Interstitials, PbI$_2$ termination, formation energies vs $\mu_\mathrm{I}$ and $E_F$, ML potentials: \emph{out of scope for now}.
-
-  \vspace{0.2em}
-  \alert{This talk: G1 (RQ1 done for $+1$, nearly done for neutral; RQ2 set up).}
-  \refs{\RA\quad \RB\quad \RC}
-\end{frame}
-
-% =====================================================================
-\section{Methods and why}
-
-\begin{frame}{Workflow}
-  \footnotesize
-  \begin{tabular}{clll}
-    \toprule
-    Step & Calculation & Purpose & Status \\
-    \midrule
-    1 & Unit cell: convergence, tight relaxation & Reference lattice & \done \\
-    2 & Perfect 2$\times$2$\times$2 supercell (160 atoms) & Energy reference & \done \\
-    3 & 4c and 8d vacancy, $+1$ and 0 & Site preference (RQ1) & 3/4 \done, 1 \run \\
-    4 & NEB, 10 distinct bulk hops & Bulk barriers (RQ2) & inputs ready, \nxt \\
-    5 & CsI-terminated (001) slab & Bulk-like slab middle & \nxt \\
-    6 & Vacancies at increasing depth & Site energy vs depth & \nxt \\
-    7 & NEB at increasing depth & Barriers vs depth & \nxt \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.8em}
-  Steps 1--4 are the bulk reference that every slab result is compared against.
-\end{frame}
-
-\begin{frame}{Settings and why}
-  \footnotesize
-  \begin{tabular}{lll}
-    \toprule
-    Choice & Value & Why \\
-    \midrule
-    Code & Quantum ESPRESSO 6.5\cit{10} & One version for all production runs \\
-    Functional & PBEsol\cit{9} & Good solid-state lattices; \textbf{same as paper A}\cit{1} \\
-    Spin--orbit & Not included & Mainly shifts the Pb-$p$ band\cit{12}; check later \\
-    Dispersion & None & Same as paper A\cit{1} \\
-    Pseudopotentials & SSSP 1.3 PBEsol efficiency\cit{11} & Verified library \\
-    Cutoff & 60 Ry (480 Ry density) & 0.86 meV/atom from 80 Ry \\
-    $k$-mesh & 4$\times$4$\times$3 cell; 2$\times$2$\times$2 supercell & 0.23 meV/atom from 6$\times$6$\times$4; same density \\
-    Forces & largest $< 0.01$ eV/\AA & Same as paper A\cit{1} \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.6em}
-  Guiding rule: \alert{match paper A where possible}, so any difference in results is physics, not settings.
-  \refs{\RA\quad \RI\quad \RJ\quad \RK\quad \RL\quad Cutoff and $k$-mesh: this work (next slide).}
-\end{frame}
-
-\begin{frame}{Convergence tests (20-atom cell)}
+\begin{frame}{Settings}
   \begin{columns}[T]
-    \column{0.45\textwidth}
-    \centering\small
-    \begin{tabular}{lc}
-      \toprule
-      $k$-mesh (50 Ry) & meV/atom vs 6$\times$6$\times$4 \\
-      \midrule
-      2$\times$2$\times$1 & 45.46 \\
-      3$\times$3$\times$2 & 2.52 \\
-      \textbf{4$\times$4$\times$3} & \textbf{0.23} \\
-      5$\times$5$\times$4 & 0.004 \\
-      \bottomrule
-    \end{tabular}
-    \column{0.5\textwidth}
-    \centering\small
-    \begin{tabular}{lcc}
-      \toprule
-      Cutoff & meV/atom vs 80 Ry & $P$ (kbar) \\
-      \midrule
-      40 Ry & 5.83 & $-1.89$ \\
-      50 Ry & 3.29 & $-1.57$ \\
-      \textbf{60 Ry} & \textbf{0.86} & $\mathbf{-1.48}$ \\
-      70 Ry & 0.40 & $-1.35$ \\
-      80 Ry & 0 & $-1.39$ \\
-      \bottomrule
-    \end{tabular}
+    \begin{column}{0.55\textwidth}
+      \scriptsize
+      \begin{tabular}{ll}
+        \toprule
+        Code & VASP 6.3.2 with VTST\cit{12} \\
+        Functional & PBEsol\cit{11}, no dispersion \\
+        Potentials, cutoff & PAW Cs\_sv, Pb\_d, I; 500 eV \\
+        $k$-mesh & 4$\times$4$\times$3 (unit cell), 2$\times$2$\times$2 (supercell) \\
+        Supercell & 2$\times$2$\times$2, 160 atoms, cell fixed \\
+        Force limit & 0.01 eV/\AA\ (NEB 0.03 eV/\AA) \\
+        NEB & CI-NEB\cit{13}, 4 images \\
+        Checks & SOC; HSE06+SOC\cit{15} band edges \\
+        Cross-check & Quantum ESPRESSO (same physics) \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \small
+      \textbf{Why PBEsol.} Barriers depend on I--I distances and the octahedral tilt. PBE overestimates the lattice by 1--2\,\%, which acts like built-in tensile strain, the very effect under study.
+
+      \vspace{0.4em}
+      \textbf{Why no SOC in relaxations.} For $V_\mathrm{I}^{+}$ SOC changed nothing (next slides). Same workflow as the group's earlier work\cit{9,10}.
+    \end{column}
   \end{columns}
-
-  \vspace{1em}
-  Both choices are well below 1 meV/atom, far smaller than the energy differences we compare (tens of meV and more).
-  \refs{All values: this work (Quantum ESPRESSO 7.6, PBEsol, SSSP).}
+  \refs{\RI\quad \RJ\quad \RK\quad \RL\quad \RM\quad \RO}
 \end{frame}
 
-\begin{frame}{Unit-cell relaxation}
-  \centering\small
-  \begin{tabular}{lcccc}
-    \toprule
-    & $a$ (\AA) & $b$ (\AA) & $c$ (\AA) & Volume (\AA$^3$) \\
-    \midrule
-    Experiment, 293 K\cit{4} & 8.577 & 8.856 & 12.472 & 947.3 \\
-    Soft relaxation & 8.378 & 8.933 & 12.352 & 924.4 \\
-    \textbf{Tight relaxation} & \textbf{8.362} & \textbf{8.961} & \textbf{12.350} & \textbf{925.4} \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{1em}
-  \raggedright
-  \begin{itemize}
-    \item \textbf{Why a tight second relaxation?} The soft result still had $a$ and $b$ drifting by 0.2--0.3\%. Tight limits: 0.01 eV/\AA, 0.2 kbar.
-    \item The cell is \alert{very soft} against exchanging $a$ and $b$ (only 1.9 meV per cell over the whole tight run).
-    \item Volume 2.3\% below room-temperature experiment: expected for a 0 K PBEsol relaxation (no thermal expansion)\cit{5}.
-  \end{itemize}
-  \refs{\RD\quad \RE\quad Relaxations: this work.}
-\end{frame}
-
-\begin{frame}{Defect supercell: choices and why}
-  \footnotesize
-  \begin{tabular}{p{0.3\textwidth}p{0.62\textwidth}}
-    \toprule
-    Choice & Why \\
-    \midrule
-    2$\times$2$\times$2 supercell, 160 atoms & Same as paper A\cit{1}; vacancy and its images about 17--25 \AA\ apart (1 vacancy per 96 I sites) \\
-    Cell fixed at the bulk lattice & Models one dilute defect inside a large host whose lattice the defect cannot change\cit{13} \\
-    Charge $+1$ first & Closed shell; stable charge state of $V_\mathrm{I}$ over most of the gap\cit{3,19}; least sensitive to spin--orbit \\
-    Neutral as well, spin-polarised & One unpaired electron; tests which charge state paper A used\cit{1} \\
-    $k$-mesh kept at 2$\times$2$\times$2 & Test with 2$\times$2$\times$1: forces 4$\times$ larger, 1.8 meV/atom shift $\rightarrow$ rejected \\
-    No charge correction (yet) & Cancels in site differences and barriers (same charge at both ends); needed only for formation energies\cit{13} \\
-    \bottomrule
-  \end{tabular}
-  \refs{\RA\quad \RC\quad \RM\quad \RS\quad $k$-mesh test: this work.}
+\begin{frame}{Structure and the two iodine sites}
+  \begin{columns}[c]
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{gamma_CsPbI3_lattice_tilted_octahedra.png}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{iodine_vacancy_sites_apical_vs_equatorial.png}
+    \end{column}
+  \end{columns}
+  \small
+  \textbf{Relaxed lattice:} 8.371 $\times$ 8.950 $\times$ 12.402 \AA\ (Pnma). Zhang \emph{et al.} (PBEsol) reported 8.39, 8.96, 12.37 \AA\cit{7}.
+  \textbf{4c} apical sites sit in the CsI layers, \textbf{8d} equatorial sites in the PbI$_2$ layers.
+  \refs{\RG}
 \end{frame}
 
 % =====================================================================
-\section{Results so far}
+\section{Results: the unstrained crystal}
 
-\begin{frame}{Perfect supercell: a consistency check}
-  \small
-  \begin{tabular}{ll}
-    \toprule
-    Total energy & $-65326.88713687$ Ry \\
-    Valence band maximum & 3.4105 eV \\
-    Relaxation & converged on the \textbf{first} SCF, 0 BFGS steps \\
-    Total force (all atoms) & 0.058 eV/\AA \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{1em}
-  \begin{itemize}
-    \item The supercell built from the tight unit cell needed no relaxation.
-    \item $\Rightarrow$ the 4$\times$4$\times$3 unit-cell mesh and the 2$\times$2$\times$2 supercell mesh agree on forces.
-    \item Its energy and VBM are the references for the vacancy cells.
-  \end{itemize}
-  \refs{This work (job 217406).}
-\end{frame}
-
-\begin{frame}{RQ1: site preference depends on the charge state}
+\begin{frame}{Site energies and the charge state}
   \centering\small
   \begin{tabular}{lccc}
     \toprule
-    & $E$(4c) (Ry) & $E$(8d) (Ry) & $\Delta E = E(\mathrm{8d}) - E(\mathrm{4c})$ \\
+    $E(\mathrm{8d}) - E(\mathrm{4c})$ & PBEsol & PBEsol + SOC (single point) & PBEsol + SOC (relaxed) \\
     \midrule
-    $V_\mathrm{I}^{+1}$ & $-64954.16973158$ & $-64954.16980915$ & $\mathbf{-1}$ \textbf{meV} \\
-    $V_\mathrm{I}^{0}$ & $-64953.80080990^{*}$ & $-64953.79815909$ & $\mathbf{\geq +36}$ \textbf{meV}$^{*}$ \\
-    \midrule
-    Paper A\cit{1}$^{\dagger}$ & & & $\approx -30$ meV \\
-    Zhang 2025\cit{20}$^{\ddagger}$ & & & $\approx +15$ meV \\
-    \bottomrule
-  \end{tabular}
-
-  {\footnotesize $^{*}$ 4c neutral still relaxing (energy still falling), so the gap can only grow.\quad $^{\dagger}$ Inferred from Fig.~S1; $^{\ddagger}$ from Fig.~6c (edge path towards apical, if it runs 8d$\rightarrow$4c); charge states not stated.}
-
-  \vspace{0.3em}
-  \raggedright\footnotesize
-  \begin{itemize}
-    \item $+1$: the two sites are \textbf{degenerate} (1 meV, below our accuracy).
-    \item Neutral: clear preference for the \textbf{apical} site, \alert{opposite in sign} to paper A.
-    \item Neither charge state reproduces paper A's 0.03 eV; the other PBEsol study (rectangular cell) leans the same way as our neutral result.
-  \end{itemize}
-  \refs{\RA\ Not reported as a site energy. Inferred from its Fig.~S1: the 8d$\rightarrow$4c profile ends $\approx$0.03 eV above its start, and the caption gives forward and reverse barriers differing by $\approx$0.03 eV; read off a plot, $\pm$0.01 eV.\quad \quad \RT\quad Our energies: this work.}
-\end{frame}
-
-\begin{frame}{The neutral vacancy is a shallow donor (in PBEsol)}
-  \begin{itemize}
-    \item Neutral $V_\mathrm{I}$ carries one extra electron. Two possibilities:
-    \begin{itemize}
-      \item localised at the vacancy $\rightarrow$ magnetic moment about $1\,\mu_B$
-      \item spread over the crystal (Pb 6p conduction band) $\rightarrow$ about $0\,\mu_B$
-    \end{itemize}
-    \item \textbf{Found: $0.00\,\mu_B$ in both cells, throughout the relaxation}; no Pb--Pb pairing.
-    \item $\Rightarrow$ shallow donor: the electron is delocalised, consistent with earlier work on CsPbI$_3$\cit{19,20}.
-  \end{itemize}
-
-  \vspace{0.5em}
-  \begin{alertblock}{Caveat}
-    Semilocal functionals (PBEsol) tend to over-delocalise electrons (delocalisation error)\cit{14}. A hybrid-functional check would confirm or overturn this.
-  \end{alertblock}
-
-  \small
-  Neutral 4c relaxation: energy still falls 0.4--1.0 meV per step while the moment stays 0 $\rightarrow$ a slow \emph{structural} (tilt) relaxation, not electron localisation.
-  \refs{\RN\quad \RS\quad \RT\quad Magnetisation: this work.}
-\end{frame}
-
-\begin{frame}{Why do we disagree with paper A? The relaxed lattice}
-  \centering\footnotesize
-  \renewcommand{\arraystretch}{1.0}
-  \begin{tabular}{llccc}
-    \toprule
-    Source & Method & Short / long in-plane axis (\AA) & $c$ (\AA) & In-plane difference \\
-    \midrule
-    Experiment, 293 K\cit{4} & X-ray & 8.577 / 8.856 & 12.47 & 3.3\% \\
-    Kaczkowski 2021\cit{5} & LDA & 7.947 / 8.939 & 12.22 & 12.5\% \\
-    \textbf{This work} & \textbf{PBEsol} & \textbf{8.362 / 8.961} & \textbf{12.35} & \textbf{7.2\%} \\
-    Zhang 2025\cit{20} & PBEsol & 8.39 / 8.96 & 12.37 & 6.8\% \\
-    Zhang 2025\cit{20} & HSE06 & 8.40 / 9.03 & 12.59 & 7.5\% \\
-    Seidu 2021\cit{6} & PBEsol & 8.31 / 8.94 & 12.35 & 7.6\% \\
-    Kaczkowski 2021\cit{5} & SCAN & 8.522 / 9.018 & 12.52 & 5.8\% \\
-    Kaczkowski 2021\cit{5} & PBE & 8.731 / 9.095 & 12.64 & 4.2\% \\
-    \alert{Paper A}\cit{1} & \alert{PBEsol} & \alert{8.68 / 8.71} & \alert{12.44} & \alert{0.3\%} \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.1em}
-  \raggedright\scriptsize
-  \begin{itemize}
-    \item Every 0 K relaxation is clearly rectangular, \emph{including a hybrid functional}; ours matches two independent PBEsol cells.
-    \item Paper A's cell is nearly square $\Rightarrow$ weaker tilt $\Rightarrow$ 4c and 8d more alike.
-    \item Since the sites differ only through tilt, this may explain part of the disagreement.
-  \end{itemize}
-  \refs{\RA\quad \RD\quad \RE\quad \RF\ (converted by us from its rotated 2$\times$2$\times$2 setting).\quad \RT\ (Table S1).}
-\end{frame}
-
-\begin{frame}{RQ2 set-up: ten distinct hops, not three}
-  \centering
-  \vspace*{-0.8em}
-  \includegraphics[width=\textwidth,height=0.83\textheight,keepaspectratio]{octahedra_hops_wide.png}
-  \refs{S1--S6: along octahedron edges; L1--L4: between corner-sharing octahedra. Figure, hop set and lengths: this work (tight-relaxed cell).}
-\end{frame}
-
-\begin{frame}{The ten hops: how many, and where they go}
-  \centering\footnotesize
-  \begin{tabular}{llcccl}
-    \toprule
-    Hop & Ends & Length (\AA) & From 8d & From 4c & Moves the vacancy \\
-    \midrule
-    S1, S6 & 8d--8d & 4.41, 4.60 & 2 each & 0 & within a PbI$_2$ layer \\
-    S2--S5 & 4c--8d & 4.43--4.56 & 1 each & 2 each & PbI$_2$ $\leftrightarrow$ CsI layer \\
-    L1 & 8d--8d & 4.80 & 1 & 0 & within a PbI$_2$ layer \\
-    L2 & 8d--8d & 5.18 & 1 & 0 & straight along $c$ \\
-    L3 & 4c--4c & 5.28 & 0 & 2 & within a CsI layer \\
-    L4 & 4c--8d & 5.93 & 1 & 2 & between layers \\
-    \midrule
-    Total & & & 11 & 12 & \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.3em}
-  \raggedright\footnotesize
-  \begin{itemize}
-    \item Half of the short hops from 8d lead to 4c; a 4c vacancy has \textbf{no short hop to another 4c}
-    \item ab plane: 8d--8d hops are enough. Along $c$: needs \textbf{4c--8d hops} (8d$\rightarrow$4c$\rightarrow$8d) or the long L2
-    \item $\Rightarrow$ transport depends on barriers \emph{and} hop numbers \emph{and} 4c/8d site energies: anisotropic diffusion
-  \end{itemize}
-  \refs{Hop set, counts and directions: this work (\texttt{hop\_network.py}, perfect supercell). Paper A treats one barrier per type\cit{1}.\quad \RA}
-\end{frame}
-
-\begin{frame}{NEB scope: start with hops that have published values}
-  \footnotesize
-  \begin{tabular}{llll}
-    \toprule
-    Published path & Value & Our hop & How identified \\
-    \midrule
-    Paper A: 4c--4c\cit{1} & 0.77 eV & \textbf{L3} & only 4c--4c hop \\
-    Paper A: 8d--8d edge\cit{1} & 0.34 eV & S1 or S6 & schematic figure only \\
-    Paper A: 8d--4c edge\cit{1} & 0.35 eV & one of S2--S5 & schematic figure only \\
-    Zhang: in-plane\cit{20} & 0.54 eV & \textbf{S1} (probable) & rises $\approx$1 \AA\ along $c$ (S6: 0) \\
-    Zhang: out-of-plane\cit{20} & 0.51 eV & \textbf{S2} (probable) & rises $\approx$2.7 \AA, no sideways shift \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.1em}
-  \begin{tabular}{clp{0.52\textwidth}}
-    \toprule
-    Stage & Hops & Purpose \\
-    \midrule
-    1 & S1, S2, L3, S6 & Compare with published values; S1 vs S6 = first spread within a type \\
-    2 & S3, S4, S5 & Spread of the 4c--8d hops (control transport along $c$) \\
-    3 & L1, L2, L4 & Only if the network analysis needs them \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.1em}
-  Spread $<$ 0.03 eV $\Rightarrow$ one barrier per type. Small threshold: at 300 K, 0.05 eV changes a rate $\approx 7\times$.
-  \refs{\RA\quad \RT\ (paths assigned from its Fig.~6a,b; raster figure, $\pm$0.3 \AA).}
-\end{frame}
-
-% =====================================================================
-\section{Next steps}
-
-\begin{frame}{NEB: ready to run}
-  \small
-  \textbf{\texttt{build\_neb.py}} (written and tested)
-  \begin{itemize}
-    \item End points \alert{by symmetry}: the relaxed 4c and 8d vacancies are mapped onto any site with the 64 Pnma operations\cit{17} $\rightarrow$ no extra relaxations
-    \item Atoms renumbered so only the hopping iodine moves; IDPP starting path\cit{16,18}
-  \end{itemize}
-
-  \textbf{NEB settings and why}
-  \begin{tabular}{lll}
-    \toprule
-    Climbing image & on & Gives the true saddle point\cit{15} \\
-    Intermediate images & 4 & Spacing about 1 \AA; the climbing image finds the saddle \\
-    $k$-mesh & 2$\times$2$\times$2 & Same as the end points (2$\times$2$\times$1 rejected) \\
-    Barrier reported & both directions & Plus the average, to compare with paper A\cit{1} \\
+    $V_\mathrm{I}^{+}$ & +0.9 meV & +1.0 meV & --- \\
+    $V_\mathrm{I}^{0}$ & +33.5 meV & $-71$ meV & $\mathbf{-1.4}$ \textbf{meV} \\
     \bottomrule
   \end{tabular}
 
   \vspace{0.6em}
-  \textbf{First run:} S1 (8d--8d, $+1$), against paper A's 0.34 eV.
-  \refs{\RA\quad \RO\quad \RP\quad \RQ\quad \RR}
+  \raggedright
+  \begin{itemize}
+    \item \textbf{$+1$:} the two sites are degenerate, and SOC changes nothing. The Pb-6p conduction band is empty.
+    \item \textbf{Neutral:} the extra electron enters the Pb-6p conduction band, spread over the cell (shallow donor, magnetisation 0). SOC shifts that band by about 1 eV, so the neutral site energies depend on the method.
+    \item \textbf{Consequence:} $+1$ results are robust at PBEsol. Neutral results need SOC (and possibly a hybrid functional).
+  \end{itemize}
 \end{frame}
 
-\begin{frame}{Plan}
-  \begin{enumerate}
-    \item Finish the neutral 4c relaxation $\rightarrow$ final neutral site energy
-    \item NEB stage 1 ($+1$): S1, S2, L3, S6 (published comparisons); stage 2: S3, S4, S5
-    \item Long hops L1, L2, L4 only if the network analysis needs them
-    \item Neutral NEB for the stage-1 hops
-    \item Build the CsI-terminated (001) slab: symmetric, all atoms free; 11 layers, 15-layer test
-    \item Vacancy energies and barriers layer by layer, until they return to the bulk values
-  \end{enumerate}
+\begin{frame}{Band gap and band edges}
+  \small
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \begin{tabular}{lc}
+        \toprule
+        Method & Gap at $\Gamma$ \\
+        \midrule
+        PBEsol & 1.62 eV \\
+        PBEsol + SOC & 0.70 eV \\
+        HSE06 + SOC (unit cell) & \run \\
+        Experiment & $\approx$1.73 eV \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \begin{itemize}
+        \item The PBEsol gap is right by \textbf{error cancellation}: missing SOC opens it by about 0.9 eV, the semilocal error closes it.
+        \item The formation-energy diagram needs correct band edges, so they come from \textbf{HSE06 + SOC on the 20-atom unit cell}, aligned to the PBEsol supercell.
+      \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
-\begin{frame}{Questions for discussion}
+\begin{frame}{Stability region}
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.75\textheight,keepaspectratio]{stability_region.png}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \small
+      \begin{itemize}
+        \item $\gamma$ is stable against CsI + PbI$_2$ by only \textbf{79 meV per formula unit}, so the region is a thin strip.
+        \item The vacancy energy contains only $\mu_\mathrm{I}$: \textbf{I-rich} $\Delta\mu_\mathrm{I}=0$ (A, B), \textbf{I-poor} $\Delta\mu_\mathrm{I}=-0.953$ eV (D, with Pb metal and CsI).
+        \item $\delta$ has the same composition, so it cannot bound the strip. It enters as $\Delta E_{\gamma\delta}(\varepsilon)$.
+        \item Cs$_4$PbI$_6$, CsPb$_2$I$_5$: published phase diagrams cited.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Formation energy against the Fermi level (preliminary)}
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{formation_energy_prelim.png}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \small
+      \begin{itemize}
+        \item $\varepsilon(+/0) = \mathbf{1.56}$ \textbf{eV}, 0.06 eV below the PBEsol CBM: \textbf{$+1$ dominates almost the whole gap}.
+        \item I-rich: $E_f(V_\mathrm{I}^+)$ = 0.65--2.26 eV.
+        \item I-poor: $E_f < 0$ below $E_F \approx 0.3$ eV, so iodine-poor films cannot be strongly p-type.
+        \item Still to add: Freysoldt correction\cit{14} (LOCPOT, dielectric constant) and HSE06 + SOC edges.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \refs{\RN}
+\end{frame}
+
+\begin{frame}{Ten distinct hops}
+  \centering
+  \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{octahedra_hops_wide.png}
+
+  \small\raggedright
+  Six short hops along octahedral edges (S1--S6) and four long hops between octahedra (L1--L4). From an 8d site 11 hops are available, from a 4c site 12. Transport along $c$ needs 4c--8d hops.
+\end{frame}
+
+\begin{frame}{Barriers of the $+1$ vacancy}
+  \begin{columns}[c]
+    \begin{column}{0.44\textwidth}
+      \centering\scriptsize
+      \begin{tabular}{lccc}
+        \toprule
+        Hop & Ends & Length (\AA) & $E_a$ (eV) \\
+        \midrule
+        S2 & 4c--8d & 4.43 & \textbf{0.326} \\
+        S4 & 4c--8d & 4.52 & \textbf{0.326} \\
+        S1 & 8d--8d & 4.40 & 0.345 \\
+        S5 & 4c--8d & 4.56 & 0.348 \\
+        S6 & 8d--8d & 4.60 & 0.434 \\
+        S3 & 4c--8d & 4.46 & 0.462 \\
+        L3 & 4c--4c & 5.32 & 0.777 \\
+        \bottomrule
+      \end{tabular}
+
+      \vspace{0.4em}
+      Arber \emph{et al.}\cit{8}: 0.34 (8d--8d), 0.35 (8d--4c), 0.77 eV (4c--4c). QE check of S1: 0.361 eV.
+    \end{column}
+    \begin{column}{0.54\textwidth}
+      \centering
+      \includegraphics[width=0.49\linewidth]{neb_S2_qp1_vasp.png}\hfill
+      \includegraphics[width=0.49\linewidth]{neb_S1_qp1_vasp.png}
+
+      \small\raggedright
+      Four short hops lie within 0.02 eV of each other. One barrier per path type misses this spread.
+    \end{column}
+  \end{columns}
+  \refs{\RH}
+\end{frame}
+
+\begin{frame}{Diffusivity tensor of $V_\mathrm{I}^{+}$}
+  \small
+  \textbf{Method.} Master equation on the full hop network of the unit cell (12 iodine sites), as Smolders \emph{et al.}\cit{6}; prefactor $10^{12}$ Hz for every hop. Kinetic Monte Carlo on the same network agreed within 2\,\%.
+
+  \vspace{0.3em}
+  \begin{columns}[T]
+    \begin{column}{0.46\textwidth}
+      \centering\scriptsize
+      \begin{tabular}{lcc}
+        \toprule
+        Axis & $D_v$ at 300 K (cm$^2$/s) & Effective $E_a$ \\
+        \midrule
+        $a$ & $3.1\times10^{-9}$ & 0.345 eV \\
+        $b$ & $2.6\times10^{-9}$ & 0.332 eV \\
+        $c$ & $4.1\times10^{-9}$ & 0.338 eV \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \centering\scriptsize
+      \begin{tabular}{lccc}
+        \toprule
+        Hop removed & $D_{aa}$ & $D_{bb}$ & $D_{cc}$ \\
+        \midrule
+        S1 & $\times$0.40 & $\times$0.92 & $\times$0.76 \\
+        S2 & $\times$0.99 & $\times$\textbf{0.04} & $\times$0.72 \\
+        S4 & $\times$0.63 & $\times$0.35 & $\times$0.72 \\
+        S5 & $\times$0.61 & $\times$0.91 & $\times$0.52 \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.4em}
+  \begin{itemize}
+    \item \textbf{Nearly isotropic.} Shifting the four fast barriers by $\pm$0.02 eV changes $D_{cc}/D_{aa}$ from 0.5 to 3.0, so the axis order is not resolved.
+    \item \textbf{Robust:} each axis runs on a different hop ($b$ almost only on S2). Strain that shifts S1 and S2 differently changes the anisotropy.
+  \end{itemize}
+  \refs{\RF}
+\end{frame}
+
+% =====================================================================
+\section{Results: strain}
+
+\begin{frame}{$\gamma$ under biaxial strain}
+  \begin{columns}[c]
+    \begin{column}{0.52\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{strain_unit_Ec.png}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \scriptsize
+      \begin{tabular}{lcc}
+        \toprule
+        $\varepsilon$ & $c$ (\AA) & Strain energy (meV/f.u.) \\
+        \midrule
+        $-1.0$\,\% & 12.465 & 4.7 \\
+        0 & 12.388 & 0 \\
+        +0.5\,\% & 12.352 & 0.6 \\
+        +1.0\,\% & 12.314 & 3.2 \\
+        \bottomrule
+      \end{tabular}
+
+      \vspace{0.4em}
+      \small
+      \begin{itemize}
+        \item $c$ follows $\varepsilon$ with $\Delta c/c \approx -0.6\,\varepsilon$ (method of Xu \emph{et al.}\cit{10}).
+        \item Compression costs more than tension.
+        \item \textbf{3--5 meV per formula unit at $\pm$1\,\%}, small next to the 79 meV $\gamma$--$\delta$ gap.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \refs{\RJ}
+\end{frame}
+
+\begin{frame}{$\gamma$ against $\delta$: two limits}
+  \small
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Coherent: $\delta$ strained the same way}
+        $\Delta E_{\gamma\delta}(\varepsilon) = \Delta E_\gamma(\varepsilon) - \Delta E_\delta(\varepsilon)$, with $\delta$ strained on each of its three planes (108 cells, \run).
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Incoherent: $\delta$ grains relax freely}
+        Only $\gamma$ pays the strain energy, so strain makes $\gamma$ \emph{less} stable by 3--5 meV per formula unit.
+      \end{block}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.6em}
+  \textbf{Reading.} Unless $\delta$ pays much more for the same strain, a 1\,\% strain cannot close a 79 meV gap. Clamping then stabilises $\gamma$ \textbf{kinetically}, by blocking the reconstructive $\gamma\rightarrow\delta$ transformation, in line with the symmetry argument of Steele \emph{et al.}\cit{4}
+  \refs{\RD}
+\end{frame}
+
+\begin{frame}{Vacancy formation under strain (first result)}
+  \small
+  \centering
+  \begin{tabular}{lccc}
+    \toprule
+    $\varepsilon$ & $E(\mathrm{perfect})$ (eV) & $E(V_\mathrm{I}^{+},\ \mathrm{4c})$ (eV) & $E(V_\mathrm{I}^{+}) - E(\mathrm{perfect})$ \\
+    \midrule
+    0 & $-486.511$ & $-485.984$ & 0.527 eV \\
+    $-1$\,\% & $-486.361$ & $-485.926$ & \textbf{0.435 eV} \\
+    +1\,\% & $-486.383$ & \run & --- \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.6em}
+  \raggedright
+  \begin{itemize}
+    \item The perfect strained supercell matched the unit-cell strain energy (4.7 meV per formula unit), a consistency check.
+    \item Compression lowered $E(V_\mathrm{I}^{+}) - E(\mathrm{perfect})$ by about 0.09 eV, before the band-edge shift. The VBM also moves with strain, so this is not yet $\Delta E_f$.
+    \item 8d at $\pm$1\,\% and all cells at +0.5\,\% are \run.
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{Status and plan}
+
+\begin{frame}{Status}
+  \footnotesize
+  \begin{tabular}{lll}
+    \toprule
+    Part & Item & State \\
+    \midrule
+    Setup & Lattice, supercells, QE cross-check & \done \\
+    Phase & Stability strip; $\delta$ relaxed; $\gamma$ $E(c)$ scans & \done \\
+    & $\delta$ strain scans, $\varepsilon = -0.5$\,\% cells & \run \\
+    Formation & Site energies $+1$, 0, SOC; preliminary diagram & \done \\
+    & HSE06 + SOC edges; Freysoldt correction & \run\ / \nxt \\
+    & Strained supercells ($-1$, +0.5, +1\,\%) & \run \\
+    Migration & 7 barriers ($+1$); diffusivity tensor, KMC check & \done \\
+    & Strained NEBs: S2, S4, S1, S5 & \nxt \\
+    Side result & CsI-terminated slab: tilt recovers within about 1 nm & \done \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\begin{frame}{Points for discussion}
+  \small
   \begin{enumerate}
-    \item \textbf{Paper A's lattice\cit{1}:} rerun our $+1$ pair on their cell (8.68/8.71/12.44 \AA) to test the tilt explanation? Cost: two relaxations, about one week.
-    \item \textbf{Neutral vacancy:} is a hybrid-functional check of the delocalised electron worth the cost?
-    \item \textbf{Spin--orbit coupling:} single-point check on the site energies now, or after the barriers?
-    \item \textbf{NEB scope:} start with the 4 hops comparable to published values, then decide; neutral only for stage 1?
-    \item Contact paper A's authors about their charge state and 4c/8d end-point energies?
+    \item \textbf{Strained NEBs.} Four fast hops (S2, S4, S1, S5) at four strains make 16 NEBs of 2--4 days on 4 nodes each. S2 and S4 alone carry most of the transport.
+    \item \textbf{Neutral vacancy.} A neutral NEB needs SOC (about 4 nodes per image). It runs only if HSE06 + SOC places $\varepsilon(+/0)$ inside the gap.
+    \item \textbf{Prefactors.} Kept at $10^{12}$ Hz; the axis order of the tensor stays open.
+    \item \textbf{Fermi level.} A self-consistent $E_F$ needs acceptors ($V_\mathrm{Pb}$, $V_\mathrm{Cs}$), outside the present scope.
+    \item \textbf{Phase result.} Both limits (coherent, incoherent) reported, with the kinetic reading.
   \end{enumerate}
-  \refs{\RA}
 \end{frame}
 
 \begin{frame}{Summary}
+  \small
   \begin{itemize}
-    \item \textbf{Bulk reference built:} converged settings, tight lattice, perfect and vacancy supercells.
-    \item \textbf{Site preference depends on charge:} $+1$ degenerate ($-1$ meV); neutral favours 4c by $\geq 36$ meV, opposite to paper A.
-    \item \textbf{Neutral vacancy is a shallow donor} in PBEsol (moment $0\,\mu_B$).
-    \item \textbf{Benchmark mismatch} likely from paper A's nearly square, less-tilted cell.
-    \item \textbf{Ten distinct hops}; transport along $c$ needs 4c--8d hops $\Rightarrow$ staged NEB plan, inputs ready.
+    \item \textbf{$+1$ is the relevant charge state} across almost the whole gap. Its energies and barriers are robust at PBEsol; the neutral vacancy depends on the method.
+    \item \textbf{Four short hops within 0.02 eV} (0.326--0.348 eV) carry the transport, each axis on a different hop. The tensor is nearly isotropic.
+    \item \textbf{1\,\% strain costs $\gamma$ only 3--5 meV per formula unit} against a 79 meV $\gamma$--$\delta$ gap, which points to kinetic stabilisation by clamping.
+    \item \textbf{Compression lowered the vacancy energy} by about 0.09 eV (first strained result).
   \end{itemize}
-
-  \vspace{1em}
+  \vspace{0.6em}
   \centering
-  \textbf{Next: first barrier (S1) against paper A's 0.34 eV.}
+  \textbf{Next: strained formation energies, HSE06 + SOC edges, then strained NEBs.}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{References}
@@ -522,10 +503,6 @@
     \item[] \RN
     \item[] \RO
     \item[] \RP
-    \item[] \RQ
-    \item[] \RR
-    \item[] \RS
-    \item[] \RT
   \end{itemize}
 \end{frame}
 
