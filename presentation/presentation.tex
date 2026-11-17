@@ -39,8 +39,20 @@
 \setbeamertemplate{footline}{%
   \begin{beamercolorbox}[wd=\paperwidth,ht=2.6ex,dp=1.2ex,leftskip=0.6cm,rightskip=0.6cm]{footline}%
     \usebeamerfont{page number in head/foot}%
-    Duy M. Dao \quad$\vert$\quad Tsinghua University\hfill\insertframenumber/\inserttotalframenumber
+    \raisebox{-0.35ex}{\putlogo{thu_logo}{2.2ex}}\hspace{0.4em}Duy M. Dao \quad$\vert$\quad Tsinghua University\hfill\insertframenumber/\inserttotalframenumber
   \end{beamercolorbox}}
+
+% ---------- logos: put thu_logo.(pdf|png|jpg) and mse_logo.(pdf|png|jpg) in this folder ----------
+% The deck compiles without them; each logo appears as soon as its file exists.
+\newcommand{\putlogo}[2]{%
+  \IfFileExists{#1.pdf}{\includegraphics[height=#2]{#1.pdf}}{%
+  \IfFileExists{#1.png}{\includegraphics[height=#2]{#1.png}}{%
+  \IfFileExists{#1.jpg}{\includegraphics[height=#2]{#1.jpg}}{}}}}
+\usepackage{tikz}
+\titlegraphic{\begin{tikzpicture}[remember picture,overlay]
+  \node[anchor=north east,inner sep=0pt] at ([xshift=-0.6cm,yshift=-0.5cm]current page.north east)
+    {\putlogo{thu_logo}{1.4cm}\hspace{0.35cm}\putlogo{mse_logo}{1.4cm}};
+\end{tikzpicture}}
 \newcommand{\cpi}{$\gamma$-CsPbI$_3$}
 \newcommand{\done}{\textcolor{cs}{\textbf{done}}}
 \newcommand{\run}{\textcolor{iod}{\textbf{running}}}
