@@ -19,8 +19,11 @@ GGA      = PE              ! PBE base for HSE06
 LHFCALC  = .TRUE.        
 HFSCREEN = 0.2             ! 1/A, HSE06
 AEXX     = 0.25            ! exact-exchange fraction
-PRECFOCK = Normal        
+PRECFOCK = Fast          
 ALGO     = All           
+NKREDX   = 2               ! exchange on a 2x2x3 q-mesh: 4x less Fock memory
+NKREDY   = 2             
+NKREDZ   = 1             
 
 # Single point
 NSW      = 0             
@@ -34,4 +37,4 @@ LMAXMIX  = 4               ! d electrons (Pb_d)
 
 # Parallelisation (40 cores per std40 node)
 NCORE    = 1             
-KPAR     = 4               ! k-point groups, more of them is faster but uses more memory
+KPAR     = 1               ! k-point groups, more of them is faster but uses more memory

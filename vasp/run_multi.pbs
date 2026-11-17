@@ -48,7 +48,8 @@ echo "started: $(date)"
       swap=${line#* }
       if [ -n "$swap" ] && [ "$swap" -gt "$SWAP_LIMIT_GB" ] 2>/dev/null; then
         echo "$(date) swap ${swap} GB on $n: stopping" | tee -a "$PBS_O_WORKDIR/mem.log"
-        pkill -u "$USER" -f "$VASP_EXE"; touch "$PBS_O_WORKDIR/STOPPED_SWAP"; exit 0
+        for m in "${NODES[@]}"; do ssh -o BatchMode=yes "$m" "pkill -u $USER -f vasp_" 2>/dev/null; done   # every node, std and ncl
+        touch "$PBS_O_WORKDIR/STOPPED_SWAP"; exit 0
       fi
     done
     sleep 300

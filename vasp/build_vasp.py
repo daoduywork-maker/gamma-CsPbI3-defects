@@ -332,9 +332,13 @@ def cmd_bandedges(a):
     hse = [t for t in base_tags(".FALSE.") if not (isinstance(t, tuple) and t[0] in ("GGA", "ALGO"))]
     hse += ["HSE06", ("GGA", "PE", "PBE base for HSE06"), ("LHFCALC", ".TRUE.", ""),
             ("HFSCREEN", 0.2, "1/A, HSE06"), ("AEXX", 0.25, "exact-exchange fraction"),
-            ("PRECFOCK", "Normal", ""), ("ALGO", "All", "")]
+            ("PRECFOCK", "Fast", ""), ("ALGO", "All", ""),
+            ("NKREDX", 2, "exchange on a 2x2x3 q-mesh: 4x less Fock memory"),
+            ("NKREDY", 2, ""), ("NKREDZ", 1, "")]
+    # KPAR = 1: one copy of the wavefunctions spread over all cores (KPAR = 4 on one node
+    # swapped 26 GB in job 218006); run alone on 4 nodes with run_vasp.pbs
     runs["hse_soc"] = ("gamma unit cell, HSE06+SOC single point",
-                       hse + sp_tags() + soc_tags(n) + para_tags(1, 4))
+                       hse + sp_tags() + soc_tags(n) + para_tags(1, 1))
     for name, (title, tags) in runs.items():
         d = os.path.join(base, name)
         os.makedirs(d, exist_ok=True)
