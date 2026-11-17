@@ -41,11 +41,14 @@ echo "started: $(date)"
 
 # memory watch, same as run_vasp.pbs
 (
+  # swap already in use when the job starts (left by earlier jobs) is not counted
+  declare -A SWAP0
+  for n in "${NODES[@]}"; do SWAP0[$n]=$(ssh -o BatchMode=yes "$n" "free -g | awk '/Swap/{print \$3}'" 2>/dev/null); echo "$(date '+%m-%d %H:%M') $n swap at start ${SWAP0[$n]:-0}G (not counted)" >> "$PBS_O_WORKDIR/mem.log"; done
   while true; do
     for n in "${NODES[@]}"; do
       line=$(ssh -o BatchMode=yes "$n" "free -g | awk '/Mem/{m=\$3} /Swap/{s=\$3} END{print m, s}'" 2>/dev/null)
       echo "$(date '+%m-%d %H:%M') $n used=${line% *}G swap=${line#* }G" >> "$PBS_O_WORKDIR/mem.log"
-      swap=${line#* }
+      swap=$(( ${line#* } - ${SWAP0[$n]:-0} ))   # growth since the start
       if [ -n "$swap" ] && [ "$swap" -gt "$SWAP_LIMIT_GB" ] 2>/dev/null; then
         echo "$(date) swap ${swap} GB on $n: stopping" | tee -a "$PBS_O_WORKDIR/mem.log"
         for m in "${NODES[@]}"; do ssh -o BatchMode=yes "$m" "pkill -u $USER -f vasp_" 2>/dev/null; done   # every node, std and ncl
