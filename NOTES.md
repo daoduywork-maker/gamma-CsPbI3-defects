@@ -60,6 +60,32 @@ Measured memory (use these to size jobs):
 | VASP 159-atom +1 vacancy | 4 std40 nodes | 14 GB per node, max 0.62 GB per process |
 | VASP 159-atom neutral (ISPIN = 2) | 4 std40 nodes | 20 GB per node, max 0.73 GB per process |
 
+
+**Resource log of every run so far (17 Nov).** From 17 Nov both job scripts append one line per VASP run to `~/cspbi3/vasp/run_history.tsv` (date, job, folder, program, nodes, cores, hours, ionic steps, finished, converged, memory of rank 0, peak memory per node from `mem.log`). Copy that file to the laptop now and then; no need to log in for each job. Entries below were collected by hand from the job logs; "—" = not recorded.
+
+| Run (job) | Atoms | Setup | Memory | Time | Steps | Outcome |
+|---|---|---|---|---|---|---|
+| QE perfect supercell (217406) | 160 | 2 nodes, NK 2 | 62 GB/node | 3 h 06 min | 0 BFGS | done |
+| QE V_I⁺ 4c (217407) | 159 | 2 nodes, NK 2 | 1.71 GB/proc | 3 d 11 h | 46 BFGS | done |
+| QE NEB +1, 2 images at once (S1 first try) | 159 × 2 | 4 nodes, NI 2 | 88 GB + swap | minutes | — | out of memory |
+| QE NEB +1, 1 image at a time (217856) | 159 | 4 nodes, NI 1, NK 2 | 33 GB/node | — | — | done |
+| VASP unit cell relax (217910) | 20 | 1 node, KPAR 4 | 0.39 GB/proc | — | 2 stages | done |
+| VASP perfect supercell (217924) | 160 | 4 nodes | 14 GB/node, 0.52 GB/proc | — | — | done |
+| VASP V_I⁺ 4c / 8d (217925–6) | 159 | 4 nodes | 14 GB/node, 0.62 GB/proc | about 1 d | 33 / 31 | done |
+| VASP V_I⁰ 4c / 8d, ISPIN 2 (217927–8) | 159 | 4 nodes | 20 GB/node, 0.73 GB/proc | about 1 d | 40 / 38 | done |
+| VASP NEB +1 S1, S2 (217939–40) | 159 × 4 | 4 nodes, 1 image/node | 30–31 GB/node | about 2 h per step | 25 / 27 | done |
+| VASP NEB +1 L3, S6 (217941–2) | 159 × 4 | as above | 30–31 GB/node | about 2 h per step | 33 / 39 | done |
+| VASP NEB +1 S3, S4, S5 (217963–5) | 159 × 4 | as above | 30–31 GB/node | 2.5–3.5 d | 35 / 40 / 24 | done |
+| VASP SOC single points (217944) | 159–160 | 4 nodes, vasp_ncl | — | — | 17–21 SCF | done |
+| VASP SOC relax V_I⁰ (217961–2) | 159 | 4 nodes, vasp_ncl | 1.14 GB/proc rank 0, about 46 GB/node | 2–3 d | 27 / 14 | done |
+| VASP slabs L07–L11 (217936) | 34–54 | 1 node | 17 GB/node | — | — | done |
+| VASP slabs L13–L17 (217951) | 64–84 | 1 node | — | — | L17: 22 | done |
+| VASP HSE06+SOC at Γ (217966–8) | 159–160 | 4 nodes, vasp_ncl, NCORE 1 | 91 GB + 8–14 GB swap on node10 | 10 min | — | **out of memory** |
+| VASP HSE06+SOC unit cell, 4×4×3 (in 218006) | 20 | 1 node, KPAR 4, NCORE 1, PRECFOCK Normal | 91 GB + 26 GB swap | hours, 5 SCF steps | — | **out of memory** |
+| VASP γ strain E(c) cells (218001) | 20 | 1 node, KPAR 4 | 1–2 GB/node | a few min each | — | done |
+| VASP δ relax (218001) | 20 | 1 node, KPAR 4 | 2 GB/node | 22 + 3 min | 2 stages | done |
+| VASP strained supercells −1% (218007) | 160 / 159 | 4 nodes | — | perfect + 4c within 18.7 h | 14 / 20 | running |
+
 **VASP on the cluster**
 
 - Modules: `vasp/vasp541scala`, `vasp544elpa`, `vasp544mod`, `vasp544scala`, `vasp632`, `vasp632vaspsol`, `vasp632vaspsol.vtst`, `vasp632vtst`, `vasp632wannier90`, `vasp643`. This project uses **`vasp/vasp632vtst`** for every step (VTST is needed for NEB).

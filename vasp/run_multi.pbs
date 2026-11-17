@@ -60,6 +60,23 @@ echo "started: $(date)"
 ) &
 WATCH=$!
 
+
+# ---- run history: one line per VASP run, appended to ~/cspbi3/vasp/run_history.tsv ----
+# date, job, name, folder, program, nodes, cores, hours, ionic steps, finished, converged,
+# memory of MPI rank 0 (GB, from OUTCAR), peak memory per node during the run (GB, from mem.log)
+HIST="$HOME/cspbi3/vasp/run_history.tsv"
+[ -s "$HIST" ] || printf "date\tjob\tname\tfolder\tprogram\tnodes\tcores\thours\tsteps\tfinished\tconverged\trank0_GB\tnode_peak_GB\n" > "$HIST"
+log_run() {   # $1 folder (absolute)  $2 program  $3 nodes  $4 cores  $5 start epoch  $6 mem.log line at start  $7 node filter (regex)
+  local t1 h steps fin conv r0 pk
+  t1=$(date +%s); h=$(awk -v a="$5" -v b="$t1" 'BEGIN{printf "%.2f", (b-a)/3600}')
+  steps=$(grep -c "F=" "$1/OSZICAR" 2>/dev/null); fin=$(grep -c "General timing" "$1/OUTCAR" 2>/dev/null)
+  conv=$(grep -c "reached required accuracy" "$1/OUTCAR" 2>/dev/null)
+  r0=$(grep "Maximum memory used" "$1/OUTCAR" 2>/dev/null | tail -n 1 | awk '{printf "%.2f", $NF/1048576}')
+  pk=$(tail -n +"$6" "$PBS_O_WORKDIR/mem.log" 2>/dev/null | grep -E "$7" | grep -o 'used=[0-9]*' | cut -d= -f2 | sort -n | tail -n 1)
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "$(date '+%Y-%m-%d %H:%M')" "${PBS_JOBID%%.*}" "$PBS_JOBNAME" \
+    "${1#$HOME/cspbi3/}" "$2" "$3" "$4" "$h" "${steps:-0}" "${fin:-0}" "${conv:-0}" "${r0:-na}" "${pk:-na}" >> "$HIST"
+}
+
 run_chain() {   # $1 = node, $2 = folders
   local node=$1                         # separate line: in "local a=.. b=$a" $a is still empty
   local hf="$PBS_O_WORKDIR/.hosts_$node.$PBS_JOBID"
@@ -73,7 +90,9 @@ run_chain() {   # $1 = node, $2 = folders
     for s in $(seq 1 $st); do
       [ -f "$PBS_O_WORKDIR/STOPPED_SWAP" ] && return
       echo "[$node] $d stage $s/$st ($(basename $exe)): $(date '+%m-%d %H:%M')"
+      t0=$(date +%s); m0=$(( $(wc -l < "$PBS_O_WORKDIR/mem.log" 2>/dev/null || echo 0) + 1 ))
       mpirun -np "$PPN" -machinefile "$hf" "$exe" > vasp.out 2>&1
+      log_run "$PWD" "$(basename $exe)" 1 "$PPN" "$t0" "$m0" " $node "
       if [ "$st" -gt 1 ]; then cp OUTCAR OUTCAR.$s; cp OSZICAR OSZICAR.$s; [ -s CONTCAR ] && cp CONTCAR POSCAR; fi
       echo "[$node] $d: $(grep -c 'reached required accuracy' OUTCAR) converged, $(grep 'free  energy   TOTEN' OUTCAR | tail -1)"
     done
