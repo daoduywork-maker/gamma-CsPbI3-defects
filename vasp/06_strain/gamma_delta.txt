@@ -1,0 +1,10 @@
+gamma-delta energy against biaxial strain (meV per formula unit; positive = gamma above delta)
+
+eps(%)  E_gamma-E_gamma(0)  dE_delta(ab)  dE_delta(ac)  dE_delta(bc)   coherent  incoherent  lowest-delta plane
+ -1.0         4.72            3.55          2.82          2.92         80.67      83.49     ac
+ -0.5         1.29            0.91          0.77          0.79         79.28      80.06     ac
+ +0.0         0.00            0.00          0.03          0.02         78.76      78.76     ab
+ +0.5         0.59            0.69          0.48          0.61         78.87      79.35     ac
+ +1.0         3.18            2.92          2.19          2.56         79.76      81.95     ac
+
+dx* of delta (%% on the free axis): ab -1.0%: +0.92; ab +1.0%: -0.78; ac -1.0%: +1.30; ac +1.0%: -1.10; bc -1.0%: +0.99; bc +1.0%: -0.75

@@ -1,11 +1,5 @@
 Strained supercells; c factor = (1+dc*(eps))/(1+dc*(0)), dc*(0) = -0.115%
 
-eps -1.0%  pristine               160 atoms  cell 16.5736 17.7204 24.9583 A
-eps -1.0%  q+1/vac_I_apical       159 atoms  cell 16.5736 17.7204 24.9583 A
-eps -1.0%  q+1/vac_I_equatorial   159 atoms  cell 16.5736 17.7204 24.9583 A
-eps +0.5%  pristine               160 atoms  cell 16.8247 17.9889 24.7318 A
-eps +0.5%  q+1/vac_I_apical       159 atoms  cell 16.8247 17.9889 24.7318 A
-eps +0.5%  q+1/vac_I_equatorial   159 atoms  cell 16.8247 17.9889 24.7318 A
-eps +1.0%  pristine               160 atoms  cell 16.9084 18.0784 24.6570 A
-eps +1.0%  q+1/vac_I_apical       159 atoms  cell 16.9084 18.0784 24.6570 A
-eps +1.0%  q+1/vac_I_equatorial   159 atoms  cell 16.9084 18.0784 24.6570 A
+eps -0.5%  pristine               160 atoms  cell 16.6573 17.8099 24.8810 A
+eps -0.5%  q+1/vac_I_apical       159 atoms  cell 16.6573 17.8099 24.8810 A
+eps -0.5%  q+1/vac_I_equatorial   159 atoms  cell 16.6573 17.8099 24.8810 A
