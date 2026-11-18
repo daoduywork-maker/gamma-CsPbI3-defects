@@ -73,7 +73,7 @@ def main():
     for p, ls in zip(planes, (":", "-.", (0, (5, 2)))):
         ax.plot(eps, per[p], color=MUT, lw=0.8, ls=ls, label=r"coherent, $\delta$ %s plane" % p)
     ax.plot(eps, inc, "s-", color=OR, ms=4, lw=1.4, label=r"incoherent ($\delta$ relaxed)")
-    ax.plot(eps, coh, "o-", color=PU, ms=4, lw=1.4, label=r"coherent, lowest $\delta$")
+    ax.plot(eps, coh, "o-", color=PU, ms=4, lw=1.4, label=r"coherent, most stable $\delta$")
     ax.set_xlabel(r"Biaxial strain $\varepsilon$ (%)")
     ax.set_ylabel(r"$E_\gamma - E_\delta$ (meV per f.u.)")
     ax.legend(frameon=False, fontsize=6.5, loc="best")
