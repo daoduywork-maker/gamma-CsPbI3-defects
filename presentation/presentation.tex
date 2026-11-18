@@ -59,28 +59,29 @@
 \newcommand{\nxt}{\textcolor{gray}{next}}
 \renewcommand{\arraystretch}{1.15}
 
-% ---------- references: [n] marks in text, full entries at the foot of each slide ----------
-\newcommand{\cit}[1]{\textsuperscript{\textcolor{gray}{[#1]}}}
+% ---------- references: (Author Year) in text, author, title and journal at the foot of each slide ----------
+\newcommand{\cit}[1]{\,\textcolor{gray}{(#1)}}
 \newcommand{\refs}[1]{\par\vfill\begingroup\tiny\color{gray}\raggedright #1\par\endgroup}
-\newcommand{\RA}{[1] NREL, Best Research-Cell Efficiency Chart (2026).}
-\newcommand{\RB}{[2] R.\,J.~Sutton \emph{et al.}, ACS Energy Lett.\ \textbf{3}, 1787 (2018).}
-\newcommand{\RC}{[3] J.\,A.~Steele \emph{et al.}, Science \textbf{365}, 679 (2019).}
-\newcommand{\RD}{[4] J.\,A.~Steele \emph{et al.}, J.\ Am.\ Chem.\ Soc.\ \textbf{143}, 10500 (2021).}
-\newcommand{\RE}{[5] D.-J.~Xue \emph{et al.}, Nat.\ Commun.\ \textbf{11}, 1514 (2020).}
-\newcommand{\RF}{[6] T.\,J.\,A.\,M.~Smolders \emph{et al.}, Chem.\ Mater.\ \textbf{36}, 2334 (2024).}
-\newcommand{\RG}{[7] J.~Zhang \emph{et al.}, Appl.\ Surf.\ Sci.\ \textbf{679}, 161235 (2025).}
-\newcommand{\RH}{[8] A.\,N.~Arber \emph{et al.}, Chem.\ Mater.\ \textbf{37}, 4416 (2025).}
-\newcommand{\RI}{[9] J.~Xu \emph{et al.}, J.\ Phys.\ Chem.\ Lett.\ \textbf{8}, 4391 (2017).}
-\newcommand{\RJ}{[10] J.~Xu \emph{et al.}, J.\ Power Sources \textbf{412}, 689 (2019).}
-\newcommand{\RK}{[11] J.\,P.~Perdew \emph{et al.}, Phys.\ Rev.\ Lett.\ \textbf{100}, 136406 (2008).}
-\newcommand{\RL}{[12] G.~Kresse, J.~Furthm\"uller, Phys.\ Rev.\ B \textbf{54}, 11169 (1996).}
-\newcommand{\RM}{[13] G.~Henkelman, B.\,P.~Uberuaga, H.~J\'onsson, J.\ Chem.\ Phys.\ \textbf{113}, 9901 (2000).}
-\newcommand{\RN}{[14] C.~Freysoldt \emph{et al.}, Rev.\ Mod.\ Phys.\ \textbf{86}, 253 (2014).}
-\newcommand{\RO}{[15] A.\,V.~Krukau \emph{et al.}, J.\ Chem.\ Phys.\ \textbf{125}, 224106 (2006).}
-\newcommand{\RP}{[16] H.\,K.\,D.~Le \emph{et al.}, Matter \textbf{6}, 2368 (2023).}
-\newcommand{\RQ}{[17] J.~Park \emph{et al.}, Nature \textbf{616}, 724 (2023).}
-\newcommand{\RR}{[18] S.\,S.~Mali \emph{et al.}, Nat.\ Energy \textbf{8}, 989 (2023).}
-\newcommand{\RS}{[19] S.~Mariotti \emph{et al.}, Science \textbf{381}, 63 (2023).}
+\newcommand{\RA}{NREL (2026), \emph{Best Research-Cell Efficiency Chart}.}
+\newcommand{\RB}{R.\,J.~Sutton \emph{et al.} (2018), \emph{Cubic or orthorhombic? Revealing the crystal structure of metastable black-phase CsPbI$_3$ by theory and experiment}, ACS Energy Lett.\ \textbf{3}, 1787.}
+\newcommand{\RC}{J.\,A.~Steele \emph{et al.} (2019), \emph{Thermal unequilibrium of strained black CsPbI$_3$ thin films}, Science \textbf{365}, 679.}
+\newcommand{\RD}{J.\,A.~Steele \emph{et al.} (2021), \emph{Trojans that flip the black phase: impurity-driven stabilization and spontaneous strain suppression in $\gamma$-CsPbI$_3$ perovskite}, J.\ Am.\ Chem.\ Soc.\ \textbf{143}, 10500.}
+\newcommand{\RE}{D.-J.~Xue \emph{et al.} (2020), \emph{Regulating strain in perovskite thin films through charge-transport layers}, Nat.\ Commun.\ \textbf{11}, 1514.}
+\newcommand{\RF}{T.\,J.\,A.\,M.~Smolders \emph{et al.} (2024), \emph{Diffusivity tensors of Br and Cs vacancies in biaxially strained perovskite CsPbBr$_3$}, Chem.\ Mater.\ \textbf{36}, 2334.}
+\newcommand{\RG}{J.~Zhang \emph{et al.} (2025), \emph{Strain effects on the structural stability and defect properties of $\gamma$-CsPbI$_3$}, Appl.\ Surf.\ Sci.\ \textbf{679}, 161235.}
+\newcommand{\RH}{A.\,N.~Arber \emph{et al.} (2025), \emph{Ion migration and dopant effects in the gamma-CsPbI$_3$ perovskite photovoltaic material}, Chem.\ Mater.\ \textbf{37}, 4416.}
+\newcommand{\RI}{J.~Xu \emph{et al.} (2017), \emph{Intrinsic defect physics in indium-based lead-free halide double perovskites}, J.\ Phys.\ Chem.\ Lett.\ \textbf{8}, 4391.}
+\newcommand{\RJ}{J.~Xu \emph{et al.} (2019), \emph{Unique ion diffusion properties in lead-free halide double perovskites}, J.\ Power Sources \textbf{412}, 689.}
+\newcommand{\RK}{J.\,P.~Perdew \emph{et al.} (2008), \emph{Restoring the density-gradient expansion for exchange in solids and surfaces}, Phys.\ Rev.\ Lett.\ \textbf{100}, 136406.}
+\newcommand{\RL}{G.~Kresse, J.~Furthm\"uller (1996), \emph{Efficient iterative schemes for ab initio total-energy calculations using a plane-wave basis set}, Phys.\ Rev.\ B \textbf{54}, 11169.}
+\newcommand{\RM}{G.~Henkelman \emph{et al.} (2000), \emph{A climbing image nudged elastic band method for finding saddle points and minimum energy paths}, J.\ Chem.\ Phys.\ \textbf{113}, 9901.}
+\newcommand{\RN}{C.~Freysoldt \emph{et al.} (2014), \emph{First-principles calculations for point defects in solids}, Rev.\ Mod.\ Phys.\ \textbf{86}, 253.}
+\newcommand{\RO}{A.\,V.~Krukau \emph{et al.} (2006), \emph{Influence of the exchange screening parameter on the performance of screened hybrid functionals}, J.\ Chem.\ Phys.\ \textbf{125}, 224106.}
+\newcommand{\RP}{H.\,K.\,D.~Le \emph{et al.} (2023), \emph{Quantification of strain and its impact on the phase stabilization of all-inorganic cesium lead iodide perovskite}, Matter \textbf{6}, 2368.}
+\newcommand{\RQ}{J.~Park \emph{et al.} (2023), \emph{Controlled growth of perovskite layers with volatile alkylammonium chlorides}, Nature \textbf{616}, 724.}
+\newcommand{\RR}{S.\,S.~Mali \emph{et al.} (2023), \emph{Phase-heterojunction all-inorganic perovskite solar cells surpassing 21.5\,\% efficiency}, Nat.\ Energy \textbf{8}, 989.}
+\newcommand{\RS}{S.~Mariotti \emph{et al.} (2023), \emph{Interface engineering for high-performance, triple-halide perovskite--silicon tandem solar cells}, Science \textbf{381}, 63.}
+\newcommand{\RT}{A.~van Hattem \emph{et al.} (2023), \emph{Ternary system CsI--PbI$_2$--BiI$_3$ and thermodynamic stability of cesium metal halide perovskites}, J.\ Phys.\ Chem.\ C \textbf{127}, 17482.}
 % paper card: the screenshot #1 (e.g. record_hybrid.png) if present, otherwise a text card
 \newcommand{\papercard}[5]{%
   \IfFileExists{#1}{\fcolorbox{thupurple!40}{white}{\includegraphics[width=0.95\linewidth,height=0.2\textheight,keepaspectratio]{#1}}}{%
@@ -106,100 +107,136 @@
     \begin{column}{0.47\textwidth}
       \footnotesize
       \begin{itemize}
-        \item \textbf{Record cells are hybrid.} Formamidinium-rich mixed-cation, mixed-halide perovskites reached about 28\,\% (single junction)\cit{1}.
+        \item \textbf{Record cells are hybrid.} Formamidinium-rich mixed-cation, mixed-halide perovskites reached about 28\,\% (single junction)\cit{NREL 2026}.
         \item \textbf{Organic cations limit thermal stability.} Methylammonium and formamidinium are volatile at processing temperatures.
-        \item \textbf{All-inorganic CsPbI$_3$} has no volatile cation and a gap of about 1.7 eV, suited to the top cell of perovskite/silicon tandems (32.5\,\% at HZB\cit{19}). Best single cells reach about 21--22\,\%.
+        \item \textbf{All-inorganic CsPbI$_3$} has no volatile cation and a gap of about 1.7 eV, suited to the top cell of perovskite/silicon tandems (32.5\,\% at HZB\cit{Mariotti 2023}). Best single cells reach about 21--22\,\%.
       \end{itemize}
     \end{column}
     \begin{column}{0.51\textwidth}
       \centering
-      {\scriptsize\textbf{Hybrid, 26.08\,\% certified}\cit{17}}\par\vspace{0.1em}
+      {\scriptsize\textbf{Hybrid, 26.08\,\% certified}}\par\vspace{0.1em}
       \papercard{record_hybrid.png}{Nature \textbf{616}, 724--730 (2023)}{Controlled growth of perovskite layers with volatile alkylammonium chlorides}{J.~Park, J.~Kim, H.-S.~Yun, M.\,J.~Paik, E.~Noh, H.\,J.~Mun, M.\,G.~Kim, T.\,J.~Shin, S.\,I.~Seok}{DOI 10.1038/s41586-023-05825-y}
       \par\vspace{0.3em}
-      {\scriptsize\textbf{All-inorganic CsPbI$_3$, above 21.5\,\%}\cit{18}}\par\vspace{0.1em}
+      {\scriptsize\textbf{All-inorganic CsPbI$_3$, above 21.5\,\%}}\par\vspace{0.1em}
       \papercard{record_inorganic.png}{Nature Energy \textbf{8}, 989--1001 (2023)}{Phase-heterojunction all-inorganic perovskite solar cells surpassing 21.5\,\% efficiency}{S.\,S.~Mali, J.\,V.~Patil, J.-Y.~Shao, Y.-W.~Zhong, S.\,R.~Rondiya, N.\,Y.~Dzade, C.\,K.~Hong}{Issue 9, September 2023}
       \par\vspace{0.3em}
-      {\scriptsize\textbf{Perovskite/silicon tandem (HZB), 32.5\,\% certified}\cit{19}}\par\vspace{0.1em}
+      {\scriptsize\textbf{Perovskite/silicon tandem (HZB), 32.5\,\% certified}}\par\vspace{0.1em}
       \papercard{record_tandem.png}{Science \textbf{381}, 63--69 (2023)}{Interface engineering for high-performance, triple-halide perovskite--silicon tandem solar cells}{S.~Mariotti, E.~K\"ohnen, F.~Scheler, K.~Sveinbj\"ornsson, \ldots, L.~Korte, S.~Albrecht (32 authors)}{DOI 10.1126/science.adf5872}
     \end{column}
   \end{columns}
-  \refs{\RA\ Newer certified records (about 27--28\,\%) appear there.\quad \RQ\quad \RR\quad \RS}
+  \refs{\RA\ Newer certified records (about 27--28\,\%) appear there. Full references for the three papers at the end.}
 \end{frame}
 
 \begin{frame}{The phase problem}
-  \small
-  \begin{itemize}
-    \item \textbf{Four phases.} Cubic $\alpha$ (above about 300\,$^\circ$C) $\rightarrow$ tetragonal $\beta$ $\rightarrow$ orthorhombic \textbf{$\gamma$} on cooling, by octahedral tilting. All three are black (photoactive).
-    \item \textbf{$\delta$ is the ground state} at room temperature: yellow, edge-sharing PbI$_6$ chains, gap about 2.8 eV\cit{2}.
-    \item \textbf{$\gamma$ is metastable with respect to $\delta$}, not to $\alpha$. Quenching keeps $\gamma$ because $\alpha\rightarrow\beta\rightarrow\gamma$ is displacive and fast, whereas $\gamma\rightarrow\delta$ rebuilds the network and is slow.
-  \end{itemize}
-    % Is quenching a hard process? why we need to stabilize gamma if alpha revert to gamma anyway?
-    % Add the experimental phase diagram on the side, from the phase course
-  \refs{\RB}
+  \begin{columns}[c]
+    \begin{column}{0.56\textwidth}
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{Four phases.} Cubic $\alpha$ $\rightarrow$ tetragonal $\beta$ $\rightarrow$ orthorhombic \textbf{$\gamma$} on cooling, by octahedral tilting. All three are black (photoactive).
+        \item \textbf{$\delta$ is the ground state} at room temperature. It is yellow, with edge-sharing PbI$_6$ chains and a gap of about 2.8 eV\cit{Sutton 2018}.
+        \item \textbf{Slow cooling gives $\delta$.} $\alpha$ is stable only between 599 and 758 K (yellow box), and $\delta$ below 599 K\cit{van Hattem 2023}.
+        \item \textbf{Quenching is easy. Keeping $\gamma$ is the hard part.} Fast cooling turns $\alpha$ into $\gamma$ by tilting, a displacive and fast change. At room temperature $\gamma$ then turns into $\delta$, quickly in humid air\cit{Steele 2019}. This step rebuilds the network and is slow, but not slow enough.
+        \item \alert{Stabilising $\gamma$ means slowing $\gamma\rightarrow\delta$}, not forming $\gamma$.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.68\textheight,keepaspectratio]{phase_CsI_PbI2_film.png}
+
+      \tiny CsI--PbI$_2$ phase diagram, data of van Hattem \emph{et al.} (2023). $\beta$ and $\gamma$ are absent because they are never stable.
+    \end{column}
+  \end{columns}
+  \refs{\RB\quad \RC\quad \RT}
 \end{frame}
 
-\begin{frame}{Strain stabilizes phase and ion-migration in different ways}
-  \small
-  \begin{itemize}
-    \item \textbf{Clamping keeps the black phase.} Films quenched from 330\,$^\circ$C on glass or ITO kept about 1\,\% in-plane tensile strain and stayed black\cit{3,4}. Lattice-mismatched nanoplates show the same trend\cit{16}.
-    \item \textbf{Tensile strain tends to lower migration barriers.} In CsPbI$_2$Br the barrier fell from 0.67 to 0.55 eV at +1.5\,\% and rose to 0.79 eV at $-1.5$\,\%\cit{5}.
-    % cite also my supervisor's group studies
-    \item \textbf{The response is hop-resolved.} In Pnma CsPbBr$_3$ the diffusivity tensor changed differently along each axis, and not monotonically\cit{6}.
-    \item \textbf{Bulk \cpi\ under strain}\cit{7}: two migration paths only, charge state not stated. Can be safely assume +1 vac since it s the dominant charge state in CsPbI3. 
+\begin{frame}{Strain affects the phase and ion migration in different ways}
+  \footnotesize
+  \begin{itemize}\setlength{\itemsep}{1pt}
+    \item \textbf{Clamping keeps the black phase.} Films quenched from 330\,$^\circ$C on glass or ITO kept about 1\,\% in-plane tensile strain and stayed black\cit{Steele 2019, Steele 2021}. Nanoplates on mica agreed\cit{Le 2023}.
+    \item \textbf{Tensile strain tends to lower migration barriers.} In CsPbI$_2$Br the barrier fell from 0.67 to 0.55 eV at +1.5\,\% and rose to 0.79 eV at $-1.5$\,\%\cit{Xue 2020}.
+    \item \textbf{Compression slows ions (group work).} In Cs$_2$AgInBr$_6$ a compressive biaxial strain of only 0.5\,\% raised the Ag$_i^+$ barrier from 0.15 to 0.24 eV\cit{Xu 2019}.
+    \item \textbf{The response is hop-resolved.} In Pnma CsPbBr$_3$ the diffusivity tensor changed differently along each axis, and not monotonically\cit{Smolders 2024}.
+    \item \textbf{Bulk \cpi\ under strain}\cit{Zhang 2025}. Two migration paths, neutral vacancy by default. HSE06 + SOC (this work) leaves $+1$ as the only stable charge state in the gap.
   \end{itemize}
-  \begin{alertblock}{Overall}
-    \small Tensile strain helps the phase but speeds up ion migration. No study has put both on one strain scale for \cpi.
-  \end{alertblock}
-  \refs{\RC\quad \RD\quad \RE\quad \RF\quad \RG\quad \RP}
+  \vspace{0.2em}
+  \alert{\textbf{Overall.} Tensile strain helps the phase but speeds up ion migration. No study has put both on one strain scale for \cpi.}
+  \refs{\RC\quad \RD\quad \RP\quad \RE\quad \RJ\quad \RF\quad \RG}
 \end{frame}
 
-\begin{frame}{What hasn't been answered}
+\begin{frame}{What has not been answered}
   \small
   \begin{enumerate}
-    \item \textbf{Phase.} How biaxial (001) strain changes the $\gamma$--$\delta$ energy difference. 
-    % Why biaxial strain? why the 001 direction
-    \item \textbf{Formation.} How strain changes the formation energy of $V_\mathrm{I}$, and which charge state is relevant across the gap.
+    \item \textbf{Phase.} How biaxial strain in the (001) plane changes the $\gamma$--$\delta$ energy difference.
+    \item \textbf{Formation and charge state.} How strain changes the formation energy of $V_\mathrm{I}$, and which charge state is stable across the gap.
     \item \textbf{Migration.} Which hops carry the transport, and how strain changes the barriers and the diffusivity tensor.
-    \item \textbf{Charge state.} Whether the neutral vacancy exists in the gap, and whether its barrier differs from $+1$.
-    % same as question 2 is it? 
   \end{enumerate}
-  \vspace{0.5em}
-  \textbf{Strains:} $\varepsilon = -1,\ -0.5,\ 0,\ +0.5,\ +1$\,\% on $a$ and $b$, with $c$ relaxed. The tensile end matches the clamping strain of Steele \emph{et al.}\cit{3}
-  \refs{\RC}
-  % move this to methods lol
+  \begin{block}{Why biaxial strain in the (001) plane}
+    \footnotesize
+    \begin{itemize}
+      \item \textbf{Biaxial.} A substrate clamps a film in both in-plane directions, and the film normal relaxes. Thermal-expansion mismatch on cooling therefore gives biaxial strain\cit{Steele 2019, Xue 2020}.
+      \item \textbf{(001).} The $ab$ plane of the Pnma cell, with the long $c$ axis free. Zhang \emph{et al.} (2025) found (001) strain the most favourable for keeping the black phase.
+      \item \textbf{Open point.} Steele \emph{et al.} (2019) found the long $b$ and $c$ axes in-plane in their films, which is the (100) plane. A (100) check would match those films.
+    \end{itemize}
+  \end{block}
+  \refs{\RC\quad \RE\quad \RG}
 \end{frame}
 
 % =====================================================================
 \section{Methods}
 
-\begin{frame}{Settings}
+\begin{frame}{Computational settings}
+  \scriptsize
+  \begin{tabular}{p{0.15\textwidth}p{0.36\textwidth}p{0.41\textwidth}}
+    \toprule
+    & Setting & Reason \\
+    \midrule
+    Code & VASP 6.3.2 with VTST\cit{Kresse 1996} & PAW potentials, CI-NEB built in \\
+    Functional & PBEsol\cit{Perdew 2008}, no dispersion & Barriers depend on I--I distances and tilt. PBE overestimates the lattice by 1--2\,\%, a built-in tensile strain \\
+    SOC & Single points, $+1$ and neutral & $V_\mathrm{I}^{+}$ energies unchanged, so relaxations without SOC \\
+    HSE06 + SOC & Band edges, 20-atom cell\cit{Krukau 2006} & Corrects the PBEsol gap for the charge-state analysis \\
+    \midrule
+    Supercell & 2$\times$2$\times$2, 160 atoms, $k$ 2$\times$2$\times$2, cell fixed & Vacancy images 16.7--24.8 \AA\ apart \\
+    Strain & $\varepsilon = -1,\ -0.5,\ 0,\ +0.5,\ +1$\,\% on $a$ and $b$, $c$ from an $E(c)$ fit\cit{Xu 2019} & Tensile end matches the clamping strain of Steele \emph{et al.} (2019) \\
+    Force limit & 0.01 eV/\AA\ (NEB 0.03 eV/\AA) & \\
+    NEB & CI-NEB\cit{Henkelman 2000}, 4 moving images & Climbing image gives the saddle point \\
+    Cross-check & Quantum ESPRESSO & Lattice within 0.5\,\%, S1 barrier within 0.02 eV \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.3em}
+  Workflow as in the group's earlier work\cit{Xu 2017, Xu 2019}. Potentials and cutoff on the next slide.
+  \refs{\RL\quad \RK\quad \RO\quad \RM\quad \RI\quad \RJ\quad \RC}
+\end{frame}
+
+\begin{frame}{Potentials and convergence tests}
   \begin{columns}[T]
-    \begin{column}{0.55\textwidth}
-      \scriptsize
-      \begin{tabular}{ll}
+    \begin{column}{0.44\textwidth}
+      \small
+      \textbf{PAW potentials.} Cs\_sv (5s 5p 6s, 9 e), Pb\_d (5d 6s 6p, 14 e), I (5s 5p, 7 e).
+
+      \vspace{0.5em}
+      \textbf{Cutoff.} All values from 350 to 650 eV agreed within 0.08 meV/atom. 500 eV was kept for accurate stress in the cell relaxations.
+
+      \vspace{0.5em}
+      \textbf{$k$-mesh.} 4$\times$4$\times$3 for the 20-atom cell, within 0.22 meV/atom of 6$\times$6$\times$4. The supercell mesh 2$\times$2$\times$2 is equivalent.
+    \end{column}
+    \begin{column}{0.52\textwidth}
+      \centering\scriptsize
+      \begin{tabular}{lcc}
         \toprule
-        Code & VASP 6.3.2 with VTST\cit{12} \\
-        Functional & PBEsol\cit{11}, no dispersion \\
-        Potentials, cutoff & PAW Cs\_sv, Pb\_d, I; 500 eV \\
-        $k$-mesh & 4$\times$4$\times$3 (unit cell), 2$\times$2$\times$2 (supercell) \\
-        Supercell & 2$\times$2$\times$2, 160 atoms, cell fixed \\
-        Force limit & 0.01 eV/\AA\ (NEB 0.03 eV/\AA) \\
-        NEB & CI-NEB\cit{13}, 4 images \\
-        Checks & SOC; HSE06+SOC\cit{15} band edges \\
-        Cross-check & Quantum ESPRESSO (same physics) \\
+        $k$-mesh & VASP (meV/atom) & QE (meV/atom) \\
+        \midrule
+        2$\times$2$\times$1 & +45.2 & +45.5 \\
+        3$\times$3$\times$2 & +2.48 & +2.5 \\
+        \textbf{4$\times$4$\times$3} & \textbf{+0.22} & \textbf{+0.23} \\
+        5$\times$5$\times$4 & +0.004 & +0.004 \\
         \bottomrule
       \end{tabular}
-    \end{column}
-    \begin{column}{0.42\textwidth}
-      \small
-      \textbf{Why PBEsol.} Barriers depend on I--I distances and the octahedral tilt. PBE overestimates the lattice by 1--2\,\%, which acts like built-in tensile strain, the very effect under study.
 
-      \vspace{0.4em}
-      \textbf{Why no SOC in relaxations.} For $V_\mathrm{I}^{+}$ SOC changed nothing (next slides). Same workflow as the group's earlier work\cit{9,10}.
+      \vspace{0.3em}
+      Energy above the 6$\times$6$\times$4 result, 20-atom cell.
     \end{column}
   \end{columns}
-  \refs{\RI\quad \RJ\quad \RK\quad \RL\quad \RM\quad \RO}
-  % General things first like Code, Functional, explain why too + SOC-HSE check, name the paper clearly title + author + year (This should be apply whenever refering cuz number is hard to track), then supercell, force limit, NEB. potential and cutoff will be presented with convergence test
 \end{frame}
 
 \begin{frame}{Structure and the two iodine sites}
@@ -214,7 +251,7 @@
     \end{column}
   \end{columns}
   \small
-  \textbf{Relaxed lattice:} 8.371 $\times$ 8.950 $\times$ 12.402 \AA\ (Pnma). Zhang \emph{et al.} (PBEsol) reported 8.39, 8.96, 12.37 \AA\cit{7}.
+  \textbf{Relaxed lattice:} 8.371 $\times$ 8.950 $\times$ 12.402 \AA\ (Pnma). Zhang \emph{et al.} (2025, PBEsol) reported 8.39, 8.96, 12.37 \AA.
   \textbf{4c} apical sites sit in the CsI layers, \textbf{8d} equatorial sites in the PbI$_2$ layers.
   \refs{\RG}
 \end{frame}
@@ -301,7 +338,7 @@
         \item With the HSE06 + SOC edges, $\varepsilon(+/0)$ lies \textbf{0.44 eV above the CBM}.
         \item \alert{$V_\mathrm{I}$ is $+1$ for every Fermi level in the gap}, so no neutral barrier is needed.
         \item I-rich: $E_f(V_\mathrm{I}^+)$ = 0.65 eV at the VBM. I-poor: $E_f < 0$ below $E_F \approx 0.3$ eV.
-        \item Still to add: Freysoldt correction\cit{14} (LOCPOT, dielectric constant).
+        \item Still to add: Freysoldt correction\cit{Freysoldt 2014} (LOCPOT, dielectric constant).
       \end{itemize}
     \end{column}
   \end{columns}
@@ -335,7 +372,7 @@
       \end{tabular}
 
       \vspace{0.4em}
-      Arber \emph{et al.}\cit{8}: 0.34 (8d--8d), 0.35 (8d--4c), 0.77 eV (4c--4c). QE check of S1: 0.361 eV.
+      Arber \emph{et al.} (2025): 0.34 (8d--8d), 0.35 (8d--4c), 0.77 eV (4c--4c). QE check of S1: 0.361 eV.
     \end{column}
     \begin{column}{0.54\textwidth}
       \centering
@@ -351,7 +388,7 @@
 
 \begin{frame}{Diffusivity tensor of $V_\mathrm{I}^{+}$}
   \small
-  \textbf{Method.} Master equation on the full hop network of the unit cell (12 iodine sites), as Smolders \emph{et al.}\cit{6}; prefactor $10^{12}$ Hz for every hop. Kinetic Monte Carlo on the same network agreed within 2\,\%.
+  \textbf{Method.} Master equation on the full hop network of the unit cell (12 iodine sites), as Smolders \emph{et al.} (2024); prefactor $10^{12}$ Hz for every hop. Kinetic Monte Carlo on the same network agreed within 2\,\%.
 
   \vspace{0.3em}
   \begin{columns}[T]
@@ -416,7 +453,7 @@
       \vspace{0.4em}
       \small
       \begin{itemize}
-        \item $c$ follows $\varepsilon$ with $\Delta c/c \approx -0.6\,\varepsilon$ (method of Xu \emph{et al.}\cit{10}).
+        \item $c$ follows $\varepsilon$ with $\Delta c/c \approx -0.6\,\varepsilon$ (method of Xu \emph{et al.} (2019)).
         \item Compression costs more than tension.
         \item \textbf{3--5 meV per formula unit at $\pm$1\,\%}, small next to the 79 meV $\gamma$--$\delta$ gap.
       \end{itemize}
@@ -438,7 +475,7 @@
         \item \textbf{Coherent} ($\delta$ strained too, most stable plane): 80.7, 79.3, \textbf{78.8}, 78.9, 79.8 meV/f.u.\ at $-1$ to +1\,\%.
         \item \textbf{Incoherent} ($\delta$ relaxed): 83.5, 80.1, \textbf{78.8}, 79.4, 82.0 meV/f.u.
         \item \alert{The gap is smallest at $\varepsilon$ = 0}: $\pm$1\,\% strain makes $\gamma$ slightly \emph{less} stable in both limits.
-        \item Strain cannot stabilise $\gamma$ thermodynamically; clamping must act \textbf{kinetically}, in line with Steele \emph{et al.}\cit{4}
+        \item Strain cannot stabilise $\gamma$ thermodynamically; clamping must act \textbf{kinetically}, in line with Steele \emph{et al.} (2021)
       \end{itemize}
     \end{column}
   \end{columns}
@@ -498,6 +535,7 @@
     \item \textbf{Strained NEBs.} Four fast hops (S2, S4, S1, S5) at four strains make 16 NEBs of 2--4 days on 4 nodes each. S2 and S4 alone carry most of the transport.
     \item \textbf{Charge state.} $V_\mathrm{I}$ is $+1$ throughout the gap (HSE06 + SOC), so the charge-state question is answered without a neutral NEB.
     \item \textbf{Phase result.} Strain does not stabilise $\gamma$ against $\delta$ at $\pm$1\,\%; both limits reported, with the kinetic reading.
+    \item \textbf{Contrast with Steele \emph{et al.} (2019).} Their DFT found strain destabilised $\delta$ strongly against $\gamma$. How $\delta$ is strained (its own lattice here, the film interface there) needs a check.
     \item \textbf{Prefactors.} Kept at $10^{12}$ Hz; the axis order of the tensor stays open.
     \item \textbf{Fermi level.} A self-consistent $E_F$ needs acceptors ($V_\mathrm{Pb}$, $V_\mathrm{Cs}$), outside the present scope.
   \end{enumerate}
@@ -538,6 +576,7 @@
     \item[] \RQ
     \item[] \RR
     \item[] \RS
+    \item[] \RT
   \end{itemize}
 \end{frame}
 
