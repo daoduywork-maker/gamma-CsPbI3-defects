@@ -109,7 +109,6 @@
         \item \textbf{Record cells are hybrid.} Formamidinium-rich mixed-cation, mixed-halide perovskites reached about 28\,\% (single junction)\cit{1}.
         \item \textbf{Organic cations limit thermal stability.} Methylammonium and formamidinium are volatile at processing temperatures.
         \item \textbf{All-inorganic CsPbI$_3$} has no volatile cation and a gap of about 1.7 eV, suited to the top cell of perovskite/silicon tandems (32.5\,\% at HZB\cit{19}). Best single cells reach about 21--22\,\%.
-        \item \textbf{The obstacle is the phase}, not the absorber itself.
       \end{itemize}
     \end{column}
     \begin{column}{0.51\textwidth}
@@ -133,36 +132,41 @@
     \item \textbf{Four phases.} Cubic $\alpha$ (above about 300\,$^\circ$C) $\rightarrow$ tetragonal $\beta$ $\rightarrow$ orthorhombic \textbf{$\gamma$} on cooling, by octahedral tilting. All three are black (photoactive).
     \item \textbf{$\delta$ is the ground state} at room temperature: yellow, edge-sharing PbI$_6$ chains, gap about 2.8 eV\cit{2}.
     \item \textbf{$\gamma$ is metastable with respect to $\delta$}, not to $\alpha$. Quenching keeps $\gamma$ because $\alpha\rightarrow\beta\rightarrow\gamma$ is displacive and fast, whereas $\gamma\rightarrow\delta$ rebuilds the network and is slow.
-    \item \textbf{This work (PBEsol, 0 K):} $\delta$ lies \alert{79 meV per formula unit} below $\gamma$ (70 meV with SOC) and is 6\,\% denser (218.9 vs 232.3 \AA$^3$ per formula unit).
   \end{itemize}
+    % Is quenching a hard process? why we need to stabilize gamma if alpha revert to gamma anyway?
+    % Add the experimental phase diagram on the side, from the phase course
   \refs{\RB}
 \end{frame}
 
-\begin{frame}{Strain: a stabiliser that also moves the ions}
+\begin{frame}{Strain stabilizes phase and ion-migration in different ways}
   \small
   \begin{itemize}
     \item \textbf{Clamping keeps the black phase.} Films quenched from 330\,$^\circ$C on glass or ITO kept about 1\,\% in-plane tensile strain and stayed black\cit{3,4}. Lattice-mismatched nanoplates show the same trend\cit{16}.
-    \item \textbf{Tensile strain lowers migration barriers.} In CsPbI$_2$Br the barrier fell from 0.67 to 0.55 eV at +1.5\,\% and rose to 0.79 eV at $-1.5$\,\%\cit{5}.
+    \item \textbf{Tensile strain tends to lower migration barriers.} In CsPbI$_2$Br the barrier fell from 0.67 to 0.55 eV at +1.5\,\% and rose to 0.79 eV at $-1.5$\,\%\cit{5}.
+    % cite also my supervisor's group studies
     \item \textbf{The response is hop-resolved.} In Pnma CsPbBr$_3$ the diffusivity tensor changed differently along each axis, and not monotonically\cit{6}.
-    \item \textbf{Bulk \cpi\ under strain}\cit{7}: two migration paths only, charge state not stated.
+    \item \textbf{Bulk \cpi\ under strain}\cit{7}: two migration paths only, charge state not stated. Can be safely assume +1 vac since it s the dominant charge state in CsPbI3. 
   \end{itemize}
-  \begin{alertblock}{Tension}
+  \begin{alertblock}{Overall}
     \small Tensile strain helps the phase but speeds up ion migration. No study has put both on one strain scale for \cpi.
   \end{alertblock}
   \refs{\RC\quad \RD\quad \RE\quad \RF\quad \RG\quad \RP}
 \end{frame}
 
-\begin{frame}{Research questions}
+\begin{frame}{What hasn't been answered}
   \small
   \begin{enumerate}
-    \item \textbf{Phase.} How biaxial (001) strain changes the $\gamma$--$\delta$ energy difference.
+    \item \textbf{Phase.} How biaxial (001) strain changes the $\gamma$--$\delta$ energy difference. 
+    % Why biaxial strain? why the 001 direction
     \item \textbf{Formation.} How strain changes the formation energy of $V_\mathrm{I}$, and which charge state is relevant across the gap.
     \item \textbf{Migration.} Which hops carry the transport, and how strain changes the barriers and the diffusivity tensor.
     \item \textbf{Charge state.} Whether the neutral vacancy exists in the gap, and whether its barrier differs from $+1$.
+    % same as question 2 is it? 
   \end{enumerate}
   \vspace{0.5em}
   \textbf{Strains:} $\varepsilon = -1,\ -0.5,\ 0,\ +0.5,\ +1$\,\% on $a$ and $b$, with $c$ relaxed. The tensile end matches the clamping strain of Steele \emph{et al.}\cit{3}
   \refs{\RC}
+  % move this to methods lol
 \end{frame}
 
 % =====================================================================
@@ -195,6 +199,7 @@
     \end{column}
   \end{columns}
   \refs{\RI\quad \RJ\quad \RK\quad \RL\quad \RM\quad \RO}
+  % General things first like Code, Functional, explain why too + SOC-HSE check, name the paper clearly title + author + year (This should be apply whenever refering cuz number is hard to track), then supercell, force limit, NEB. potential and cutoff will be presented with convergence test
 \end{frame}
 
 \begin{frame}{Structure and the two iodine sites}
