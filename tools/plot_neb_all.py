@@ -34,7 +34,7 @@ for ax, (hop, ends) in zip(axs.flat, HOPS):
     ax.plot(xs, e, "o", ms=3.2, color=PU, zorder=3)
     ax.plot(xs[k], e[k], "o", ms=5.5, mfc="none", mec=OR, mew=1.1, zorder=4)
     ax.axhline(0, color=MUT, lw=0.5, ls=(0, (3, 2)))
-    ax.text(0.5, 0.95, "%.3f eV" % e[k], transform=ax.transAxes, ha="center", va="top", color=TXT, fontsize=8.5)
+    ax.text(0.04, 0.95, "%.3f eV" % e[k], transform=ax.transAxes, ha="left", va="top", color=TXT, fontsize=8.5)
     ax.set_xlim(xs[0] - 0.05 * xs[-1], xs[-1] * 1.05)
     print("%s %.3f eV" % (hop, e[k]))
 last = axs.flat[-1]
