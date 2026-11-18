@@ -69,6 +69,7 @@
 \newcommand{\RE}{[5] E.~Fransson, J.~Wiktor, P.~Erhart, J.\ Phys.\ Chem.\ C \textbf{127}, 13773 (2023).}
 \newcommand{\RF}{[6] T.~Braeckevelt \emph{et al.}, Chem.\ Mater.\ \textbf{34}, 8561 (2022).}
 \newcommand{\RG}{[7] T.~Braeckevelt \emph{et al.}, arXiv:2602.20058 (2026).}
+\newcommand{\RH}{[8] A.~van Hattem, D.~Alders, R.\,J.\,M.~Konings, A.\,L.~Smith, J.\ Phys.\ Chem.\ C \textbf{127}, 17482 (2023).}
 
 \title{The Phase Diagram of CsPbI$_3$}
 \subtitle{What experiment and machine-learned potentials show}
@@ -121,6 +122,24 @@
     \end{column}
   \end{columns}
   \refs{\RA\quad \RC}
+\end{frame}
+
+\begin{frame}{Composition--temperature: the CsI--PbI$_2$ system}
+  \begin{columns}[c]
+    \begin{column}{0.55\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{phase_CsI_PbI2.png}
+    \end{column}
+    \begin{column}{0.43\textwidth}
+      \small
+      \begin{itemize}
+        \item \textbf{Two compounds}\cit{8}: Cs$_4$PbI$_6$ (peritectic, 754 K) and CsPbI$_3$ (congruent melting, 758 K). Eutectics at $x_{\mathrm{PbI_2}}$ = 0.38 (718 K) and 0.80 (618 K).
+        \item \textbf{CsPbI$_3$ is a line compound}: $\delta$ below 599 K, $\alpha$ above. $\beta$ and $\gamma$ do not appear, because an equilibrium diagram holds no metastable phase.
+        \item \textbf{No solubility range}: a small excess of CsI or PbI$_2$ leaves Cs$_4$PbI$_6$ or PbI$_2$ as a second phase.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \refs{\RH\ DSC and CALPHAD. Liquidus dashed between the measured invariant points; the liquid composition at the peritectic was not reported and is drawn at $x$ = 0.30.}
 \end{frame}
 
 \begin{frame}{Experiment: thin films and strain}
@@ -191,6 +210,7 @@
     \item[] \RE
     \item[] \RF
     \item[] \RG
+    \item[] \RH
   \end{itemize}
 \end{frame}
 

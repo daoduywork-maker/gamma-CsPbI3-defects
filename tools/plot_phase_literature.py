@@ -66,3 +66,48 @@ for s in ("top", "right"):
 fig.tight_layout(pad=0.3)
 fig.savefig("assets/phase_delta_functional.png", dpi=600, facecolor="white")
 print("written assets/phase_ladder.png, assets/phase_delta_functional.png")
+
+# ---- figure 3: CsI-PbI2 pseudo-binary (van Hattem et al., J. Phys. Chem. C 127, 17482 (2023)) ----
+# Measured invariant points (DSC); liquidus drawn as a schematic between them. The liquid
+# composition at the Cs4PbI6 peritectic is not reported there: x = 0.30 is a placeholder.
+fig, ax = plt.subplots(figsize=(10.0 * CM, 7.0 * CM))
+xp = 0.30
+liq = [(0.0, 904), (xp, 754), (0.38, 718), (0.50, 758), (0.80, 618), (1.0, 687)]
+ax.plot([p[0] for p in liq], [p[1] for p in liq], color=TXT, lw=1.0, ls=(0, (4, 2)))
+for x, T in liq:
+    ax.plot(x, T, "o", ms=3.2, color=TXT)
+# invariant lines
+ax.plot([0.0, xp], [754, 754], color=TXT, lw=0.9)                 # peritectic
+ax.plot([0.20, 0.50], [718, 718], color=TXT, lw=0.9)              # eutectic 1
+ax.plot([0.50, 1.00], [618, 618], color=TXT, lw=0.9)              # eutectic 2
+# compounds
+ax.plot([0.20, 0.20], [300, 754], color=PU, lw=1.4)
+ax.plot([0.50, 0.50], [300, 758], color=PU, lw=1.4)
+ax.plot([0.20, 1.00], [599, 599], color=OR, lw=0.9)   # delta -> alpha of CsPbI3 crosses both two-phase fields
+ax.text(0.62, 592, r"$\delta\rightarrow\alpha$ 599 K", fontsize=7, color=OR, va="top")
+ax.text(0.20, 305, r"Cs$_4$PbI$_6$", fontsize=7.5, color=PU, ha="center", va="bottom",
+        bbox=dict(fc="white", ec="none", pad=0.5))
+ax.text(0.50, 305, r"CsPbI$_3$", fontsize=7.5, color=PU, ha="center", va="bottom",
+        bbox=dict(fc="white", ec="none", pad=0.5))
+lab = dict(fontsize=7, color=MUT, ha="center", va="center")
+ax.text(0.62, 840, "liquid", **lab)
+ax.text(0.10, 520, "CsI +\n" r"Cs$_4$PbI$_6$", **lab)
+ax.text(0.35, 640, r"Cs$_4$PbI$_6$ +" "\n" r"$\alpha$-CsPbI$_3$", **lab)
+ax.text(0.35, 450, r"Cs$_4$PbI$_6$ +" "\n" r"$\delta$-CsPbI$_3$", **lab)
+ax.text(0.75, 450, r"$\delta$-CsPbI$_3$ + PbI$_2$", **lab)
+ax.text(0.02, 912, "CsI 904 K", fontsize=7, color=TXT, va="bottom")
+ax.text(0.98, 695, "PbI$_2$ 687 K", fontsize=7, color=TXT, ha="right", va="bottom")
+ax.text(0.50, 766, "758 K", fontsize=7, color=TXT, ha="center", va="bottom")
+ax.text(0.38, 708, "718 K", fontsize=7, color=TXT, ha="center", va="top")
+ax.text(0.80, 628, "618 K", fontsize=7, color=TXT, ha="center", va="bottom")
+ax.text(0.15, 762, "754 K", fontsize=7, color=TXT, ha="center", va="bottom")
+ax.axhline(300, color=MUT, lw=0.5, ls=":")
+ax.set_xlim(0, 1)
+ax.set_ylim(290, 960)
+ax.set_xlabel(r"Mole fraction PbI$_2$")
+ax.set_ylabel("Temperature (K)")
+ax.set_xticks([0, 0.2, 0.5, 0.8, 1.0])
+ax.set_xticklabels(["CsI", "0.2", "0.5", "0.8", r"PbI$_2$"])
+fig.tight_layout(pad=0.3)
+fig.savefig("assets/phase_CsI_PbI2.png", dpi=600, facecolor="white")
+print("written assets/phase_CsI_PbI2.png")
