@@ -127,7 +127,7 @@
     \item \textbf{Four phases.} Cubic $\alpha$ (above about 300\,$^\circ$C) $\rightarrow$ tetragonal $\beta$ $\rightarrow$ orthorhombic \textbf{$\gamma$} on cooling, by octahedral tilting. All three are black (photoactive).
     \item \textbf{$\delta$ is the ground state} at room temperature: yellow, edge-sharing PbI$_6$ chains, gap about 2.8 eV\cit{2}.
     \item \textbf{$\gamma$ is metastable with respect to $\delta$}, not to $\alpha$. Quenching keeps $\gamma$ because $\alpha\rightarrow\beta\rightarrow\gamma$ is displacive and fast, whereas $\gamma\rightarrow\delta$ rebuilds the network and is slow.
-    \item \textbf{This work (PBEsol, 0 K):} $\delta$ lies \alert{79 meV per formula unit} below $\gamma$ and is 6\,\% denser (218.9 vs 232.3 \AA$^3$ per formula unit).
+    \item \textbf{This work (PBEsol, 0 K):} $\delta$ lies \alert{79 meV per formula unit} below $\gamma$ (70 meV with SOC) and is 6\,\% denser (218.9 vs 232.3 \AA$^3$ per formula unit).
   \end{itemize}
   \refs{\RB}
 \end{frame}
@@ -235,21 +235,25 @@
   \small
   \begin{columns}[T]
     \begin{column}{0.5\textwidth}
-      \begin{tabular}{lc}
+      \begin{tabular}{lccc}
         \toprule
-        Method & Gap at $\Gamma$ \\
+        Method & VBM & CBM & Gap \\
         \midrule
-        PBEsol & 1.62 eV \\
-        PBEsol + SOC & 0.70 eV \\
-        HSE06 + SOC (unit cell) & \run \\
-        Experiment & $\approx$1.73 eV \\
+        PBEsol & 1.849 & 3.467 & 1.62 eV \\
+        PBEsol + SOC & 1.994 & 2.696 & 0.70 eV \\
+        \textbf{HSE06 + SOC} & \textbf{1.716} & \textbf{2.973} & \textbf{1.26 eV} \\
+        Experiment & & & $\approx$1.73 eV \\
         \bottomrule
       \end{tabular}
+
+      \vspace{0.3em}
+      \scriptsize 20-atom unit cell, same PBEsol structure, eigenvalues in eV.
     \end{column}
     \begin{column}{0.47\textwidth}
       \begin{itemize}
         \item The PBEsol gap is right by \textbf{error cancellation}: missing SOC opens it by about 0.9 eV, the semilocal error closes it.
-        \item The formation-energy diagram needs correct band edges, so they come from \textbf{HSE06 + SOC on the 20-atom unit cell}, aligned to the PBEsol supercell.
+        \item HSE06 + SOC moved the VBM by $-0.13$ eV and the CBM by $-0.50$ eV relative to PBEsol.
+        \item HSE06 + SOC forces on the PBEsol structure: at most 0.037 eV/\AA, so the PBEsol geometry is adequate for the band edges.
       \end{itemize}
     \end{column}
   \end{columns}
@@ -273,7 +277,7 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}{Formation energy against the Fermi level (preliminary)}
+\begin{frame}{Formation energy and the charge state}
   \begin{columns}[c]
     \begin{column}{0.5\textwidth}
       \centering
@@ -282,10 +286,11 @@
     \begin{column}{0.47\textwidth}
       \small
       \begin{itemize}
-        \item $\varepsilon(+/0) = \mathbf{1.56}$ \textbf{eV}, 0.06 eV below the PBEsol CBM: \textbf{$+1$ dominates almost the whole gap}.
-        \item I-rich: $E_f(V_\mathrm{I}^+)$ = 0.65--2.26 eV.
-        \item I-poor: $E_f < 0$ below $E_F \approx 0.3$ eV, so iodine-poor films cannot be strongly p-type.
-        \item Still to add: Freysoldt correction\cit{14} (LOCPOT, dielectric constant) and HSE06 + SOC edges.
+        \item PBEsol: $\varepsilon(+/0)$ = 1.56 eV above the VBM, 0.06 eV below the PBEsol CBM.
+        \item With the HSE06 + SOC edges, $\varepsilon(+/0)$ lies \textbf{0.44 eV above the CBM}.
+        \item \alert{$V_\mathrm{I}$ is $+1$ for every Fermi level in the gap}, so no neutral barrier is needed.
+        \item I-rich: $E_f(V_\mathrm{I}^+)$ = 0.65 eV at the VBM. I-poor: $E_f < 0$ below $E_F \approx 0.3$ eV.
+        \item Still to add: Freysoldt correction\cit{14} (LOCPOT, dielectric constant).
       \end{itemize}
     \end{column}
   \end{columns}
@@ -390,6 +395,7 @@
         $\varepsilon$ & $c$ (\AA) & Strain energy (meV/f.u.) \\
         \midrule
         $-1.0$\,\% & 12.465 & 4.7 \\
+        $-0.5$\,\% & 12.426 & 1.3 \\
         0 & 12.388 & 0 \\
         +0.5\,\% & 12.352 & 0.6 \\
         +1.0\,\% & 12.314 & 3.2 \\
@@ -408,45 +414,49 @@
   \refs{\RJ}
 \end{frame}
 
-\begin{frame}{$\gamma$ against $\delta$: two limits}
-  \small
-  \begin{columns}[T]
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Coherent: $\delta$ strained the same way}
-        $\Delta E_{\gamma\delta}(\varepsilon) = \Delta E_\gamma(\varepsilon) - \Delta E_\delta(\varepsilon)$, with $\delta$ strained on each of its three planes (108 cells, \run).
-      \end{block}
+\begin{frame}{$\gamma$ against $\delta$ under strain}
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{strain_gamma_delta.png}
     \end{column}
     \begin{column}{0.48\textwidth}
-      \begin{block}{Incoherent: $\delta$ grains relax freely}
-        Only $\gamma$ pays the strain energy, so strain makes $\gamma$ \emph{less} stable by 3--5 meV per formula unit.
-      \end{block}
+      \small
+      \begin{itemize}
+        \item $\delta$ strained on each of its three planes, free axis scanned (135 cells); $\gamma$ from its $E(c)$ scans.
+        \item \textbf{Coherent} ($\delta$ strained too, most stable plane): 80.7, 79.3, \textbf{78.8}, 78.9, 79.8 meV/f.u.\ at $-1$ to +1\,\%.
+        \item \textbf{Incoherent} ($\delta$ relaxed): 83.5, 80.1, \textbf{78.8}, 79.4, 82.0 meV/f.u.
+        \item \alert{The gap is smallest at $\varepsilon$ = 0}: $\pm$1\,\% strain makes $\gamma$ slightly \emph{less} stable in both limits.
+        \item Strain cannot stabilise $\gamma$ thermodynamically; clamping must act \textbf{kinetically}, in line with Steele \emph{et al.}\cit{4}
+      \end{itemize}
     \end{column}
   \end{columns}
-
-  \vspace{0.6em}
-  \textbf{Reading.} Unless $\delta$ pays much more for the same strain, a 1\,\% strain cannot close a 79 meV gap. Clamping then stabilises $\gamma$ \textbf{kinetically}, by blocking the reconstructive $\gamma\rightarrow\delta$ transformation, in line with the symmetry argument of Steele \emph{et al.}\cit{4}
   \refs{\RD}
 \end{frame}
 
-\begin{frame}{Vacancy formation under strain (first result)}
+\begin{frame}{Vacancy formation under strain}
   \small
   \centering
-  \begin{tabular}{lccc}
+  \begin{tabular}{lcccc}
     \toprule
-    $\varepsilon$ & $E(\mathrm{perfect})$ (eV) & $E(V_\mathrm{I}^{+},\ \mathrm{4c})$ (eV) & $E(V_\mathrm{I}^{+}) - E(\mathrm{perfect})$ \\
+    $\varepsilon$ & $E(V_\mathrm{I}^{+}) - E(\mathrm{perfect})$ & VBM (eV) & $E(\mathrm{8d}) - E(\mathrm{4c})$ & $E_f(V_\mathrm{I}^+)$ \\
     \midrule
-    0 & $-486.511$ & $-485.984$ & 0.527 eV \\
-    $-1$\,\% & $-486.361$ & $-485.926$ & \textbf{0.435 eV} \\
-    +1\,\% & $-486.383$ & \run & --- \\
+    $-1$\,\% & 0.431 eV & 1.969 & $-4.3$ meV & \textbf{0.669 eV} \\
+    0 & 0.527 eV & 1.849 & +0.9 meV & \textbf{0.645 eV} \\
+    +0.5\,\% & 0.565 eV & 1.782 & \run & \textbf{0.624 eV} \\
+    +1\,\% & 0.604 eV & 1.718 & $-6.5$ meV & \textbf{0.602 eV} \\
     \bottomrule
   \end{tabular}
 
-  \vspace{0.6em}
+  \vspace{0.2em}
+  {\scriptsize Lower site; $E_f$ at I-rich, $E_F$ at each strained VBM, alignment from the Cs core potentials. $-0.5$\,\% \run.}
+
+  \vspace{0.5em}
   \raggedright
   \begin{itemize}
-    \item The perfect strained supercell matched the unit-cell strain energy (4.7 meV per formula unit), a consistency check.
-    \item Compression lowered $E(V_\mathrm{I}^{+}) - E(\mathrm{perfect})$ by about 0.09 eV, before the band-edge shift. The VBM also moves with strain, so this is not yet $\Delta E_f$.
-    \item 8d at $\pm$1\,\% and all cells at +0.5\,\% are \run.
+    \item The raw energy rises under tension, but the VBM drops faster: \alert{tension lowers $E_f(V_\mathrm{I}^+)$ by about 0.034 eV per \%}, about 5$\times$ more vacancies at +1\,\% (300 K).
+    \item Strain splits the two sites slightly: 8d becomes 4--6 meV lower at $\pm$1\,\%.
+    \item The perfect strained supercells match the unit-cell strain energy, a consistency check.
   \end{itemize}
 \end{frame}
 
@@ -460,11 +470,10 @@
     Part & Item & State \\
     \midrule
     Setup & Lattice, supercells, QE cross-check & \done \\
-    Phase & Stability strip; $\delta$ relaxed; $\gamma$ $E(c)$ scans & \done \\
-    & $\delta$ strain scans, $\varepsilon = -0.5$\,\% cells & \run \\
-    Formation & Site energies $+1$, 0, SOC; preliminary diagram & \done \\
-    & HSE06 + SOC edges; Freysoldt correction & \run\ / \nxt \\
-    & Strained supercells ($-1$, +0.5, +1\,\%) & \run \\
+    Phase & Stability strip; $\delta$ relaxed; $\gamma$ and $\delta$ strain scans; SOC check & \done \\
+    Formation & Site energies; HSE06 + SOC edges; charge state ($+1$ only) & \done \\
+    & Strained supercells $-1$, +0.5, +1\,\% & \done\ (+0.5\,\% 8d \run) \\
+    & Strained supercells $-0.5$\,\%; Freysoldt correction & \nxt \\
     Migration & 7 barriers ($+1$); diffusivity tensor, KMC check & \done \\
     & Strained NEBs: S2, S4, S1, S5 & \nxt \\
     Side result & CsI-terminated slab: tilt recovers within about 1 nm & \done \\
@@ -476,24 +485,24 @@
   \small
   \begin{enumerate}
     \item \textbf{Strained NEBs.} Four fast hops (S2, S4, S1, S5) at four strains make 16 NEBs of 2--4 days on 4 nodes each. S2 and S4 alone carry most of the transport.
-    \item \textbf{Neutral vacancy.} A neutral NEB needs SOC (about 4 nodes per image). It runs only if HSE06 + SOC places $\varepsilon(+/0)$ inside the gap.
+    \item \textbf{Charge state.} $V_\mathrm{I}$ is $+1$ throughout the gap (HSE06 + SOC), so the charge-state question is answered without a neutral NEB.
+    \item \textbf{Phase result.} Strain does not stabilise $\gamma$ against $\delta$ at $\pm$1\,\%; both limits reported, with the kinetic reading.
     \item \textbf{Prefactors.} Kept at $10^{12}$ Hz; the axis order of the tensor stays open.
     \item \textbf{Fermi level.} A self-consistent $E_F$ needs acceptors ($V_\mathrm{Pb}$, $V_\mathrm{Cs}$), outside the present scope.
-    \item \textbf{Phase result.} Both limits (coherent, incoherent) reported, with the kinetic reading.
   \end{enumerate}
 \end{frame}
 
 \begin{frame}{Summary}
   \small
   \begin{itemize}
-    \item \textbf{$+1$ is the relevant charge state} across almost the whole gap. Its energies and barriers are robust at PBEsol; the neutral vacancy depends on the method.
+    \item \textbf{$V_\mathrm{I}$ is $+1$ for every Fermi level in the gap} (HSE06 + SOC edges). Its energies and barriers are robust at PBEsol.
     \item \textbf{Four short hops within 0.02 eV} (0.326--0.348 eV) carry the transport, each axis on a different hop. The tensor is nearly isotropic.
-    \item \textbf{1\,\% strain costs $\gamma$ only 3--5 meV per formula unit} against a 79 meV $\gamma$--$\delta$ gap, which points to kinetic stabilisation by clamping.
-    \item \textbf{Compression lowered the vacancy energy} by about 0.09 eV (first strained result).
+    \item \textbf{Strain does not stabilise $\gamma$}: the $\gamma$--$\delta$ gap (79 meV/f.u.) is smallest at zero strain and grows by up to 5 meV at $\pm$1\,\%. Clamping must act kinetically.
+    \item \textbf{Tension lowers the vacancy formation energy} by about 0.034 eV per \%: tensile films hold more iodine vacancies.
   \end{itemize}
   \vspace{0.6em}
   \centering
-  \textbf{Next: strained formation energies, HSE06 + SOC edges, then strained NEBs.}
+  \textbf{Next: $-0.5$\,\% supercells, then strained NEBs (does tension also lower the barriers?).}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{References}
