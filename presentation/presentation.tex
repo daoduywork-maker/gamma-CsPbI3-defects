@@ -80,9 +80,10 @@
 \newcommand{\RP}{[16] H.\,K.\,D.~Le \emph{et al.}, Matter \textbf{6}, 2368 (2023).}
 \newcommand{\RQ}{[17] J.~Park \emph{et al.}, Nature \textbf{616}, 724 (2023).}
 \newcommand{\RR}{[18] S.\,S.~Mali \emph{et al.}, Nat.\ Energy \textbf{8}, 989 (2023).}
+\newcommand{\RS}{[19] S.~Mariotti \emph{et al.}, Science \textbf{381}, 63 (2023).}
 % paper card: the screenshot #1 (e.g. record_hybrid.png) if present, otherwise a text card
 \newcommand{\papercard}[5]{%
-  \IfFileExists{#1}{\fcolorbox{thupurple!40}{white}{\includegraphics[width=0.95\linewidth,height=0.3\textheight,keepaspectratio]{#1}}}{%
+  \IfFileExists{#1}{\fcolorbox{thupurple!40}{white}{\includegraphics[width=0.95\linewidth,height=0.2\textheight,keepaspectratio]{#1}}}{%
   \fcolorbox{thupurple!40}{white}{\parbox{0.93\linewidth}{\raggedright\vspace{0.15em}\tiny\textcolor{gray}{#2}\par\vspace{0.1em}
   {\scriptsize\textbf{#3}}\par\vspace{0.15em}#4\par\textcolor{gray}{#5}\vspace{0.15em}}}}}
 
@@ -103,24 +104,27 @@
 \begin{frame}{Why all-inorganic CsPbI$_3$}
   \begin{columns}[T]
     \begin{column}{0.47\textwidth}
-      \small
+      \footnotesize
       \begin{itemize}
         \item \textbf{Record cells are hybrid.} Formamidinium-rich mixed-cation, mixed-halide perovskites reached about 28\,\% (single junction)\cit{1}.
         \item \textbf{Organic cations limit thermal stability.} Methylammonium and formamidinium are volatile at processing temperatures.
-        \item \textbf{All-inorganic CsPbI$_3$} has no volatile cation and a gap of about 1.7 eV, suited to tandem top cells. Best cells reach about 21--22\,\%.
+        \item \textbf{All-inorganic CsPbI$_3$} has no volatile cation and a gap of about 1.7 eV, suited to the top cell of perovskite/silicon tandems (32.5\,\% at HZB\cit{19}). Best single cells reach about 21--22\,\%.
         \item \textbf{The obstacle is the phase}, not the absorber itself.
       \end{itemize}
     \end{column}
     \begin{column}{0.51\textwidth}
       \centering
-      {\scriptsize\textbf{Hybrid, 26.08\,\% certified}\cit{17}}\par\vspace{0.15em}
+      {\scriptsize\textbf{Hybrid, 26.08\,\% certified}\cit{17}}\par\vspace{0.1em}
       \papercard{record_hybrid.png}{Nature \textbf{616}, 724--730 (2023)}{Controlled growth of perovskite layers with volatile alkylammonium chlorides}{J.~Park, J.~Kim, H.-S.~Yun, M.\,J.~Paik, E.~Noh, H.\,J.~Mun, M.\,G.~Kim, T.\,J.~Shin, S.\,I.~Seok}{DOI 10.1038/s41586-023-05825-y}
-      \par\vspace{0.5em}
-      {\scriptsize\textbf{All-inorganic CsPbI$_3$, above 21.5\,\%}\cit{18}}\par\vspace{0.15em}
+      \par\vspace{0.3em}
+      {\scriptsize\textbf{All-inorganic CsPbI$_3$, above 21.5\,\%}\cit{18}}\par\vspace{0.1em}
       \papercard{record_inorganic.png}{Nature Energy \textbf{8}, 989--1001 (2023)}{Phase-heterojunction all-inorganic perovskite solar cells surpassing 21.5\,\% efficiency}{S.\,S.~Mali, J.\,V.~Patil, J.-Y.~Shao, Y.-W.~Zhong, S.\,R.~Rondiya, N.\,Y.~Dzade, C.\,K.~Hong}{Issue 9, September 2023}
+      \par\vspace{0.3em}
+      {\scriptsize\textbf{Perovskite/silicon tandem (HZB), 32.5\,\% certified}\cit{19}}\par\vspace{0.1em}
+      \papercard{record_tandem.png}{Science \textbf{381}, 63--69 (2023)}{Interface engineering for high-performance, triple-halide perovskite--silicon tandem solar cells}{S.~Mariotti, E.~K\"ohnen, F.~Scheler, K.~Sveinbj\"ornsson, \ldots, L.~Korte, S.~Albrecht (32 authors)}{DOI 10.1126/science.adf5872}
     \end{column}
   \end{columns}
-  \refs{\RA\ Newer certified records (about 27--28\,\%) appear there.\quad \RQ\quad \RR}
+  \refs{\RA\ Newer certified records (about 27--28\,\%) appear there.\quad \RQ\quad \RR\quad \RS}
 \end{frame}
 
 \begin{frame}{The phase problem}
@@ -528,6 +532,7 @@
     \item[] \RP
     \item[] \RQ
     \item[] \RR
+    \item[] \RS
   \end{itemize}
 \end{frame}
 
