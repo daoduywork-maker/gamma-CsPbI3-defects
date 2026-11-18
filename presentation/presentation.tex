@@ -78,6 +78,13 @@
 \newcommand{\RN}{[14] C.~Freysoldt \emph{et al.}, Rev.\ Mod.\ Phys.\ \textbf{86}, 253 (2014).}
 \newcommand{\RO}{[15] A.\,V.~Krukau \emph{et al.}, J.\ Chem.\ Phys.\ \textbf{125}, 224106 (2006).}
 \newcommand{\RP}{[16] H.\,K.\,D.~Le \emph{et al.}, Matter \textbf{6}, 2368 (2023).}
+\newcommand{\RQ}{[17] J.~Park \emph{et al.}, Nature \textbf{616}, 724 (2023).}
+\newcommand{\RR}{[18] S.\,S.~Mali \emph{et al.}, Nat.\ Energy \textbf{8}, 989 (2023).}
+% paper card: the screenshot #1 (e.g. record_hybrid.png) if present, otherwise a text card
+\newcommand{\papercard}[5]{%
+  \IfFileExists{#1}{\fcolorbox{thupurple!40}{white}{\includegraphics[width=0.95\linewidth,height=0.42\textheight,keepaspectratio]{#1}}}{%
+  \fcolorbox{thupurple!40}{white}{\parbox{0.92\linewidth}{\raggedright\vspace{0.3em}\scriptsize\textcolor{gray}{#2}\par\vspace{0.2em}
+  {\small\textbf{#3}}\par\vspace{0.3em}#4\par\vspace{0.2em}\textcolor{gray}{#5}\vspace{0.3em}}}}}
 
 \title{Strain, Phase Stability and Iodine-Vacancy Migration in \cpi}
 \subtitle{Progress report}
@@ -98,8 +105,8 @@
     \begin{column}{0.52\textwidth}
       \small
       \begin{itemize}
-        \item \textbf{Record cells are hybrid.} FA-rich mixed-cation, mixed-halide perovskites reached about 28\,\% (single junction)\cit{1}.
-        \item \textbf{Organic cations limit thermal stability.} MA$^+$ and FA$^+$ are volatile at processing temperatures.
+        \item \textbf{Record cells are hybrid.} Formamidinium-rich mixed-cation, mixed-halide perovskites reached about 28\,\% (single junction)\cit{1}.
+        \item \textbf{Organic cations limit thermal stability.} Methylammonium and formamidinium are volatile at processing temperatures.
         \item \textbf{All-inorganic CsPbI$_3$} has no volatile cation and a gap of about 1.7 eV, suited to tandem top cells. Best cells reach about 21--22\,\%.
         \item \textbf{The obstacle is the phase}, not the absorber itself.
       \end{itemize}
@@ -119,6 +126,24 @@
     \end{column}
   \end{columns}
   \refs{\RA\ Values approximate; records change often.}
+\end{frame}
+
+\begin{frame}{Record cells in the literature}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \centering\textbf{Hybrid (formamidinium-based)}\par\vspace{0.4em}
+      \papercard{record_hybrid.png}{Nature \textbf{616}, 724--730 (2023)}{Controlled growth of perovskite layers with volatile alkylammonium chlorides}{J.~Park, J.~Kim, H.-S.~Yun, M.\,J.~Paik, E.~Noh, H.\,J.~Mun, M.\,G.~Kim, T.\,J.~Shin, S.\,I.~Seok}{DOI 10.1038/s41586-023-05825-y}
+      \par\vspace{0.5em}\raggedright\small
+      26.08\,\% certified. Formamidinium lead iodide grown with volatile alkylammonium chloride additives\cit{17}.
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering\textbf{All-inorganic (CsPbI$_3$)}\par\vspace{0.4em}
+      \papercard{record_inorganic.png}{Nature Energy \textbf{8}, 989--1001 (2023)}{Phase-heterojunction all-inorganic perovskite solar cells surpassing 21.5\,\% efficiency}{S.\,S.~Mali, J.\,V.~Patil, J.-Y.~Shao, Y.-W.~Zhong, S.\,R.~Rondiya, N.\,Y.~Dzade, C.\,K.~Hong}{Issue 9, September 2023}
+      \par\vspace{0.5em}\raggedright\small
+      Above 21.5\,\%. CsPbI$_3$ with a phase heterojunction\cit{18}.
+    \end{column}
+  \end{columns}
+  \refs{\RQ\quad \RR\quad Newer certified records (about 27--28\,\%) appear on the NREL chart\cit{1}.}
 \end{frame}
 
 \begin{frame}{The phase problem}
@@ -524,6 +549,8 @@
     \item[] \RN
     \item[] \RO
     \item[] \RP
+    \item[] \RQ
+    \item[] \RR
   \end{itemize}
 \end{frame}
 
