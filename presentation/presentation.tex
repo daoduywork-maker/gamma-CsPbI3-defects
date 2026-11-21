@@ -544,29 +544,37 @@
 \end{frame}
 
 \begin{frame}{Vacancy formation under strain}
-  \small
-  \centering
-  \begin{tabular}{lcccc}
-    \toprule
-    $\varepsilon$ & $E(V_\mathrm{I}^{+}) - E(\mathrm{perfect})$ & VBM (eV) & $E(\mathrm{8d}) - E(\mathrm{4c})$ & $E_f(V_\mathrm{I}^+)$ \\
-    \midrule
-    $-1$\,\% & 0.431 eV & 1.969 & $-4.3$ meV & \textbf{0.669 eV} \\
-    0 & 0.527 eV & 1.849 & +0.9 meV & \textbf{0.645 eV} \\
-    +0.5\,\% & 0.562 eV & 1.782 & $-3.3$ meV & \textbf{0.621 eV} \\
-    +1\,\% & 0.604 eV & 1.718 & $-6.5$ meV & \textbf{0.602 eV} \\
-    \bottomrule
-  \end{tabular}
+  \begin{columns}[c]
+    \begin{column}{0.44\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{ef_strain.png}
+    \end{column}
+    \begin{column}{0.54\textwidth}
+      \centering\scriptsize
+      \begin{tabular}{lcccc}
+        \toprule
+        $\varepsilon$ & $\Delta E$ (eV) & VBM (eV) & 8d -- 4c & $E_f$ (eV) \\
+        \midrule
+        $-1$\,\% & 0.431 & 1.969 & $-4.3$ meV & \textbf{0.669} \\
+        $-0.5$\,\% & 0.484 & 1.915 & +0.4 meV & \textbf{0.671} \\
+        0 & 0.527 & 1.849 & +0.9 meV & \textbf{0.645} \\
+        +0.5\,\% & 0.562 & 1.782 & $-3.3$ meV & \textbf{0.621} \\
+        +1\,\% & 0.604 & 1.718 & $-6.5$ meV & \textbf{0.602} \\
+        \bottomrule
+      \end{tabular}
 
-  \vspace{0.2em}
-  {\scriptsize Lower site; $E_f$ at I-rich, $E_F$ at each strained VBM, alignment from the Cs core potentials. $-0.5$\,\% not yet run.}
+      \vspace{0.2em}
+      {\tiny $\Delta E = E(V_\mathrm{I}^{+}) - E(\mathrm{perfect})$, lower site. $E_f$ at I-rich, $E_F$ at each strained VBM, alignment from the Cs core potentials.}
 
-  \vspace{0.5em}
-  \raggedright
-  \begin{itemize}
-    \item The raw energy rises under tension, but the VBM drops faster: \alert{tension lowers $E_f(V_\mathrm{I}^+)$ by about 0.034 eV per \%}, about 5$\times$ more vacancies at +1\,\% (300 K).
-    \item Strain splits the two sites slightly: 8d becomes 3--7 meV lower under strain.
-    \item The perfect strained supercells match the unit-cell strain energy, a consistency check.
-  \end{itemize}
+      \vspace{0.4em}
+      \raggedright\footnotesize
+      \begin{itemize}\setlength{\itemsep}{1pt}
+        \item \textbf{Tension.} The raw energy rises, but the VBM drops faster. \alert{$E_f$ falls by about 0.043 eV per \%} from 0 to +1\,\%, about 5$\times$ more vacancies at +1\,\% (300 K).
+        \item \textbf{Compression.} $E_f$ rises to about 0.67 eV by $-0.5$\,\% and then stays flat. The VBM rise cancels the drop in $\Delta E$.
+        \item \textbf{Sites.} Degenerate near zero strain, 8d lower by 3--7 meV at $+0.5$, $+1$ and $-1$\,\%.
+      \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 % =====================================================================
@@ -581,8 +589,8 @@
     Setup & Lattice, supercells, QE cross-check & \done \\
     Phase & Stability strip; $\delta$ relaxed; $\gamma$ and $\delta$ strain scans; SOC check & \done \\
     Formation & Site energies; HSE06 + SOC edges; charge state ($+1$ only) & \done \\
-    & Strained supercells $-1$, +0.5, +1\,\% & \done \\
-    & Strained supercells $-0.5$\,\%; Freysoldt correction & \nxt \\
+    & Strained supercells $-1$, $-0.5$, +0.5, +1\,\% & \done \\
+    & Freysoldt correction & \nxt \\
     Migration & 7 barriers ($+1$); diffusivity tensor, KMC check & \done \\
     & Strained NEBs: S2, S4, S1, S5 & \nxt \\
     Side result & CsI-terminated slab: tilt recovers within about 1 nm & \done \\
@@ -608,11 +616,11 @@
     \item \textbf{$V_\mathrm{I}$ is $+1$ for every Fermi level in the gap} (HSE06 + SOC edges). Its energies and barriers are robust at PBEsol.
     \item \textbf{Four short hops within 0.02 eV} (0.326--0.348 eV) carry the transport, each axis on a different hop. The tensor is nearly isotropic.
     \item \textbf{Strain does not stabilise $\gamma$}: the $\gamma$--$\delta$ gap (79 meV/f.u.) is smallest at zero strain and grows by up to 5 meV at $\pm$1\,\%. Clamping must act kinetically.
-    \item \textbf{Tension lowers the vacancy formation energy} by about 0.034 eV per \%: tensile films hold more iodine vacancies.
+    \item \textbf{Tension lowers the vacancy formation energy} by about 0.043 eV per \%, while compression beyond $-0.5$\,\% changes little. Tensile films hold more iodine vacancies.
   \end{itemize}
   \vspace{0.6em}
   \centering
-  \textbf{Next: $-0.5$\,\% supercells, then strained NEBs (does tension also lower the barriers?).}
+  \textbf{Next: strained NEBs (does tension also lower the barriers?) and the Freysoldt correction.}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{References}
