@@ -1,0 +1,36 @@
+SYSTEM = NEB S1, q+1
+
+# Electronic structure (same physics as the QE runs)
+GGA      = PS              ! PBEsol
+PREC     = Accurate      
+ENCUT    = 500             ! eV; PAW Cs_sv, Pb_d, I
+LASPH    = .TRUE.          ! non-spherical terms inside the PAW spheres
+LREAL    = Auto            ! Auto for the 159/160-atom cells, .FALSE. for small cells
+ALGO     = Normal        
+NELM     = 200           
+EDIFF    = 1E-6            ! eV
+ISMEAR   = 0               ! Gaussian
+SIGMA    = 0.01            ! eV; insulator (QE: fixed occupations)
+
+# Output
+LWAVE    = .FALSE.       
+LCHARG   = .FALSE.       
+
+
+# Charge state: +1, 1400 electrons
+NELECT   = 1400            ! default minus the charge
+
+# NEB (VTST): climbing image, FIRE optimiser
+IMAGES   = 4
+SPRING   = -5
+LCLIMB   = .TRUE.
+ICHAIN   = 0
+IBRION   = 3
+POTIM    = 0
+IOPT     = 3              ! FIRE
+EDIFFG   = -0.03          ! eV/A on the path (QE path_thr 0.05 eV/A)
+NSW      = 300
+ISIF     = 2
+
+# Parallelisation: cores are split over the images (cores per image = total / IMAGES)
+NCORE    = 10

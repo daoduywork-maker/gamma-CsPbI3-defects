@@ -181,6 +181,12 @@ def main():
     ap.add_argument("--ap", help="relaxed apical (4c) vacancy, relax.out or relax.in")
     ap.add_argument("--out", default=None, help="default qe/04_bulk_neb (QE) or vasp/04_bulk_neb (VASP)")
     ap.add_argument("--code", choices=["qe", "vasp"], default="qe")
+    ap.add_argument("--site", type=int, default=None,
+                    help="end site j (perfect-cell index), skipping the length match; for strained cells, "
+                         "where hop lengths move by more than LEN_TOL (use the j of the unstrained report)")
+    ap.add_argument("--guess", default=None,
+                    help="converged NEB folder of the same hop (00 ... NN with CONTCAR) whose images, shifted by "
+                         "the change of the end points, replace IDPP as the starting path (strained runs)")
     a = ap.parse_args()
 
     vasp = a.code == "vasp"
@@ -230,10 +236,16 @@ def main():
     iod = [i for i in types if i != r]
     dvec = frac_mic(fp[iod] - fp[r]) @ lat
     dist = np.linalg.norm(dvec, axis=1)
-    hits = [(d, j) for d, j in zip(dist, iod) if d < PAIR_CUT and label_pair(types, r, j, d) == a.hop]
-    if not hits:
-        sys.exit(f"no {a.hop} neighbour of site {r}")
-    d_hop, j = min(hits, key=lambda x: (round(x[0], 3), x[1]))
+    if a.site is not None:
+        j = a.site
+        if j not in iod or sorted((types[r], types[j])) != sorted((t1, t2)):
+            sys.exit(f"site {j} does not make a {t1}-{t2} pair with site {r}")
+        d_hop = float(np.linalg.norm(frac_mic(fp[j] - fp[r]) @ lat))
+    else:
+        hits = [(d, j) for d, j in zip(dist, iod) if d < PAIR_CUT and label_pair(types, r, j, d) == a.hop]
+        if not hits:
+            sys.exit(f"no {a.hop} neighbour of site {r}")
+        d_hop, j = min(hits, key=lambda x: (round(x[0], 3), x[1]))
 
     # final state: relaxed vacancy of the end type, carried onto site j
     f_end, R, t = endpoint_by_symmetry(perfect, ops, relaxed[end], j)
@@ -255,8 +267,27 @@ def main():
     first.positions, last.positions = ini_f @ lat, fin_f @ lat
 
     images = [first] + [first.copy() for _ in range(a.images)] + [last]
-    neb = NEB(images, method="improvedtangent")
-    neb.interpolate(method="idpp")
+    if a.guess:
+        # converged path of the same hop (same atom order), in fractional coordinates; each image is moved
+        # by the change of the two end points, weighted linearly along the path, and put in the new cell
+        g = [read(os.path.join(a.guess, "%02d" % n, "CONTCAR" if 0 < n <= a.images else "POSCAR"), format="vasp")
+             for n in range(a.images + 2)]
+        if len(g[0]) != len(first) or g[0].get_chemical_symbols() != first.get_chemical_symbols():
+            sys.exit("--guess path has a different atom list")
+        G = [x.get_scaled_positions() for x in g]
+        for n in range(1, len(G)):
+            G[n] = G[n - 1] + frac_mic(G[n] - G[n - 1])
+        d0 = frac_mic(ini_f - G[0])
+        d1 = frac_mic(fin_f - G[-1])
+        for n in range(1, a.images + 1):
+            w = n / (a.images + 1)
+            f = G[n] + (1 - w) * d0 + w * d1 + (ini_f - G[0] - d0)
+            images[n].positions = f @ lat
+        a.path_method = "shifted from " + a.guess
+    else:
+        neb = NEB(images, method="improvedtangent")
+        neb.interpolate(method="idpp")
+        a.path_method = "IDPP"
 
     k_move = order.index(j)
     moved = np.linalg.norm(last.positions[k_move] - first.positions[k_move])
@@ -390,7 +421,7 @@ def write_vasp_neb(hopdir, images, vdir, start, a, mins, others, moved, k_move, 
               "a pure translation" if np.allclose(R, np.eye(3)) else "a point operation"),
         "Hopping iodine: atom %d of %d (POSCAR order); site distance %.3f A, moves %.3f A" % (k_move + 1, len(order), d_hop, moved),
         "Other atoms: largest end-to-end shift %.3f A, mean %.3f A" % (others.max(), others.mean()),
-        "Images: 00 ... %02d (%d moving, IDPP)" % (nimg + 1, nimg),
+        "Images: 00 ... %02d (%d moving, %s)" % (nimg + 1, nimg, a.path_method),
         "Closest approach of two atoms per image (A): " + " ".join("%.2f" % m for m in mins),
     ]
     if min(mins) < MIN_DIST_WARN:
