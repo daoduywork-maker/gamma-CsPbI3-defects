@@ -1,8 +1,10 @@
 # E_f(V_I+), I-rich, E_F at the strained PBEsol VBM, lower site; E_f = dE + mu_I0 + VBM + dV + 0.06 (image-charge estimate)
-# mu_I0 = -1.755745 eV; dV = mean Cs core (defect) - mean Cs core (perfect), atoms 1-32
+# mu_I0 = -1.755745 eV; dV = mean Cs core (defect) - mean Cs core (perfect), atoms 1-32, last ionic step of each OUTCAR,
+# all read with the same awk on the cluster (21 Nov). Cs core perf/4c/8d: 0% -48.5911/-48.6269/-48.6263; -1% -48.4758/-48.5089/-48.5110;
+# -0.5% -48.5360/-48.5684/-48.5683; +0.5% -48.6564/-48.6844/-48.6840; +1% -48.7121/-48.7387/-48.7379
 # eps(%)  dE_4c   dE_8d   VBM      dV_lower  site  E_f(eV)
--1.0      0.4349  0.4306  1.9687   -0.0341   8d    0.669
+-1.0      0.4349  0.4306  1.9687   -0.0352   8d    0.668
 -0.5      0.4844  0.4848  1.9149   -0.0324   4c    0.671
- 0.0      0.5266  0.5275  1.8489   -0.0348   4c    0.645   # dV back-computed from the reported 0.645
-+0.5      0.5652  0.5619  1.7816   -0.0269   8d    0.621
-+1.0      0.6108  0.6044  1.7182   -0.0250   8d    0.602
+ 0.0      0.5266  0.5275  1.8489   -0.0358   4c    0.644
++0.5      0.5652  0.5619  1.7816   -0.0276   8d    0.620
++1.0      0.6108  0.6044  1.7182   -0.0258   8d    0.601

@@ -26,7 +26,7 @@ TXT, MUT, OR, PU = "#0B0B0B", "#52514E", "#D85A30", "#7F77DD"
 # VASP PBEsol, eV (NOTES.md job log)
 E_BULK = -486.51068
 E_DEF = {+1: -485.98408, 0: -482.55124}       # 4c site (8d: +0.9 meV and +33.5 meV)
-DV = {+1: -47.1173 - (-47.0827), 0: 0.0}      # mean Cs core potential, defect - bulk
+DV = {+1: -48.6269 - (-48.5911), 0: 0.0}      # mean Cs core potential (atoms 1-32, last ionic step), defect - bulk
 E_CORR = {+1: 0.06, 0: 0.0}                   # image charge, estimate (eps ~ 18, L ~ 19.5 A)
 E_VBM, E_CBM = 1.8489, 3.4679                 # pristine EIGENVAL
 MU_I0 = -7.02297865 / 4                       # solid I2, 4 atoms
