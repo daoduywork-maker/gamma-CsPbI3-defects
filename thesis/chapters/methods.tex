@@ -1,0 +1,160 @@
+% Chapter 3. Theory and computational methods
+% Written to Technical_Writing_Guide.md. Own methods in the past tense, general relations in the present tense.
+% Only the final working equations are numbered.
+
+\chapter{Theory and Computational Methods}
+\label{ch:methods}
+
+\section{Formation energy of a charged defect}
+\label{sec:formation-theory}
+
+\subsection{Thermodynamic definition}
+
+A point defect forms when atoms and electrons move between the host crystal and the surroundings. A vacancy removes one atom from the crystal and places it in a reservoir, such as solid iodine or the gas phase. A charged vacancy also exchanges electrons with an electron reservoir, which in a semiconductor is the Fermi sea of the crystal itself. The crystal therefore exchanges particles with reservoirs at fixed temperature $T$, pressure $p$ and chemical potentials, which is the situation described by the grand canonical ensemble \citep{VandeWalle2004,Freysoldt2014}.
+
+The grand potential of the crystal in contact with atomic reservoirs of chemical potentials $\mu_i$ and with an electron reservoir of chemical potential $\mu_e$ is
+\begin{equation*}
+  \Omega = G - \sum_i N_i \mu_i - N_e \mu_e ,
+\end{equation*}
+where $G = U + pV - TS$ is the Gibbs free energy, $N_i$ is the number of atoms of species $i$ and $N_e$ is the number of electrons. A defect $X$ in charge state $q$ changes the number of atoms of species $i$ by $n_i$ ($n_i < 0$ for removed atoms) and the number of electrons by $\Delta N_e = -q$. The defect forms spontaneously when the grand potential decreases, so the formation free energy is the change in $\Omega$ between the defective crystal and the perfect crystal:
+\begin{equation*}
+  \Delta G_f(X^q) = G(X^q) - G(\mathrm{host}) - \sum_i n_i \mu_i + q\,\mu_e .
+\end{equation*}
+The electron chemical potential is the Fermi level. The Fermi level is measured from the valence band maximum (VBM) of the host, so $\mu_e = E_\mathrm{VBM} + E_F$ with $0 \le E_F \le E_g$, where $E_g$ is the band gap. The equilibrium concentration of the defect on $N_\mathrm{sites}$ sites per unit volume follows from minimizing $\Omega$ including the configurational entropy of the defects \citep{VandeWalle2004}:
+\begin{equation*}
+  c(X^q) = N_\mathrm{sites}\, g \exp\!\left[-\frac{\Delta G_f(X^q)}{k_B T}\right] ,
+\end{equation*}
+where $g$ is the degeneracy of the defect state and $k_B$ is the Boltzmann constant.
+
+\subsection{Reduction to density functional theory at 0 K}
+
+Density functional theory (DFT) gives the total energy $E_\mathrm{tot}$ of electrons in their ground state with the nuclei fixed. This corresponds to $T = 0$~K for both the electrons and the nuclei. The terms of $\Delta G_f$ reduce as follows.
+\begin{enumerate}
+  \item \textbf{Electronic entropy.} The electrons occupy the ground state at 0~K, so the electronic entropy vanishes.
+  \item \textbf{Vibrational entropy and zero-point energy.} The nuclei are at rest at 0~K. The vibrational free energy of the defect, including the zero-point energy, was neglected. This contribution is typically 0.1~eV or less and partly cancels between the defective and perfect crystals \citep{Freysoldt2014}.
+  \item \textbf{Configurational entropy.} The configurational entropy of the defects enters the concentration through the Boltzmann factor and not the formation energy of a single defect.
+  \item \textbf{Volume term.} At atmospheric pressure, $p\Delta V$ is of the order of $10^{-6}$~eV for a vacancy and was neglected.
+\end{enumerate}
+The Gibbs free energy difference therefore reduces to the difference in internal energy, which is the difference in DFT total energy, $\Delta G_f \rightarrow \Delta U = \Delta E_\mathrm{tot}$. The chemical potentials also take their 0~K values. Each $\mu_i$ is written relative to the total energy per atom of the elemental phase, $\mu_i^0$, as $\mu_i = \mu_i^0 + \Delta\mu_i$.
+
+DFT calculations of a charged defect use a periodic supercell with a compensating uniform background charge. The finite supercell introduces two errors \citep{Freysoldt2009,Freysoldt2014}. First, the defect charge interacts with the periodic images and the background. Second, the average electrostatic potential of the charged supercell differs from the potential of the perfect crystal, so the band edges of the two calculations do not share a common reference. Including both corrections, the formation energy of a defect in charge state $q$ is
+\begin{equation}
+  E_f(X^q) = E_\mathrm{tot}(X^q) - E_\mathrm{tot}(\mathrm{host}) - \sum_i n_i \left(\mu_i^0 + \Delta\mu_i\right) + q\left(E_\mathrm{VBM} + \Delta V + E_F\right) + E_\mathrm{corr} ,
+  \label{eq:Ef}
+\end{equation}
+where $E_\mathrm{tot}(X^q)$ and $E_\mathrm{tot}(\mathrm{host})$ are the total energies of the defective and perfect supercells, $E_\mathrm{VBM}$ is the VBM of the perfect supercell, $\Delta V$ is the potential alignment between the defective and perfect supercells and $E_\mathrm{corr}$ is the correction for the electrostatic interaction of the periodic defect charges. For the iodine vacancy, $n_\mathrm{I} = -1$, so the term $-n_\mathrm{I}\mu_\mathrm{I}$ adds the chemical potential of the removed iodine atom.
+
+\citet{Freysoldt2009} derived $E_\mathrm{corr}$ by modelling the defect charge as a localized charge distribution screened by the dielectric constant $\varepsilon$ of the host. The leading term is the Madelung energy of a point charge in the supercell lattice \citep{Makov1995},
+\begin{equation*}
+  E_\mathrm{lat} = \frac{q^2 \alpha_M}{2 \varepsilon L} ,
+\end{equation*}
+where $\alpha_M$ is the Madelung constant of the supercell lattice and $L$ is the supercell length. \citet{Freysoldt2009} obtained the alignment term from the difference between the electrostatic potential of the defective supercell and the potential of the model charge, far from the defect.
+
+\subsection{Chemical potential limits}
+
+The chemical potentials are not free. In equilibrium with the host, the chemical potentials of the three elements satisfy
+\begin{equation*}
+  \Delta\mu_\mathrm{Cs} + \Delta\mu_\mathrm{Pb} + 3\Delta\mu_\mathrm{I} = \Delta H_f(\mathrm{CsPbI_3}) ,
+\end{equation*}
+where $\Delta H_f$ is the formation enthalpy per formula unit relative to the elemental phases. No element precipitates, so $\Delta\mu_i \le 0$. The competing compounds CsI and PbI$_2$ must not form, which requires
+\begin{equation*}
+  \Delta\mu_\mathrm{Cs} + \Delta\mu_\mathrm{I} < \Delta H_f(\mathrm{CsI}), \qquad \Delta\mu_\mathrm{Pb} + 2\Delta\mu_\mathrm{I} < \Delta H_f(\mathrm{PbI_2}) .
+\end{equation*}
+These conditions define the stability region in the plane of two independent chemical potentials \citep{Zhang1991,Xu2017}. The iodine-rich limit, $\Delta\mu_\mathrm{I} = 0$, corresponds to equilibrium with solid iodine. The iodine-poor limit is the lowest $\Delta\mu_\mathrm{I}$ in the region.
+
+\section{Charge transition levels}
+\label{sec:transition-theory}
+
+Equation~\ref{eq:Ef} gives a straight line in $E_F$ for each charge state with slope $q$. The stable charge state at a given Fermi level is the state with the lowest formation energy. The thermodynamic charge transition level $\varepsilon(q/q')$ is the Fermi level at which charge states $q$ and $q'$ have the same formation energy. Setting $E_f(X^q) = E_f(X^{q'})$ in Eq.~\ref{eq:Ef} gives
+\begin{equation}
+  \varepsilon(q/q') = \frac{E_f(X^q;\,E_F = 0) - E_f(X^{q'};\,E_F = 0)}{q' - q} ,
+  \label{eq:transition}
+\end{equation}
+where $E_f(X^q;\,E_F = 0)$ is the formation energy at the VBM. The chemical potentials cancel because both charge states contain the same atoms, so the transition level is independent of the growth conditions. Equation~\ref{eq:transition} uses the 0~K formation energies of Eq.~\ref{eq:Ef}, with both charge states fully relaxed. The level therefore describes thermal equilibrium, in which the lattice relaxes after the charge changes, and differs from the optical level measured by absorption \citep{Freysoldt2014}. A donor with $\varepsilon(+/0)$ above the conduction band minimum (CBM) is positively charged for every Fermi level in the gap.
+
+The Kohn--Sham band gap of a semilocal functional is too small, so the transition level was referenced to band edges from a hybrid functional with spin--orbit coupling (SOC). The band-edge shifts $\Delta E_\mathrm{VBM}$ and $\Delta E_\mathrm{CBM}$ were obtained by comparing the eigenvalues of the two methods in the same structure, and the PBEsol transition level was placed relative to the shifted edges.
+
+\section{Migration barriers and diffusivity}
+\label{sec:migration-theory}
+
+A vacancy moves when a neighbouring iodine atom hops into the vacant site. The minimum energy path of each hop was found with the climbing-image nudged elastic band (CI-NEB) method \citep{Henkelman2000}. The barrier of the hop is
+\begin{equation*}
+  E_a = E_\mathrm{saddle} - E_\mathrm{initial} ,
+\end{equation*}
+where $E_\mathrm{saddle}$ is the energy of the climbing image and $E_\mathrm{initial}$ is the energy of the initial state. In harmonic transition-state theory \citep{Vineyard1957}, the rate of a hop is proportional to $\exp(-E_a/k_BT)$, with an attempt frequency $\nu^{*}$ as the prefactor.
+
+The two iodine sites of $\gamma$-CsPbI$_3$ have different energies, so the rate of a hop depends on the direction. The rate from site $s$ to site $s'$ was written as
+\begin{equation*}
+  \Gamma_{ss'} = \nu^{*} \exp\!\left(-\frac{E_\mathrm{TS} - E_s}{k_B T}\right) ,
+\end{equation*}
+where $E_s$ is the energy of the vacancy on site $s$ and $E_\mathrm{TS} = E_\mathrm{low} + E_a$ is the saddle-point energy, with $E_\mathrm{low}$ the energy of the lower end of the hop. This form satisfies detailed balance.
+
+For a lattice with one type of site, the vacancy diffusivity tensor is
+\begin{equation*}
+  D_{\alpha\beta} = \frac{1}{2}\sum_j \Gamma_j\, \Delta r_{j,\alpha}\, \Delta r_{j,\beta} ,
+\end{equation*}
+where $\Delta r_{j,\alpha}$ is component $\alpha$ of the vector of hop $j$. This sum does not apply to a lattice with two types of site. The occupation probabilities $P_s$ of the sites in one unit cell instead follow the master equation
+\begin{equation*}
+  \frac{dP_s}{dt} = \sum_{s'} \left(\Gamma_{s's} P_{s'} - \Gamma_{ss'} P_s\right) ,
+\end{equation*}
+where the sums run over all the hops, including hops into neighbouring cells. Following \citet{Smolders2024}, the master equation was Fourier transformed to give a rate matrix $\mathbf{W}(\mathbf{k})$. The eigenvalue of $\mathbf{W}(\mathbf{k})$ closest to zero behaves as $\lambda(\mathbf{k}) = -\mathbf{k}\cdot\mathbf{D}\cdot\mathbf{k}$ for a small wave vector $\mathbf{k}$. Second-order perturbation theory in $\mathbf{k}$ gives
+\begin{equation}
+  D_{\alpha\beta} = \frac{1}{2}\sum_{s}\pi_s \sum_{s'} \Gamma_{ss'}\, \Delta r_{ss',\alpha}\, \Delta r_{ss',\beta}
+  - \mathrm{sym}\!\left[\mathbf{u}^{\mathsf{T}} \mathbf{B}_\alpha \mathbf{W}_0^{+} \mathbf{B}_\beta \boldsymbol{\pi}\right] ,
+  \label{eq:diffusivity}
+\end{equation}
+where $\pi_s$ is the equilibrium occupation of site $s$, $\mathbf{B}_\alpha$ is the matrix with elements $\Gamma_{ss'}\Delta r_{ss',\alpha}$, $\mathbf{W}_0^{+}$ is the pseudoinverse of $\mathbf{W}(\mathbf{0})$, $\mathbf{u}$ is a vector of ones and sym denotes the symmetric part in $\alpha$ and $\beta$. The first term averages the hops over the occupied sites. The second term corrects for the two types of site and vanishes for a lattice with one site per cell.
+
+\section{Biaxial strain}
+\label{sec:strain-theory}
+
+A film clamped to a substrate is strained in the plane of the film and relaxes along the film normal. Biaxial strain $\varepsilon$ in the $ab$ plane was applied by fixing the in-plane lattice parameters at $a = a_0(1+\varepsilon)$ and $b = b_0(1+\varepsilon)$, where $a_0$ and $b_0$ are the relaxed values. The out-of-plane parameter $c$ was found by minimizing the energy, following \citet{Xu2019}. The strain energy per formula unit is
+\begin{equation*}
+  E_s(\varepsilon) = \frac{E(\varepsilon) - E(0)}{N_\mathrm{f.u.}} ,
+\end{equation*}
+where $N_\mathrm{f.u.}$ is the number of formula units in the cell. The relative stability of the $\gamma$ and $\delta$ phases under strain is the energy difference per formula unit,
+\begin{equation}
+  \Delta E_{\gamma\delta}(\varepsilon) = \frac{E_\gamma(\varepsilon)}{N_\gamma} - \frac{E_\delta(\varepsilon)}{N_\delta} ,
+  \label{eq:gammadelta}
+\end{equation}
+where $N_\gamma$ and $N_\delta$ are the numbers of formula units in the two cells.
+
+\section{Computational details}
+\label{sec:details}
+
+\subsection{General settings}
+
+All the calculations used the Vienna Ab initio Simulation Package (VASP) 6.3.2 \citep{Kresse1996} with the projector augmented-wave method \citep{Blochl1994,Kresse1999}. The Cs\_sv, Pb\_d and I potentials treated the Cs 5s, 5p and 6s, the Pb 5d, 6s and 6p and the I 5s and 5p electrons as valence electrons. The PBEsol functional \citep{Perdew2008} described the electron exchange and correlation interactions. PBEsol was chosen because the migration barriers depend on the I--I distances and the octahedral tilt. The PBE functional overestimates the lattice parameters of halide perovskites by 1--2\%, which would act as a built-in tensile strain in a study of strain. The calculations did not include dispersion corrections. The plane-wave cutoff was 500~eV, the electronic convergence criterion was $10^{-6}$~eV and the occupations used Gaussian smearing of 0.01~eV. The VASP version included the VTST tools for the CI-NEB calculations. Quantum ESPRESSO \citep{Giannozzi2009} was used with the same functional for an independent check of the lattice and of one barrier.
+
+Convergence tests on the 20-atom unit cell were used to set the cutoff and the $k$-point mesh. All cutoffs from 350 to 650~eV gave total energies within 0.08~meV per atom. The cutoff of 500~eV was kept for accurate stresses in the cell relaxations. The $\Gamma$-centred $4\times4\times3$ mesh gave a total energy within 0.22~meV per atom of the $6\times6\times4$ mesh.
+
+\subsection{Unit cell and supercell}
+
+The 20-atom unit cell of $\gamma$-CsPbI$_3$ ($Pnma$) was relaxed with variable cell shape until the forces were below 0.01~eV/\AA. The relaxation was restarted once from the relaxed structure to remove the Pulay stress. The relaxed lattice parameters were $a = 8.371$~\AA, $b = 8.950$~\AA{} and $c = 12.402$~\AA. The unit cell was repeated to a $2\times2\times2$ supercell with 160 atoms. The supercell calculations used a $2\times2\times2$ mesh, kept the cell fixed and relaxed the atoms until the forces were below 0.01~eV/\AA.
+
+\subsection{Iodine vacancies and formation energies}
+
+One iodine atom was removed from an apical (4c) or an equatorial (8d) site of the supercell. The positive vacancy was modelled by removing one electron from the neutral cell, which left 1400 valence electrons. The neutral vacancy kept 1401 electrons and was calculated with spin polarization. The PBEsol relaxations did not include SOC. SOC was tested with single-point calculations on the PBEsol structures of both charge states and with full relaxations of the neutral vacancy.
+
+The formation energies followed Eq.~\ref{eq:Ef}. The potential alignment $\Delta V$ was taken as the difference in the mean electrostatic potential at the cores of the 32 Cs atoms between the defective and perfect supercells, read from the final ionic step. The image-charge correction was estimated from the point-charge term $E_\mathrm{lat}$ with $\varepsilon \approx 18$ and $L \approx 19.5$~\AA, which gave 0.06~eV for the positive vacancy.
+% Replace by the full Freysoldt correction (sxdefectalign with LOCPOT and the calculated dielectric constant) once it is computed.
+
+The elemental and binary reference phases were bcc Cs, fcc Pb, solid I$_2$, CsI and PbI$_2$. Each phase was relaxed with variable cell shape using $\Gamma$-centred meshes of $14\times14\times14$ (Cs), $20\times20\times20$ (Pb), $9\times9\times4$ (I$_2$), $8\times8\times8$ (CsI) and $8\times8\times6$ (PbI$_2$). The iodine chemical potential $\mu_\mathrm{I}^0$ was one quarter of the total energy of the four-atom cell of solid I$_2$. The formation enthalpy of CsPbI$_3$ used the energy of the perfect 160-atom supercell divided by 32, so that the host and the defect cells shared the same $k$-point sampling.
+
+The band edges were calculated on the relaxed PBEsol unit cell with three methods, PBEsol, PBEsol with SOC and HSE06 \citep{Heyd2003,Krukau2006} with SOC. The HSE06 calculation used a screening parameter of 0.2~\AA$^{-1}$, an exact-exchange fraction of 0.25 and the $4\times4\times3$ mesh, with the Fock operator evaluated on a mesh reduced by a factor of two along $a$ and $b$. The SOC calculations used the non-collinear version of VASP.
+
+\subsection{Migration barriers}
+
+Distinct vacancy hops were identified from the symmetry of the perfect supercell. All the pairs of iodine sites closer than 6.1~\AA{} were grouped by symmetry, which gave six short hops along octahedral edges (S1--S6) and four long hops between octahedra (L1--L4). The barriers of the positive vacancy were calculated for S1--S6 and L3. The end points of each hop were the relaxed vacancy structures, with the final state generated from a relaxed vacancy by a symmetry operation of the perfect supercell. The atoms were renumbered so that every atom except the hopping iodine occupied the same site in both end points. Four intermediate images were generated by the image-dependent pair potential method \citep{Smidstrup2014}. The CI-NEB calculations used a spring constant of 5~eV/\AA$^2$ and the FIRE optimizer \citep{Bitzek2006}, and converged when the forces on all the images were below 0.03~eV/\AA. The calculations ran one image per computer node.
+
+\subsection{Diffusivity tensor}
+
+The diffusivity tensor of the positive vacancy followed from Eq.~\ref{eq:diffusivity}, applied to the hop network of the unit cell with 12 iodine sites. The barriers of S1--S6 and L3 were used, and the attempt frequency was set to $\nu^{*} = 10^{12}$~Hz for every hop. A kinetic Monte Carlo simulation on the same hop network was used to check the tensor.
+
+\subsection{Strain}
+
+Five biaxial strains were applied, $\varepsilon = -1.0$, $-0.5$, 0, $+0.5$ and $+1.0$\%. For each strain, the unit cell of $\gamma$-CsPbI$_3$ was calculated at nine values of $c$ between $-2$\% and $+2$\% of the relaxed value, with the atoms relaxed at a fixed cell. A cubic fit of $E(c)$ gave the equilibrium $c$ and the strain energy.
+
+The $\delta$ phase ($Pnma$, 20 atoms) was built from the structure in the Materials Project database \citep{Jain2013} and relaxed with variable cell shape using an $8\times4\times2$ mesh. The relaxed lattice parameters were 4.758, 10.420 and 17.663~\AA. The $\delta$ cell was strained on each of the three crystal planes, with the free axis scanned at nine points as for the $\gamma$ phase. The energy difference of Eq.~\ref{eq:gammadelta} was evaluated in two limits. In the coherent limit, the $\delta$ phase was strained by the same $\varepsilon$ on the plane with the lowest energy. In the incoherent limit, the $\delta$ phase was unstrained.
+
+The strained supercells were built from the relaxed perfect and vacancy supercells by scaling $a$ and $b$ by $1+\varepsilon$ and $c$ by the ratio of the fitted $c$ at strain $\varepsilon$ to the fitted $c$ at zero strain. The atoms were then relaxed at a fixed cell. The formation energy at each strain used the VBM and the core-potential alignment of the strained perfect supercell. For the strained migration barriers, the initial path of each hop was the converged unstrained path, shifted by the displacement of the strained end points and placed in the strained cell.
