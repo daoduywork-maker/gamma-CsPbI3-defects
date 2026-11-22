@@ -30,3 +30,5 @@ CHGCAR
 *.synctex*
 *.toc
 *.vrb
+*.bbl
+*.blg
