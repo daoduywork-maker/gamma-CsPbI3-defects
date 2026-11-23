@@ -1,0 +1,237 @@
+% Chapter 4. Results
+% Written to Technical_Writing_Guide.md. Own results in the past tense, figures and tables in the present tense.
+% Status (23 Nov 2026): S4, S1 and S5 at +1% strain had not converged. Values marked * must be updated.
+
+\chapter{Results}
+\label{ch:results}
+
+\section{Unstrained crystal}
+\label{sec:res-unstrained}
+
+\subsection{Lattice}
+
+The relaxed unit cell of $\gamma$-CsPbI$_3$ kept the $Pnma$ symmetry, with $a = 8.371$~\AA, $b = 8.950$~\AA{} and $c = 12.402$~\AA. \citet{Zhang2025} obtained 8.39, 8.96 and 12.37~\AA{} with the same functional. The Quantum ESPRESSO calculation gave lattice parameters within 0.5\% of the VASP values. The in-plane parameters differed by 7\%, so the relaxed cell was rectangular in the $ab$ plane, as is the measured cell \citep{Sutton2018}.
+
+\subsection{Site energies and charge state}
+
+Table~\ref{tab:sites} lists the energy difference between a vacancy on an equatorial (8d) site and a vacancy on an apical (4c) site. The positive vacancy showed almost no site preference, with the 8d site only 0.9~meV higher than the 4c site. SOC changed this difference by 0.1~meV. The empty Pb-6p conduction band does not contribute to the energy of the positive vacancy, so SOC had no effect.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Energy difference $E(\mathrm{8d}) - E(\mathrm{4c})$ between the two vacancy sites (meV)}
+  \label{tab:sites}
+  \begin{tabular}{lccc}
+    \toprule
+    Charge state & PBEsol & PBEsol + SOC, single point & PBEsol + SOC, relaxed \\
+    \midrule
+    $V_\mathrm{I}^{+}$ & $+0.9$ & $+1.0$ & -- \\
+    $V_\mathrm{I}^{0}$ & $+33.5$ & $-71$ & $-1.4$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The neutral vacancy behaved differently. The extra electron of the neutral vacancy occupied the Pb-6p conduction band and spread over the whole supercell, with zero magnetization, so the neutral vacancy was a shallow donor. SOC lowers the Pb-6p band by about 1~eV, and the site energy difference of the neutral vacancy changed from $+33.5$~meV without SOC to $-1.4$~meV with SOC after full relaxation. The site energies of the neutral vacancy therefore depended on the method, whereas the positive vacancy gave the same result with and without SOC.
+
+\subsection{Band edges}
+
+Table~\ref{tab:gaps} lists the band edges of the unit cell. The PBEsol gap of 1.62~eV was close to the measured gap of about 1.73~eV only through error cancellation. Adding SOC lowered the CBM and closed the gap to 0.70~eV. The missing SOC in the PBEsol calculation therefore compensated the band-gap underestimate of the semilocal functional. HSE06 with SOC gave 1.26~eV. Relative to PBEsol, HSE06 with SOC shifted the VBM by $-0.133$~eV and the CBM by $-0.495$~eV. The largest force on the PBEsol structure from the HSE06 calculation with SOC was 0.037~eV/\AA, so the PBEsol geometry was adequate for the band edges.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Band edges and band gap of the $\gamma$-CsPbI$_3$ unit cell (eV), same PBEsol structure}
+  \label{tab:gaps}
+  \begin{tabular}{lccc}
+    \toprule
+    Method & VBM & CBM & Gap \\
+    \midrule
+    PBEsol & 1.849 & 3.467 & 1.62 \\
+    PBEsol + SOC & 1.994 & 2.696 & 0.70 \\
+    HSE06 + SOC & 1.716 & 2.973 & 1.26 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Stability region and formation energy}
+
+The calculated formation enthalpies were $-4.985$~eV for CsPbI$_3$, $-3.079$~eV for CsI and $-1.827$~eV for PbI$_2$ per formula unit. CsPbI$_3$ was therefore stable against CsI and PbI$_2$ by only 79~meV per formula unit, and the stability region was a strip 79~meV wide (Fig.~\ref{fig:stability}). The Quantum ESPRESSO calculation gave 63~meV. The iodine-rich limit corresponded to $\Delta\mu_\mathrm{I} = 0$. The iodine-poor limit lay at the point where CsPbI$_3$ coexisted with Pb metal and CsI, with $\Delta\mu_\mathrm{I} = -0.953$~eV.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.48\linewidth]{stability_region.png}\hfill
+  \includegraphics[width=0.48\linewidth]{formation_energy_prelim.png}
+  \caption{(a) Stability region of CsPbI$_3$ against CsI and PbI$_2$. (b) Formation energy of the iodine vacancy against the Fermi level at the iodine-rich and iodine-poor limits, PBEsol band edges.}
+  \label{fig:stability}
+\end{figure}
+
+Figure~\ref{fig:stability}(b) shows the formation energy of the iodine vacancy from Eq.~\ref{eq:Ef}. At the iodine-rich limit, the positive vacancy had a formation energy of 0.644~eV at the VBM. At the iodine-poor limit, the formation energy became negative for Fermi levels within 0.31~eV of the VBM. A Fermi level this close to the VBM would therefore produce vacancies spontaneously, which pins the Fermi level and limits p-type doping under iodine-poor growth.
+
+The $(+/0)$ transition level from Eq.~\ref{eq:transition} lay 1.56~eV above the PBEsol VBM, which is 0.06~eV below the PBEsol CBM. With the HSE06 and SOC band edges, the level lay 1.69~eV above the VBM and 0.44~eV above the CBM. The neutral state is therefore not stable for any Fermi level in the gap, and the iodine vacancy is positively charged throughout. The migration calculations used only the positive vacancy for this reason.
+
+\section{Vacancy migration}
+\label{sec:res-migration}
+
+\subsection{Distinct hops and barriers}
+
+The symmetry analysis gave 10 distinct hops between iodine sites closer than 6.1~\AA{} (Fig.~\ref{fig:hops}). Six short hops (S1--S6, 4.40--4.60~\AA) run along the edges of an octahedron, and four long hops (L1--L4, 4.78--5.98~\AA) run between octahedra. A vacancy on an 8d site has 11 hops available and a vacancy on a 4c site has 12. Transport along $c$ requires 4c--8d hops.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.55\linewidth]{octahedra_hops.png}
+  \caption{Distinct iodine-vacancy hops in $\gamma$-CsPbI$_3$, with short hops along octahedral edges (S1--S6) and long hops between octahedra (L1--L4).}
+  \label{fig:hops}
+\end{figure}
+
+Table~\ref{tab:barriers} lists the barriers of the positive vacancy and Fig.~\ref{fig:neb} shows the energy profiles. The four lowest barriers, for S2, S4, S1 and S5, lay within 0.02~eV of each other, between 0.326 and 0.348~eV. S6 and S3 had barriers of 0.434 and 0.462~eV, and the long hop L3 had a barrier of 0.777~eV. S1 and S6 are both 8d--8d hops, but the S6 barrier was 0.09~eV higher. One barrier per path type therefore misses the spread caused by the octahedral tilt. \citet{Arber2025} reported 0.34~eV for 8d--8d hops, 0.35~eV for 8d--4c hops and 0.77~eV for 4c--4c hops, which agree with the lowest barrier of each type in Table~\ref{tab:barriers}. The Quantum ESPRESSO calculation of S1 gave 0.361~eV, 0.016~eV above the VASP value.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Migration barriers $E_a$ of $V_\mathrm{I}^{+}$ in unstrained $\gamma$-CsPbI$_3$, measured from the 8d end for the 4c--8d hops}
+  \label{tab:barriers}
+  \begin{tabular}{lccc}
+    \toprule
+    Hop & Sites & Length (\AA) & $E_a$ (eV) \\
+    \midrule
+    S2 & 4c--8d & 4.434 & 0.326 \\
+    S4 & 4c--8d & 4.519 & 0.325 \\
+    S1 & 8d--8d & 4.404 & 0.345 \\
+    S5 & 4c--8d & 4.555 & 0.348 \\
+    S6 & 8d--8d & 4.597 & 0.434 \\
+    S3 & 4c--8d & 4.457 & 0.461 \\
+    L3 & 4c--4c & 5.323 & 0.777 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{neb_all_qp1_vasp.png}
+  \caption{Energy profiles of the seven calculated hops of $V_\mathrm{I}^{+}$, relative to the initial state.}
+  \label{fig:neb}
+\end{figure}
+
+\subsection{Diffusivity tensor}
+
+Table~\ref{tab:tensor} lists the vacancy diffusivity tensor at 300~K from Eq.~\ref{eq:diffusivity}. The tensor was diagonal along the crystal axes, with $D_{aa} = 3.1\times10^{-9}$, $D_{bb} = 2.6\times10^{-9}$ and $D_{cc} = 4.1\times10^{-9}$~cm$^2$/s. The kinetic Monte Carlo simulation agreed with these values within 2\%. The effective activation energies along the three axes, 0.332--0.345~eV, were close to the four lowest barriers.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Vacancy diffusivity of $V_\mathrm{I}^{+}$ at 300~K and the change in each component when one hop is removed from the network}
+  \label{tab:tensor}
+  \begin{tabular}{lccc}
+    \toprule
+    & $D_{aa}$ & $D_{bb}$ & $D_{cc}$ \\
+    \midrule
+    $D$ (10$^{-9}$ cm$^2$/s) & 3.1 & 2.6 & 4.1 \\
+    Effective $E_a$ (eV) & 0.345 & 0.332 & 0.338 \\
+    \midrule
+    Without S1 & $\times$0.40 & $\times$0.92 & $\times$0.76 \\
+    Without S2 & $\times$0.99 & $\times$0.04 & $\times$0.72 \\
+    Without S4 & $\times$0.63 & $\times$0.35 & $\times$0.72 \\
+    Without S5 & $\times$0.61 & $\times$0.91 & $\times$0.52 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The three components differed by less than a factor of two, so the diffusion was nearly isotropic. The order of the components was not robust. Shifting the four lowest barriers by $\pm0.02$~eV changed $D_{cc}/D_{aa}$ from 0.5 to 3.0, so the calculated barriers cannot resolve which axis is fastest. The assignment of each axis to its hops was robust. Removing S2 reduced $D_{bb}$ to 4\% of the full value, so transport along $b$ ran almost entirely through S2. S1 carried most of the transport along $a$, and S5 carried the largest share along $c$. Strain that shifts these hops by different amounts will therefore change the anisotropy.
+
+\section{Strain}
+\label{sec:res-strain}
+
+\subsection{Strained $\gamma$ phase}
+
+Table~\ref{tab:strain-gamma} lists the out-of-plane lattice parameter and the strain energy of $\gamma$-CsPbI$_3$ under biaxial strain, and Fig.~\ref{fig:strain-gamma} shows the energy scans. The $c$ parameter decreased under tension and increased under compression, with $\Delta c/c \approx -0.6\,\varepsilon$. Compression cost more energy than tension. The strain energy reached 4.7~meV per formula unit at $-1$\% and 3.2~meV at $+1$\%, both small compared with the 79~meV that separates CsPbI$_3$ from CsI and PbI$_2$.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Out-of-plane lattice parameter and strain energy of $\gamma$-CsPbI$_3$ under biaxial strain}
+  \label{tab:strain-gamma}
+  \begin{tabular}{lcc}
+    \toprule
+    $\varepsilon$ (\%) & $c$ (\AA) & $E_s$ (meV/f.u.) \\
+    \midrule
+    $-1.0$ & 12.465 & 4.7 \\
+    $-0.5$ & 12.426 & 1.3 \\
+    0 & 12.388 & 0 \\
+    $+0.5$ & 12.352 & 0.6 \\
+    $+1.0$ & 12.314 & 3.2 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{strain_unit_Ec.png}
+  \caption{Energy of the $\gamma$-CsPbI$_3$ unit cell against the out-of-plane strain at five in-plane strains.}
+  \label{fig:strain-gamma}
+\end{figure}
+
+\subsection{Stability of $\gamma$ against $\delta$}
+
+The relaxed $\delta$ phase had a volume of 218.9~\AA$^3$ per formula unit, 6\% less than the 232.3~\AA$^3$ of $\gamma$. Without strain, $\delta$ was 78.8~meV per formula unit lower in energy than $\gamma$, and SOC reduced the difference to 69.5~meV. Figure~\ref{fig:gamma-delta} shows the energy difference of Eq.~\ref{eq:gammadelta} against strain. In the coherent limit, the difference was 80.7, 79.3, 78.8, 78.9 and 79.8~meV per formula unit from $-1$ to $+1$\%. In the incoherent limit, the difference was 83.5, 80.1, 78.8, 79.4 and 82.0~meV. In both limits, the difference was smallest without strain. Biaxial strain of $\pm1$\% therefore made $\gamma$ slightly less stable relative to $\delta$, by at most 2~meV in the coherent limit and 5~meV in the incoherent limit.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{strain_gamma_delta.png}
+  \caption{Energy difference between $\gamma$- and $\delta$-CsPbI$_3$ against biaxial strain in the coherent and incoherent limits.}
+  \label{fig:gamma-delta}
+\end{figure}
+
+These results show that strain up to 1\% cannot stabilize $\gamma$-CsPbI$_3$ thermodynamically. The stabilization observed in clamped films \citep{Steele2019} therefore points to a kinetic origin, with clamping raising the barrier of the $\gamma\rightarrow\delta$ transformation. The coherent limit strained $\delta$ relative to the $\delta$ lattice. \citet{Steele2019} instead strained $\delta$ to match the $\gamma$ film, which imposes a much larger strain on $\delta$ and is a likely reason for the larger destabilization of $\delta$ in their calculation.
+
+\subsection{Vacancy formation under strain}
+
+Table~\ref{tab:ef-strain} and Fig.~\ref{fig:ef-strain} show the formation energy of the positive vacancy under strain, at the iodine-rich limit and with the Fermi level at the VBM of each strained cell. The energy difference $\Delta E = E(V_\mathrm{I}^{+}) - E(\mathrm{perfect})$ increased from 0.431~eV at $-1$\% to 0.604~eV at $+1$\%. The VBM decreased over the same range from 1.969 to 1.718~eV. Under tension, the VBM decreased faster than $\Delta E$ increased, so the formation energy decreased from 0.644~eV without strain to 0.601~eV at $+1$\%, by 0.043~eV per percent of strain. This decrease raises the equilibrium vacancy concentration at 300~K by a factor of five. Under compression, the increase of the VBM cancelled the decrease of $\Delta E$, and the formation energy remained at 0.67~eV between $-0.5$ and $-1$\%. Strain also split the two sites slightly. The 8d site became 3--7~meV lower at $+0.5$, $+1$ and $-1$\%, whereas the two sites remained degenerate near zero strain.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Formation energy of $V_\mathrm{I}^{+}$ under biaxial strain, iodine-rich limit, $E_F$ at the VBM of each strained cell, lower site}
+  \label{tab:ef-strain}
+  \begin{tabular}{lcccc}
+    \toprule
+    $\varepsilon$ (\%) & $\Delta E$ (eV) & VBM (eV) & $E(\mathrm{8d}) - E(\mathrm{4c})$ (meV) & $E_f$ (eV) \\
+    \midrule
+    $-1.0$ & 0.431 & 1.969 & $-4.3$ & 0.668 \\
+    $-0.5$ & 0.484 & 1.915 & $+0.4$ & 0.671 \\
+    0 & 0.527 & 1.849 & $+0.9$ & 0.644 \\
+    $+0.5$ & 0.562 & 1.782 & $-3.3$ & 0.620 \\
+    $+1.0$ & 0.604 & 1.718 & $-6.5$ & 0.601 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{ef_strain.png}
+  \caption{Formation energy of $V_\mathrm{I}^{+}$ against biaxial strain, iodine-rich limit, Fermi level at the VBM.}
+  \label{fig:ef-strain}
+\end{figure}
+
+\subsection{Migration under strain}
+
+Table~\ref{tab:neb-strain} and Fig.~\ref{fig:neb-strain} show the barriers of the four lowest hops at $\pm1$\% strain. All the hops at $-1$\% and S2 at $+1$\% converged. S4, S1 and S5 at $+1$\% had not converged at the time of writing, and the values marked with an asterisk are the highest image energies of the unconverged paths.
+% Update S4, S1 and S5 at +1% when the runs converge.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Migration barriers of $V_\mathrm{I}^{+}$ (eV) under biaxial strain, measured from the 8d end (* not yet converged)}
+  \label{tab:neb-strain}
+  \begin{tabular}{lcccc}
+    \toprule
+    Hop & $-1$\% & 0 & $+1$\% & Change from $-1$ to $+1$\% \\
+    \midrule
+    S2 & 0.332 & 0.326 & 0.316 & $-0.016$ \\
+    S4 & 0.332 & 0.325 & 0.311* & $-0.021$* \\
+    S1 & 0.349 & 0.345 & 0.332* & $-0.017$* \\
+    S5 & 0.367 & 0.348 & 0.333* & $-0.034$* \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{neb_strain_prelim.png}
+  \caption{Migration barriers of the four lowest hops of $V_\mathrm{I}^{+}$ against biaxial strain. Open symbols denote paths that had not converged.}
+  \label{fig:neb-strain}
+\end{figure}
+
+Tension lowered every barrier and compression raised every barrier, in agreement with the trend reported for CsPbI$_2$Br \citep{Xue2020} and for the double perovskites studied by \citet{Xu2019}. The changes were small, 0.008--0.017~eV per percent of strain, compared with the 0.08~eV per percent that \citet{Xue2020} reported for a single path in CsPbI$_2$Br. The hops also responded differently. S5 changed the most and S2 the least. Under compression, S5 separated from the other three hops, and under tension the four barriers moved closer together. Strain therefore changes the relative weight of the hops and, through Table~\ref{tab:tensor}, the anisotropy of the diffusion.
