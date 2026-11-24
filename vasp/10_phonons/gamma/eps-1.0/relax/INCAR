@@ -1,0 +1,28 @@
+SYSTEM = gamma-CsPbI3, strain -1.0%, tight relaxation for phonons
+
+# Electronic structure (same physics as the QE runs)
+GGA      = PS              ! PBEsol
+PREC     = Accurate      
+ENCUT    = 500             ! eV; PAW Cs_sv, Pb_d, I
+LASPH    = .TRUE.          ! non-spherical terms inside the PAW spheres
+LREAL    = .FALSE.         ! Auto for the 159/160-atom cells, .FALSE. for small cells
+ALGO     = Normal        
+NELM     = 200           
+EDIFF    = 1E-8            ! eV
+ISMEAR   = 0               ! Gaussian
+SIGMA    = 0.01            ! eV; insulator (QE: fixed occupations)
+
+# Output
+LWAVE    = .FALSE.       
+LCHARG   = .FALSE.       
+
+# Relaxation: atoms only, cell fixed
+IBRION   = 2             
+ISIF     = 2             
+NSW      = 200           
+EDIFFG   = -1E-3           ! eV/A
+ADDGRID  = .TRUE.          ! smoother forces for phonons
+
+# Parallelisation (40 cores per std40 node)
+NCORE    = 10            
+KPAR     = 4               ! k-point groups, more of them is faster but uses more memory

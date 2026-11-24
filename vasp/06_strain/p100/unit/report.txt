@@ -1,0 +1,5 @@
+(100) strain: b, c fixed at (1+eps), a scanned; unit /sessions/rcw-01agsrws61gtwqgqwxt4bd4a/mnt/Project-1/vasp/01_unitcell/relax/CONTCAR
+
+eps -1.0%: b 8.8602, c 12.2780 A
+eps +0.0%: b 8.9497, c 12.4020 A
+eps +1.0%: b 9.0392, c 12.5260 A

@@ -626,6 +626,146 @@ def cmd_strain_super(a):
     print("\n".join(rows))
 
 
+
+# ------------------------------------------------ referee-driven additions (24 Nov) -----
+
+def _tags(lreal, repl):
+    """base_tags with some values replaced, e.g. {"EDIFF": "1E-8"}."""
+    out = []
+    for t in base_tags(lreal):
+        if isinstance(t, tuple) and t[0] in repl:
+            t = (t[0], repl[t[0]], t[2])
+        out.append(t)
+    return out
+
+
+def cmd_strain100(a):
+    """Gamma unit cells strained on the (100) plane (b, c in-plane, a free), the film texture
+    of Steele et al. 2019. a scanned -2 ... +2%, atoms relaxed at fixed cell.
+    Folders: vasp/06_strain/p100/unit/eps<e>/a<da>/."""
+    unit = sort_atoms(read(a.unit, format="vasp"))
+    a0, b0, c0 = unit.cell.lengths()
+    out = os.path.join(HERE, "06_strain", "p100", "unit")
+    rows = ["(100) strain: b, c fixed at (1+eps), a scanned; unit %s" % a.unit, ""]
+    for e in (a.eps or (-1.0, 0.0, 1.0)):
+        for da in STRAIN_C:
+            at = unit.copy()
+            at.set_cell(np.diag([a0 * (1 + da / 100), b0 * (1 + e / 100), c0 * (1 + e / 100)]), scale_atoms=True)
+            d = os.path.join(out, "eps%+.1f" % e, "a%+.1f" % da)
+            os.makedirs(d, exist_ok=True)
+            write_poscar(os.path.join(d, "POSCAR"), at, "gamma unit cell, (100) strain")
+            write_kpoints(os.path.join(d, "KPOINTS"), K_UNIT)
+            incar(os.path.join(d, "INCAR"), "gamma unit cell, (100) strain %+.1f%%, a %+.1f%%" % (e, da),
+                  base_tags(".FALSE.") + ["Relaxation: atoms only, cell fixed (E(a) scan)",
+                  ("IBRION", 2, "conjugate gradient"), ("ISIF", 2, "fixed cell"),
+                  ("NSW", 100, ""), ("EDIFFG", EDIFFG, "eV/A")] + para_tags(10, 4))
+        rows.append("eps %+.1f%%: b %.4f, c %.4f A" % (e, b0 * (1 + e / 100), c0 * (1 + e / 100)))
+    open(os.path.join(out, "report.txt"), "w").write("\n".join(rows) + "\n")
+    print("\n".join(rows))
+
+
+def cmd_dielectric(a):
+    """Static dielectric tensor of the gamma unit cell, electronic + ionic (DFPT, IBRION 8),
+    for the Freysoldt correction. Folder: vasp/01_unitcell/dielectric/."""
+    unit = sort_atoms(read(a.unit, format="vasp"))
+    d = os.path.join(HERE, "01_unitcell", "dielectric")
+    os.makedirs(d, exist_ok=True)
+    write_poscar(os.path.join(d, "POSCAR"), unit, "relaxed gamma unit cell")
+    write_kpoints(os.path.join(d, "KPOINTS"), K_UNIT)
+    incar(os.path.join(d, "INCAR"), "gamma unit cell, dielectric tensor (DFPT)",
+          _tags(".FALSE.", {"EDIFF": "1E-8"}) + ["Linear response",
+          ("IBRION", 8, "DFPT, ionic contribution with symmetry"), ("LEPSILON", ".TRUE.", "electronic contribution"),
+          ("NSW", 1, "")] + para_tags(1, 1))
+    print("written", d)
+
+
+def cmd_locpot(a):
+    """Single points with the electrostatic potential (LVHAR) on the relaxed perfect and
+    lower-site V_I+ supercells at every strain, for the Freysoldt correction. INCAR and KPOINTS
+    from the relaxation folder, NSW 0; POSCAR is copied on the cluster from the CONTCAR
+    (vasp/make_locpot.sh). Folders: vasp/08_fnv/eps<e>/{perfect,vac}/."""
+    lower = {-1.0: "vac_I_equatorial", -0.5: "vac_I_apical", 0.0: "vac_I_apical",
+             0.5: "vac_I_equatorial", 1.0: "vac_I_equatorial"}
+    lines = ["#!/bin/bash", "# copy the relaxed structures into vasp/08_fnv (run from ~/cspbi3/vasp)", "set -e"]
+    for e in STRAIN_EPS:
+        if e == 0.0:
+            src = {"perfect": "02_pristine", "vac": "03_vacancies/q+1/" + lower[e]}
+        else:
+            base = "06_strain/super/eps%+.1f" % e
+            src = {"perfect": base + "/pristine", "vac": base + "/q+1/" + lower[e]}
+        for name, sd in src.items():
+            d = os.path.join(HERE, "08_fnv", "eps%+.1f" % e, name)
+            os.makedirs(d, exist_ok=True)
+            txt = open(os.path.join(HERE, sd, "INCAR")).read().splitlines()
+            keep = [l for l in txt if l.split("=")[0].strip() not in
+                    ("IBRION", "ISIF", "NSW", "EDIFFG", "POTIM", "LVHAR", "LVTOT", "LCHARG")]
+            keep[0] = keep[0] + ", single point for LOCPOT (Freysoldt correction)"
+            keep += ["", "# Single point with the electrostatic potential", "NSW      = 0",
+                     "IBRION   = -1", "LVHAR    = .TRUE.          ! Hartree + ionic potential in LOCPOT"]
+            open(os.path.join(d, "INCAR"), "w").write("\n".join(keep) + "\n")
+            open(os.path.join(d, "KPOINTS"), "w").write(open(os.path.join(HERE, sd, "KPOINTS")).read())
+            lines.append("cp %s/CONTCAR 08_fnv/eps%+.1f/%s/POSCAR" % (sd, e, name))
+    lines.append('ls -la 08_fnv/*/*/POSCAR | wc -l   # expect 10')
+    open(os.path.join(HERE, "make_locpot.sh"), "w").write("\n".join(lines) + "\n")
+    print("written vasp/08_fnv/* and vasp/make_locpot.sh")
+
+
+def cmd_nebtight(a):
+    """Convergence check: S2 at -1, 0, +1% restarted from the converged path with forces
+    below 0.01 eV/A (was 0.03). Inputs are copied on the cluster (vasp/make_nebtight.sh)."""
+    src = {-1.0: "06_strain/neb/eps-1.0/q+1/S2", 0.0: "04_bulk_neb/q+1/S2", 1.0: "06_strain/neb/eps+1.0/q+1/S2"}
+    lines = ["#!/bin/bash", "# tight-force restarts of S2 (run from ~/cspbi3/vasp)", "set -e"]
+    for e, sd in src.items():
+        d = "09_convergence/S2_tight/eps%+.1f" % e
+        os.makedirs(os.path.join(HERE, d), exist_ok=True)
+        txt = open(os.path.join(HERE, sd, "INCAR")).read()
+        txt = txt.replace("EDIFFG   = -0.03", "EDIFFG   = -0.01").replace("EDIFF    = 1E-6", "EDIFF    = 1E-7")
+        open(os.path.join(HERE, d, "INCAR"), "w").write(txt.replace("\n", ", tight forces (0.01 eV/A) restart\n", 1))
+        open(os.path.join(HERE, d, "KPOINTS"), "w").write(open(os.path.join(HERE, sd, "KPOINTS")).read())
+        lines += ["for i in 00 05; do mkdir -p %s/$i; cp %s/$i/POSCAR %s/$i/; done" % (d, sd, d),
+                  "for i in 01 02 03 04; do mkdir -p %s/$i; cp %s/$i/CONTCAR %s/$i/POSCAR; done" % (d, sd, d),
+                  "cp %s/POTCAR %s/" % (sd, d)]
+    lines.append("grep EDIFFG 09_convergence/S2_tight/*/INCAR")
+    open(os.path.join(HERE, "make_nebtight.sh"), "w").write("\n".join(lines) + "\n")
+    print("written vasp/09_convergence/S2_tight/* and vasp/make_nebtight.sh")
+
+
+def cmd_phonrelax(a):
+    """Tight relaxations of gamma and delta (20-atom cells) at 0 and +-1% for phonons.
+    gamma: (001) strain, c from the E(c) fit. delta: ac plane (coherent, lowest plane),
+    b from a cubic fit of the delta scan. Forces < 1e-3 eV/A, EDIFF 1e-8.
+    Folders: vasp/10_phonons/{gamma,delta}/eps<e>/relax/."""
+    fit = read_strain_fit()
+    unit = sort_atoms(read(a.unit, format="vasp"))
+    a0, b0, c0 = unit.cell.lengths()
+    dl = sort_atoms(read(os.path.join(HERE, "05_reference_phases", "delta_CsPbI3", "CONTCAR"), format="vasp"))
+    L0 = dl.cell.lengths()
+    rows = [l.split() for l in open(os.path.join(HERE, "06_strain", "delta", "energies_delta.txt")) if l.startswith("ac ")]
+    rep = []
+    for e in (-1.0, 0.0, 1.0):
+        # gamma
+        c = c0 * (1 + fit[e] / 100) / (1 + fit[0.0] / 100)
+        g = unit.copy(); g.set_cell(np.diag([a0 * (1 + e / 100), b0 * (1 + e / 100), c]), scale_atoms=True)
+        # delta, ac plane, b from cubic fit of E(x)
+        pts = sorted((float(r[2]), float(r[3])) for r in rows if abs(float(r[1]) - e) < 1e-6)
+        x, y = np.array(pts).T
+        cf = np.polyfit(x, y, 3); xs = np.linspace(-2, 2, 4001); xmin = xs[np.argmin(np.polyval(cf, xs))]
+        dd = dl.copy(); dd.set_cell(np.diag([L0[0] * (1 + e / 100), L0[1] * (1 + xmin / 100), L0[2] * (1 + e / 100)]), scale_atoms=True)
+        for name, at, k in (("gamma", g, K_UNIT), ("delta", dd, (8, 4, 2))):
+            d = os.path.join(HERE, "10_phonons", name, "eps%+.1f" % e, "relax")
+            os.makedirs(d, exist_ok=True)
+            write_poscar(os.path.join(d, "POSCAR"), at, "%s, strain %+.1f%%, for phonons" % (name, e))
+            write_kpoints(os.path.join(d, "KPOINTS"), k)
+            incar(os.path.join(d, "INCAR"), "%s-CsPbI3, strain %+.1f%%, tight relaxation for phonons" % (name, e),
+                  _tags(".FALSE.", {"EDIFF": "1E-8"}) + ["Relaxation: atoms only, cell fixed",
+                  ("IBRION", 2, ""), ("ISIF", 2, ""), ("NSW", 200, ""), ("EDIFFG", "-1E-3", "eV/A"),
+                  ("ADDGRID", ".TRUE.", "smoother forces for phonons")] + para_tags(10, 4))
+            rep.append("%s eps %+.1f%%: cell %.4f %.4f %.4f A" % (name, e, *at.cell.lengths()))
+        rep.append("  delta free b %+.3f%%" % xmin)
+    open(os.path.join(HERE, "10_phonons", "report.txt"), "w").write("\n".join(rep) + "\n")
+    print("\n".join(rep))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -651,9 +791,21 @@ def main():
     p = sub.add_parser("strain_delta")
     p.add_argument("--cell", default="vasp/05_reference_phases/delta_CsPbI3/CONTCAR", help="relaxed delta cell")
     p.add_argument("--eps", type=float, nargs="+")
+    p = sub.add_parser("strain100")
+    p.add_argument("--unit", default=os.path.join(HERE, "01_unitcell", "relax", "CONTCAR"))
+    p.add_argument("--eps", type=float, nargs="*")
+    p.set_defaults(func=cmd_strain100)
+    for nm, fn in (("dielectric", cmd_dielectric), ("phonrelax", cmd_phonrelax)):
+        p = sub.add_parser(nm)
+        p.add_argument("--unit", default=os.path.join(HERE, "01_unitcell", "relax", "CONTCAR"))
+        p.set_defaults(func=fn)
+    sub.add_parser("locpot").set_defaults(func=cmd_locpot)
+    sub.add_parser("nebtight").set_defaults(func=cmd_nebtight)
     p = sub.add_parser("strain_super")
     p.add_argument("--eps", type=float, nargs="+")
     a = ap.parse_args()
+    if hasattr(a, "func"):
+        return a.func(a)
     if a.cmd == "strain_super":
         return cmd_strain_super(a)
     if a.cmd == "strain_delta":

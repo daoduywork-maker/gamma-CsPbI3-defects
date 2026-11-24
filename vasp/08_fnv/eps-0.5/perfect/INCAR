@@ -1,0 +1,28 @@
+SYSTEM = perfect 2x2x2 supercell (energy and VBM reference), biaxial strain -0.5%, single point for LOCPOT (Freysoldt correction)
+
+# Electronic structure (same physics as the QE runs)
+GGA      = PS              ! PBEsol
+PREC     = Accurate      
+ENCUT    = 500             ! eV; PAW Cs_sv, Pb_d, I
+LASPH    = .TRUE.          ! non-spherical terms inside the PAW spheres
+LREAL    = Auto            ! Auto for the 159/160-atom cells, .FALSE. for small cells
+ALGO     = Normal        
+NELM     = 200           
+EDIFF    = 1E-6            ! eV
+ISMEAR   = 0               ! Gaussian
+SIGMA    = 0.01            ! eV; insulator (QE: fixed occupations)
+
+# Output
+LWAVE    = .FALSE.       
+
+# Relaxation: atoms only, cell fixed (as in QE)
+
+# Parallelisation (40 cores per std40 node)
+NCORE    = 10            
+KPAR     = 1               ! k-point groups; more KPAR = faster but more memory
+
+# Single point with the electrostatic potential
+NSW      = 0
+IBRION   = -1
+LVHAR    = .TRUE.          ! Hartree + ionic potential in LOCPOT
+LCHARG   = .FALSE.
