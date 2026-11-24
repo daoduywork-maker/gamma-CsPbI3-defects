@@ -14,11 +14,48 @@
 
 Metal halide perovskites have the formula ABX$_3$, where A is a monovalent cation, B is a divalent metal and X is a halide. The record single-junction perovskite cells of the past decade have used mixed compositions, with more than one cation on the A site or more than one halide on the X site. \citet{Jeon2015} mixed formamidinium lead iodide with methylammonium lead bromide and stabilized the black phase of the formamidinium-rich film, which raised the efficiency above 18\%. \citet{Saliba2016} added cesium to this mixture. The resulting triple-cation films crystallized more reproducibly and reached a stabilized efficiency of 21.1\%. Later studies kept the formamidinium-rich composition and improved the film and the interfaces. \citet{Jeong2021} replaced part of the iodide with the formate pseudo-halide, and \citet{Min2021} grew an atomically coherent interlayer on the SnO$_2$ electrode and reached 25.8\%. \citet{Park2023} controlled the film growth with volatile alkylammonium chlorides and obtained an efficiency of 26.08\%. The certified record now stands at about 27\% \citep{NREL2026}.
 
-\subsection{Stability of hybrid and all-inorganic cells}
+\subsection{Efficiency and stability of hybrid and all-inorganic cells}
 
-All of these record compositions contain the organic cations methylammonium or formamidinium. These cations are volatile, and the films lose them at the temperatures used for processing and testing. \citet{Conings2015} showed that methylammonium lead iodide decomposed at 85$^\circ$C even in an inert atmosphere. This temperature is the standard temperature of the damp-heat and thermal tests for commercial modules, so pure methylammonium compositions cannot pass these tests. Mixed compositions and protective layers have improved the stability considerably. \citet{Saliba2016Rb} added rubidium to the cation mixture, and polymer-coated cells kept 95\% of the initial efficiency after 500~h at 85$^\circ$C under full illumination. The unencapsulated cells of \citet{Min2021} kept about 90\% of the initial efficiency after 500~h of continuous illumination. These lifetimes still fall far short of the 25-year lifetime of silicon modules.
+Efficiency and stability must be compared within the same study, because each study reports its own stability test under its own conditions. Table~\ref{tab:landscape} lists representative cells with the efficiency and the stability test reported in each paper.
 
-Cesium in place of the organic cation removes the volatile component. CsPbI$_3$ melts congruently at 758~K without decomposing \citep{vanHattem2023}, far above any processing or operating temperature. All-inorganic cells have accordingly shown higher thermal stability. \citet{Xue2020} reported CsPbI$_2$Br cells that kept 96\% of the initial efficiency after 1000~h at 85$^\circ$C, twice the duration of the hybrid tests above at the same temperature. The all-inorganic cells of \citet{Mali2023} operated stably for more than 200~h under one-sun illumination at the maximum power point. The weakness of all-inorganic CsPbI$_3$ is therefore not chemical decomposition but the phase transformation described in Section~\ref{sec:phase}. The stability tests above used various conditions, encapsulation and durations, so the numbers show trends rather than a direct comparison.
+\begin{table}[htbp]
+  \centering
+  \caption{Efficiency and stability reported in the same study for representative perovskite solar cells}
+  \label{tab:landscape}
+  \scriptsize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{p{0.12\linewidth}p{0.14\linewidth}p{0.09\linewidth}p{0.12\linewidth}p{0.06\linewidth}p{0.17\linewidth}p{0.06\linewidth}p{0.11\linewidth}}
+    \toprule
+    Study & Absorber & Efficiency (\%) & Light & $T$ ($^\circ$C) & Atmosphere, encapsulation & Time (h) & Retained (\%) \\
+    \midrule
+    \multicolumn{8}{l}{\textit{Hybrid single junction}} \\
+    \citet{Conings2015} & MAPbI$_3$ films & -- & none & 85 & inert & -- & decomposed \\
+    \citet{Saliba2016Rb} & Rb/Cs/MA/FA mixed cation & 21.6 & 1 sun, MPP & 85 & polymer coated & 500 & 95 \\
+    \citet{Jeong2021} & FAPbI$_3$ with formate & 25.6 (25.2 cert.) & operation & n.s. & n.s. & 450 & n.s. \\
+    \citet{Min2021} & FAPbI$_3$-based & 25.8 (25.5 cert.) & continuous & n.s. & unencapsulated & 500 & 90 \\
+    \citet{Park2023} & FAPbI$_3$-based & 26.08 (25.73 cert.) & \multicolumn{5}{l}{not verified} \\
+    \midrule
+    \multicolumn{8}{l}{\textit{All-inorganic single junction}} \\
+    \citet{Wang2019} & $\beta$-CsPbI$_3$ & 18.4 (18.3 cert.) & 1 sun, MPP & n.s. & N$_2$, unencapsulated & 500 & 92 \\
+     & & & 1 sun, MPP & n.s. & air, encapsulated & 240 & 95 \\
+    \citet{Xue2020} & CsPbI$_2$Br & 16.4 & 1 sun, MPP & n.s. & n.s. & 60 & 95 \\
+     & & & none & 85 & N$_2$ & 1000 & 96 \\
+    \citet{Mali2021} & CsPbI$_2$Br with Eu$^{2+}$ & 15.3 & 1 sun, white LED & 85 & air, 65--75\% RH, unencapsulated & 1000 & 87 \\
+    \citet{Mali2023} & CsPbI$_3$, $\beta$/$\gamma$ heterojunction & $>$21.5 & 1 sun, MPP & n.s. & n.s. & $>$200 & stable \\
+    \midrule
+    \multicolumn{8}{l}{\textit{Perovskite/silicon tandem}} \\
+    \citet{AlAshouri2020} & Cs/FA/MA, I/Br top cell & 29.15 cert. & 1 sun, MPP & 25 & air, 30--40\% RH, unencapsulated & 300 & 95.5 \\
+    \citet{Mariotti2023} & Triple-halide top cell & 32.5 cert. & \multicolumn{5}{l}{not reported in the abstract} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.3em}
+  \raggedright\scriptsize MPP, maximum power point tracking. n.s., not stated in the sources read. cert., certified. RH, relative humidity. The efficiency of \citet{Mali2021} is the best cell with the same CuSCN hole-transport layer as the stability test.
+\end{table}
+
+All the hybrid compositions contain the organic cations methylammonium or formamidinium. These cations are volatile, and the films lose them at the temperatures used for processing and testing. \citet{Conings2015} showed that methylammonium lead iodide decomposed at 85$^\circ$C even in an inert atmosphere. This temperature is the standard temperature of the damp-heat and thermal tests for commercial modules. Mixed cations, additives and protective layers have improved the stability considerably. The rubidium-containing cells of \citet{Saliba2016Rb} kept 95\% of the initial efficiency after 500~h at 85$^\circ$C under illumination, and the 25.8\% cells of \citet{Min2021} kept 90\% after 500~h of continuous illumination.
+
+Cesium in place of the organic cation removes the volatile component. CsPbI$_3$ melts congruently at 758~K without decomposing \citep{vanHattem2023}, far above any processing or operating temperature. Under one-sun illumination at room temperature, the 18.4\% $\beta$-CsPbI$_3$ cells of \citet{Wang2019} kept 92\% of the initial efficiency after 500~h at the maximum power point, close to the 90\% of the hybrid cells of \citet{Min2021} over the same time. The combined test of heat and light gives the strictest comparison. \citet{Mali2021} kept unencapsulated Eu-doped CsPbI$_2$Br cells at 85$^\circ$C under one-sun illumination in humid air for 1000~h, and the cells retained 87\% of the initial efficiency. The rubidium-containing hybrid cells of \citet{Saliba2016Rb} retained 95\% after 500~h at 85$^\circ$C under illumination, but with a polymer coating. The inorganic cells therefore survived twice the duration without encapsulation in humid air, whereas the hybrid cells needed a protective coating. Table~\ref{tab:landscape} shows that the best hybrid and all-inorganic cells now reach comparable operational stability, while the hybrid cells remain 4--8 percentage points higher in efficiency. The advantage of the all-inorganic perovskites is intrinsic, because the material itself does not decompose at operating temperatures and does not depend on encapsulation or additives to retain the organic cation. The weakness of all-inorganic CsPbI$_3$ is the phase transformation described in Section~\ref{sec:phase}, not chemical decomposition. The stability tests in Table~\ref{tab:landscape} used various light sources, atmospheres and durations, so the comparison shows trends rather than ranked lifetimes.
 
 \subsection{All-inorganic mixed-halide perovskites}
 
