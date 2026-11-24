@@ -1,0 +1,5 @@
+# V_I+ vacancy diffusivity at 300 K (cm^2/s), nu = 1e12 Hz; strained hop vectors and barriers
+# eps(%)   D_aa        D_bb        D_cc       D_cc/D_aa  D_bb/D_aa  max|chk-D|/D
+ -1.0   2.332e-09  2.051e-09  2.842e-09   1.22       0.88       5.5e-06
+ +0.0   3.066e-09  2.587e-09  4.065e-09   1.33       0.84       4.9e-06
+ +1.0   6.355e-09  4.602e-09  8.033e-09   1.26       0.72       4.5e-06

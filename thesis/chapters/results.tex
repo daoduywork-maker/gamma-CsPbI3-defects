@@ -1,6 +1,5 @@
 % Chapter 4. Results
 % Written to Technical_Writing_Guide.md. Own results in the past tense, figures and tables in the present tense.
-% Status (23 Nov 2026): S4, S1 and S5 at +1% strain had not converged. Values marked * must be updated.
 
 \chapter{Results}
 \label{ch:results}
@@ -208,30 +207,48 @@ Table~\ref{tab:ef-strain} and Fig.~\ref{fig:ef-strain} show the formation energy
 
 \subsection{Migration under strain}
 
-Table~\ref{tab:neb-strain} and Fig.~\ref{fig:neb-strain} show the barriers of the four lowest hops at $\pm1$\% strain. All the hops at $-1$\% and S2 at $+1$\% converged. S4, S1 and S5 at $+1$\% had not converged at the time of writing, and the values marked with an asterisk are the highest image energies of the unconverged paths.
-% Update S4, S1 and S5 at +1% when the runs converge.
+Table~\ref{tab:neb-strain} and Fig.~\ref{fig:neb-strain} show the barriers of the four lowest hops at $\pm1$\% strain. All eight strained paths converged within 8--17 steps from the shifted unstrained paths.
 
 \begin{table}[htbp]
   \centering
-  \caption{Migration barriers of $V_\mathrm{I}^{+}$ (eV) under biaxial strain, measured from the 8d end (* not yet converged)}
+  \caption{Migration barriers of $V_\mathrm{I}^{+}$ (eV) under biaxial strain, measured from the 8d end}
   \label{tab:neb-strain}
   \begin{tabular}{lcccc}
     \toprule
     Hop & $-1$\% & 0 & $+1$\% & Change from $-1$ to $+1$\% \\
     \midrule
     S2 & 0.332 & 0.326 & 0.316 & $-0.016$ \\
-    S4 & 0.332 & 0.325 & 0.311* & $-0.021$* \\
-    S1 & 0.349 & 0.345 & 0.332* & $-0.017$* \\
-    S5 & 0.367 & 0.348 & 0.333* & $-0.034$* \\
+    S4 & 0.332 & 0.325 & 0.308 & $-0.024$ \\
+    S1 & 0.349 & 0.345 & 0.330 & $-0.019$ \\
+    S5 & 0.367 & 0.348 & 0.329 & $-0.038$ \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.6\linewidth]{neb_strain_prelim.png}
-  \caption{Migration barriers of the four lowest hops of $V_\mathrm{I}^{+}$ against biaxial strain. Open symbols denote paths that had not converged.}
+  \includegraphics[width=0.6\linewidth]{neb_strain.png}
+  \caption{Migration barriers of the four lowest hops of $V_\mathrm{I}^{+}$ against biaxial strain.}
   \label{fig:neb-strain}
 \end{figure}
 
-Tension lowered every barrier and compression raised every barrier, in agreement with the trend reported for CsPbI$_2$Br \citep{Xue2020} and for the double perovskites studied by \citet{Xu2019}. The changes were small, 0.008--0.017~eV per percent of strain, compared with the 0.08~eV per percent that \citet{Xue2020} reported for a single path in CsPbI$_2$Br. The hops also responded differently. S5 changed the most and S2 the least. Under compression, S5 separated from the other three hops, and under tension the four barriers moved closer together. Strain therefore changes the relative weight of the hops and, through Table~\ref{tab:tensor}, the anisotropy of the diffusion.
+Tension lowered every barrier and compression raised every barrier, in agreement with the trend reported for CsPbI$_2$Br \citep{Xue2020} and for the double perovskites studied by \citet{Xu2019}. The changes were small, 0.008--0.019~eV per percent of strain, compared with the 0.08~eV per percent that \citet{Xue2020} reported for a single path in CsPbI$_2$Br. The hops also responded differently. S5 changed the most, by 0.038~eV between $-1$ and $+1$\%, and S2 changed the least, by 0.016~eV. Under compression, S5 separated from the other three hops by 0.018~eV. Under tension, S5 fell below S1, and S4 became the lowest hop.
+
+Table~\ref{tab:tensor-strain} lists the diffusivity tensor at $\pm1$\% strain from Eq.~\ref{eq:diffusivity}. The calculations used the strained barriers of the four lowest hops and the strained site energies, kept the unstrained barriers of S3, S6 and L3, and scaled every hop vector by the strained lattice. Tension of 1\% doubled $D_{aa}$ and $D_{cc}$ and raised $D_{bb}$ by a factor of 1.8. Compression of 1\% reduced all three components to 70--79\% of the unstrained values. The ratio $D_{bb}/D_{aa}$ decreased from 0.88 at $-1$\% to 0.72 at $+1$\%, because transport along $b$ runs almost entirely through S2 (Table~\ref{tab:tensor}), and S2 was the least sensitive hop. Strain therefore changed both the magnitude and the anisotropy of the vacancy diffusion, but all three components stayed within a factor of 1.3 of each other along $a$ and $c$.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Vacancy diffusivity of $V_\mathrm{I}^{+}$ at 300~K under biaxial strain ($10^{-9}$~cm$^2$/s), $\nu^{*} = 10^{12}$~Hz}
+  \label{tab:tensor-strain}
+  \begin{tabular}{lccccc}
+    \toprule
+    $\varepsilon$ (\%) & $D_{aa}$ & $D_{bb}$ & $D_{cc}$ & $D_{bb}/D_{aa}$ & $D_{cc}/D_{aa}$ \\
+    \midrule
+    $-1.0$ & 2.33 & 2.05 & 2.84 & 0.88 & 1.22 \\
+    0 & 3.07 & 2.59 & 4.07 & 0.84 & 1.33 \\
+    $+1.0$ & 6.36 & 4.60 & 8.03 & 0.72 & 1.26 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Combined with the formation energies of Table~\ref{tab:ef-strain}, tension of 1\% raised the vacancy concentration by a factor of five and the vacancy diffusivity by a factor of two. Both effects increase ion migration, so the iodide flux under 1\% tension is about ten times the unstrained flux at the iodine-rich limit.
