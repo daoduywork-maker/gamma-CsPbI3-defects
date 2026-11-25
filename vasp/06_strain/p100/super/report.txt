@@ -1,0 +1,8 @@
+(100) strained supercells; a factor = (1+da*(eps))/(1+da*(0)), da*(0) = +0.065%
+
+eps -1.0%  pristine               cell 17.0162 17.7204 24.5560 A
+eps -1.0%  q+1/vac_I_apical       cell 17.0162 17.7204 24.5560 A
+eps -1.0%  q+1/vac_I_equatorial   cell 17.0162 17.7204 24.5560 A
+eps +1.0%  pristine               cell 16.4509 18.0784 25.0521 A
+eps +1.0%  q+1/vac_I_apical       cell 16.4509 18.0784 25.0521 A
+eps +1.0%  q+1/vac_I_equatorial   cell 16.4509 18.0784 25.0521 A

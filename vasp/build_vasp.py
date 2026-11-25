@@ -766,6 +766,35 @@ def cmd_phonrelax(a):
     print("\n".join(rep))
 
 
+
+P100_DA = {-1.0: 1.710, 0.0: 0.065, 1.0: -1.669}   # % fitted a-minimum of the (100) E(a) scans (25 Nov)
+
+
+def cmd_strain_super100(a):
+    """Strained 160-atom supercells for (100) biaxial strain: b and c scaled by (1+eps),
+    a by (1+da*(eps))/(1+da*(0)) from the (100) E(a) fit (P100_DA). Same sources as
+    strain_super. Folders: vasp/06_strain/p100/super/eps<e>/..."""
+    src = {"pristine": "02_pristine/POSCAR",
+           "q+1/vac_I_apical": "03_vacancies/q+1/vac_I_apical/CONTCAR",
+           "q+1/vac_I_equatorial": "03_vacancies/q+1/vac_I_equatorial/CONTCAR"}
+    rows = ["(100) strained supercells; a factor = (1+da*(eps))/(1+da*(0)), da*(0) = %+.3f%%" % P100_DA[0.0], ""]
+    for e in (-1.0, 1.0):
+        fa = (1 + P100_DA[e] / 100) / (1 + P100_DA[0.0] / 100)
+        for name, rel in src.items():
+            at = read(os.path.join(HERE, rel), format="vasp")
+            L = at.cell.lengths()
+            at.set_cell(np.diag([L[0] * fa, L[1] * (1 + e / 100), L[2] * (1 + e / 100)]), scale_atoms=True)
+            d = os.path.join(HERE, "06_strain", "p100", "super", "eps%+.1f" % e, name)
+            os.makedirs(d, exist_ok=True)
+            write_poscar(os.path.join(d, "POSCAR"), at, "(100) strained supercell")
+            sd = os.path.dirname(os.path.join(HERE, rel))
+            open(os.path.join(d, "KPOINTS"), "w").write(open(os.path.join(sd, "KPOINTS")).read())
+            first, rest = open(os.path.join(sd, "INCAR")).read().split("\n", 1)
+            open(os.path.join(d, "INCAR"), "w").write("%s, (100) biaxial strain %+.1f%%\n%s" % (first, e, rest))
+            rows.append("eps %+.1f%%  %-22s cell %.4f %.4f %.4f A" % (e, name, *at.cell.lengths()))
+    open(os.path.join(HERE, "06_strain", "p100", "super", "report.txt"), "w").write("\n".join(rows) + "\n")
+    print("\n".join(rows))
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -801,6 +830,7 @@ def main():
         p.set_defaults(func=fn)
     sub.add_parser("locpot").set_defaults(func=cmd_locpot)
     sub.add_parser("nebtight").set_defaults(func=cmd_nebtight)
+    sub.add_parser("strain_super100").set_defaults(func=cmd_strain_super100)
     p = sub.add_parser("strain_super")
     p.add_argument("--eps", type=float, nargs="+")
     a = ap.parse_args()
