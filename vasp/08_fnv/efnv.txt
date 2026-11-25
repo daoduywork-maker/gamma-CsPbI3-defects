@@ -1,0 +1,8 @@
+# eFNV (Kumagai-Oba) correction for V_I+, q = +1; dielectric tensor (electronic + ionic):
+#   diag = 18.918 22.422 22.528
+# eps(%)  E_lat(eV)  q*align(eV)  E_corr(eV)  n_far  R_ws(A)  E_f_old  E_f_eFNV  (I-rich, E_F at VBM, lower site)
+ -1.0   0.0489    -0.0370      0.0119     108    8.29     0.668    0.655
+ -0.5   0.0489    -0.0425      0.0064     107    8.33     0.671    0.650
+ +0.0   0.0489    -0.0413      0.0076     107    8.37     0.644    0.627
+ +0.5   0.0488    -0.0360      0.0129     107    8.41     0.620    0.601
+ +1.0   0.0488    -0.0361      0.0127     107    8.45     0.601    0.580

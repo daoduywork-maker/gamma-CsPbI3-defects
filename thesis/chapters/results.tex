@@ -62,9 +62,9 @@ The calculated formation enthalpies were $-4.985$~eV for CsPbI$_3$, $-3.079$~eV 
   \label{fig:stability}
 \end{figure}
 
-Figure~\ref{fig:stability}(b) shows the formation energy of the iodine vacancy from Eq.~\ref{eq:Ef}. At the iodine-rich limit, the positive vacancy had a formation energy of 0.644~eV at the VBM. At the iodine-poor limit, the formation energy became negative for Fermi levels within 0.31~eV of the VBM. A Fermi level this close to the VBM would therefore produce vacancies spontaneously, which pins the Fermi level and limits p-type doping under iodine-poor growth.
+Figure~\ref{fig:stability}(b) shows the formation energy of the iodine vacancy from Eq.~\ref{eq:Ef}. At the iodine-rich limit, the positive vacancy had a formation energy of 0.627~eV at the VBM, including the finite-size correction. At the iodine-poor limit, the formation energy became negative for Fermi levels within 0.33~eV of the VBM. A Fermi level this close to the VBM would therefore produce vacancies spontaneously, which pins the Fermi level and limits p-type doping under iodine-poor growth.
 
-The $(+/0)$ transition level from Eq.~\ref{eq:transition} lay 1.56~eV above the PBEsol VBM, which is 0.06~eV below the PBEsol CBM. With the HSE06 and SOC band edges, the level lay 1.69~eV above the VBM and 0.44~eV above the CBM. The neutral state is therefore not stable for any Fermi level in the gap, and the iodine vacancy is positively charged throughout. The migration calculations used only the positive vacancy for this reason.
+The $(+/0)$ transition level from Eq.~\ref{eq:transition} lay 1.54~eV above the PBEsol VBM, which is 0.08~eV below the PBEsol CBM. With the HSE06 and SOC band edges, the level lay 1.68~eV above the VBM and 0.42~eV above the CBM. The neutral state is therefore not stable for any Fermi level in the gap, and the iodine vacancy is positively charged throughout. The migration calculations used only the positive vacancy for this reason.
 
 \section{Vacancy migration}
 \label{sec:res-migration}
@@ -179,21 +179,21 @@ These results show that strain up to 1\% cannot stabilize $\gamma$-CsPbI$_3$ the
 
 \subsection{Vacancy formation under strain}
 
-Table~\ref{tab:ef-strain} and Fig.~\ref{fig:ef-strain} show the formation energy of the positive vacancy under strain, at the iodine-rich limit and with the Fermi level at the VBM of each strained cell. The energy difference $\Delta E = E(V_\mathrm{I}^{+}) - E(\mathrm{perfect})$ increased from 0.431~eV at $-1$\% to 0.604~eV at $+1$\%. The VBM decreased over the same range from 1.969 to 1.718~eV. Under tension, the VBM decreased faster than $\Delta E$ increased, so the formation energy decreased from 0.644~eV without strain to 0.601~eV at $+1$\%, by 0.043~eV per percent of strain. This decrease raises the equilibrium vacancy concentration at 300~K by a factor of five. Under compression, the increase of the VBM cancelled the decrease of $\Delta E$, and the formation energy remained at 0.67~eV between $-0.5$ and $-1$\%. Strain also split the two sites slightly. The 8d site became 3--7~meV lower at $+0.5$, $+1$ and $-1$\%, whereas the two sites remained degenerate near zero strain.
+Table~\ref{tab:ef-strain} and Fig.~\ref{fig:ef-strain} show the formation energy of the positive vacancy under strain, at the iodine-rich limit and with the Fermi level at the VBM of each strained cell. The energy difference $\Delta E = E(V_\mathrm{I}^{+}) - E(\mathrm{perfect})$ increased from 0.431~eV at $-1$\% to 0.604~eV at $+1$\%. The VBM decreased over the same range from 1.969 to 1.718~eV. Under tension, the VBM decreased faster than $\Delta E$ increased, so the formation energy decreased from 0.627~eV without strain to 0.580~eV at $+1$\%, by 0.047~eV per percent of strain. This decrease raises the equilibrium vacancy concentration at 300~K by a factor of six. Under compression, the formation energy rose to 0.650~eV at $-0.5$\% and changed by only 5~meV between $-0.5$ and $-1$\%, because the increase of the VBM nearly cancelled the decrease of $\Delta E$. The finite-size correction was 0.006--0.013~eV at every strain, so the correction shifted all the formation energies by a similar amount and did not change the trend. Strain also split the two sites slightly. The 8d site became 3--7~meV lower at $+0.5$, $+1$ and $-1$\%, whereas the two sites remained degenerate near zero strain.
 
 \begin{table}[htbp]
   \centering
-  \caption{Formation energy of $V_\mathrm{I}^{+}$ under biaxial strain, iodine-rich limit, $E_F$ at the VBM of each strained cell, lower site}
+  \caption{Formation energy of $V_\mathrm{I}^{+}$ under biaxial strain, iodine-rich limit, $E_F$ at the VBM of each strained cell, lower site, eFNV correction}
   \label{tab:ef-strain}
   \begin{tabular}{lcccc}
     \toprule
     $\varepsilon$ (\%) & $\Delta E$ (eV) & VBM (eV) & $E(\mathrm{8d}) - E(\mathrm{4c})$ (meV) & $E_f$ (eV) \\
     \midrule
-    $-1.0$ & 0.431 & 1.969 & $-4.3$ & 0.668 \\
-    $-0.5$ & 0.484 & 1.915 & $+0.4$ & 0.671 \\
-    0 & 0.527 & 1.849 & $+0.9$ & 0.644 \\
-    $+0.5$ & 0.562 & 1.782 & $-3.3$ & 0.620 \\
-    $+1.0$ & 0.604 & 1.718 & $-6.5$ & 0.601 \\
+    $-1.0$ & 0.431 & 1.969 & $-4.3$ & 0.655 \\
+    $-0.5$ & 0.484 & 1.915 & $+0.4$ & 0.650 \\
+    0 & 0.527 & 1.849 & $+0.9$ & 0.627 \\
+    $+0.5$ & 0.562 & 1.782 & $-3.3$ & 0.601 \\
+    $+1.0$ & 0.604 & 1.718 & $-6.5$ & 0.580 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -251,4 +251,4 @@ Table~\ref{tab:tensor-strain} lists the diffusivity tensor at $\pm1$\% strain fr
   \end{tabular}
 \end{table}
 
-Combined with the formation energies of Table~\ref{tab:ef-strain}, tension of 1\% raised the vacancy concentration by a factor of five and the vacancy diffusivity by a factor of two. Both effects increase ion migration, so the iodide flux under 1\% tension is about ten times the unstrained flux at the iodine-rich limit.
+Combined with the formation energies of Table~\ref{tab:ef-strain}, tension of 1\% raised the vacancy concentration by a factor of six and the vacancy diffusivity by a factor of two. Both effects increase ion migration, so the iodide flux under 1\% tension is about an order of magnitude larger than the unstrained flux at the iodine-rich limit.

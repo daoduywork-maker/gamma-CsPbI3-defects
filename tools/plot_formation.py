@@ -26,8 +26,8 @@ TXT, MUT, OR, PU = "#0B0B0B", "#52514E", "#D85A30", "#7F77DD"
 # VASP PBEsol, eV (NOTES.md job log)
 E_BULK = -486.51068
 E_DEF = {+1: -485.98408, 0: -482.55124}       # 4c site (8d: +0.9 meV and +33.5 meV)
-DV = {+1: -48.6269 - (-48.5911), 0: 0.0}      # mean Cs core potential (atoms 1-32, last ionic step), defect - bulk
-E_CORR = {+1: 0.06, 0: 0.0}                   # image charge, estimate (eps ~ 18, L ~ 19.5 A)
+DV = {+1: -0.0413, 0: 0.0}                    # eFNV site-potential alignment (tools/efnv_correction.py, vasp/08_fnv/efnv.txt)
+E_CORR = {+1: 0.0489, 0: 0.0}                 # eFNV point-charge term, static dielectric tensor (DFPT)
 E_VBM, E_CBM = 1.8489, 3.4679                 # pristine EIGENVAL
 MU_I0 = -7.02297865 / 4                       # solid I2, 4 atoms
 DMU = {"I-rich": 0.0, "I-poor": -0.953}       # stability strip (CsI, PbI2, Pb limits)
